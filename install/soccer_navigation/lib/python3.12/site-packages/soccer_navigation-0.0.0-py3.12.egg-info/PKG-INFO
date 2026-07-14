@@ -1,0 +1,7 @@
+Metadata-Version: 2.1
+Name: soccer-navigation
+Version: 0.0.0
+Summary: Lidar-based obstacle avoidance and navigation for soccer bot
+Maintainer: sharmin
+Maintainer-email: sharmin@todo.todo
+License: Apache-2.0

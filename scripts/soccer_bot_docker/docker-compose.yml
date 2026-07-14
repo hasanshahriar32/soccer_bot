@@ -1,0 +1,13 @@
+version: '3.8'
+
+services:
+  edge_node:
+    build: 
+      context: ../../
+      dockerfile: scripts/soccer_bot_docker/Dockerfile
+    container_name: soccer_bot_edge
+    privileged: true
+    network_mode: host
+    restart: unless-stopped
+    volumes:
+      - /dev:/dev

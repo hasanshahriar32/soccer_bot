@@ -1,0 +1,177 @@
+[0.000000] (-) TimerEvent: {}
+[0.006095] (-) JobUnselected: {'identifier': 'soccer_navigation'}
+[0.006428] (-) JobUnselected: {'identifier': 'ydlidar_ros2_driver'}
+[0.006508] (-) JobUnselected: {'identifier': 'ydlidar_sdk'}
+[0.006583] (soccer_vision) JobQueued: {'identifier': 'soccer_vision', 'dependencies': OrderedDict()}
+[0.006663] (soccer_vision) JobStarted: {'identifier': 'soccer_vision'}
+[0.099483] (-) TimerEvent: {}
+[0.201108] (-) TimerEvent: {}
+[0.301823] (-) TimerEvent: {}
+[0.404012] (-) TimerEvent: {}
+[0.504727] (-) TimerEvent: {}
+[0.605317] (-) TimerEvent: {}
+[0.710010] (-) TimerEvent: {}
+[0.810618] (-) TimerEvent: {}
+[0.911327] (-) TimerEvent: {}
+[1.013075] (-) TimerEvent: {}
+[1.113649] (-) TimerEvent: {}
+[1.214502] (-) TimerEvent: {}
+[1.316669] (-) TimerEvent: {}
+[1.418221] (-) TimerEvent: {}
+[1.521987] (-) TimerEvent: {}
+[1.622523] (-) TimerEvent: {}
+[1.723083] (-) TimerEvent: {}
+[1.823854] (-) TimerEvent: {}
+[1.925234] (-) TimerEvent: {}
+[2.027482] (-) TimerEvent: {}
+[2.128775] (-) TimerEvent: {}
+[2.230247] (-) TimerEvent: {}
+[2.331126] (-) TimerEvent: {}
+[2.432153] (-) TimerEvent: {}
+[2.534270] (-) TimerEvent: {}
+[2.637297] (-) TimerEvent: {}
+[2.737857] (-) TimerEvent: {}
+[2.838434] (-) TimerEvent: {}
+[2.938996] (-) TimerEvent: {}
+[3.042007] (-) TimerEvent: {}
+[3.142658] (-) TimerEvent: {}
+[3.243264] (-) TimerEvent: {}
+[3.345230] (-) TimerEvent: {}
+[3.445846] (-) TimerEvent: {}
+[3.546482] (-) TimerEvent: {}
+[3.649266] (-) TimerEvent: {}
+[3.749963] (-) TimerEvent: {}
+[3.852219] (-) TimerEvent: {}
+[3.952821] (-) TimerEvent: {}
+[4.053383] (-) TimerEvent: {}
+[4.154173] (-) TimerEvent: {}
+[4.257024] (-) TimerEvent: {}
+[4.357579] (-) TimerEvent: {}
+[4.458110] (-) TimerEvent: {}
+[4.561013] (-) TimerEvent: {}
+[4.661639] (-) TimerEvent: {}
+[4.762218] (-) TimerEvent: {}
+[4.862812] (-) TimerEvent: {}
+[4.963448] (-) TimerEvent: {}
+[5.066320] (-) TimerEvent: {}
+[5.166885] (-) TimerEvent: {}
+[5.267504] (-) TimerEvent: {}
+[5.369040] (-) TimerEvent: {}
+[5.469727] (-) TimerEvent: {}
+[5.572411] (-) TimerEvent: {}
+[5.673025] (-) TimerEvent: {}
+[5.773686] (-) TimerEvent: {}
+[5.874357] (-) TimerEvent: {}
+[5.977003] (-) TimerEvent: {}
+[6.077634] (-) TimerEvent: {}
+[6.178308] (-) TimerEvent: {}
+[6.278879] (-) TimerEvent: {}
+[6.382975] (-) TimerEvent: {}
+[6.483550] (-) TimerEvent: {}
+[6.584220] (-) TimerEvent: {}
+[6.688736] (-) TimerEvent: {}
+[6.791204] (-) TimerEvent: {}
+[6.891747] (-) TimerEvent: {}
+[6.992274] (-) TimerEvent: {}
+[7.097640] (-) TimerEvent: {}
+[7.198136] (-) TimerEvent: {}
+[7.301033] (-) TimerEvent: {}
+[7.403865] (-) TimerEvent: {}
+[7.507025] (-) TimerEvent: {}
+[7.607587] (-) TimerEvent: {}
+[7.708197] (-) TimerEvent: {}
+[7.811208] (-) TimerEvent: {}
+[7.916159] (-) TimerEvent: {}
+[8.016777] (-) TimerEvent: {}
+[8.117424] (-) TimerEvent: {}
+[8.220342] (-) TimerEvent: {}
+[8.325029] (-) TimerEvent: {}
+[8.425571] (-) TimerEvent: {}
+[8.526348] (-) TimerEvent: {}
+[8.626919] (-) TimerEvent: {}
+[8.729245] (-) TimerEvent: {}
+[8.829861] (-) TimerEvent: {}
+[8.932318] (-) TimerEvent: {}
+[8.948013] (soccer_vision) Command: {'cmd': ['/usr/bin/python3', '-W', 'ignore:setup.py install is deprecated', '-W', 'ignore:easy_install command is deprecated', 'setup.py', 'egg_info', '--egg-base', '../../build/soccer_vision', 'build', '--build-base', '/home/sharmin/Desktop/iot/soccer_bot/build/soccer_vision/build', 'install', '--record', '/home/sharmin/Desktop/iot/soccer_bot/build/soccer_vision/install.log', '--install-scripts', '$base/lib/soccer_vision', '--single-version-externally-managed', 'install_data'], 'cwd': '/home/sharmin/Desktop/iot/soccer_bot/src/soccer_vision', 'env': {'XDG_ACTIVATION_TOKEN': 'nemo-desktop-2159-sharmin-Satellite-L15W-B-xfce4-terminal-0_TIME296255', 'LESSOPEN': '| /usr/bin/lesspipe %s', 'LANGUAGE': 'en_US', 'USER': 'sharmin', 'ANTIGRAVITY_SOURCE_METADATA': '{"tool":{"conversationId":"2cb51940-68b9-4c09-9f07-7059f5ec9b8d", "stepIndex":1801, "toolCall":{"id":"td55wepd", "name":"run_command", "argumentsJson":"{\\"CommandLine\\":\\"colcon build --packages-select soccer_vision\\",\\"Cwd\\":\\"/home/sharmin/Desktop/iot/soccer_bot\\",\\"WaitMsBeforeAsync\\":5000,\\"toolAction\\":\\"Rebuilding the package to update the node behavior\\",\\"toolSummary\\":\\"Rebuild soccer_vision\\"}", "thinkingSignature":"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", "originalName":"run_command"}}}', 'XDG_SEAT': 'seat0', 'ANTIGRAVITY_SAFECLIS_DIR': '/home/sharmin/.gemini/antigravity-cli/bin/safeclis', 'PT8HOME': '/opt/pt', 'SSH_AGENT_PID': '2085', 'XDG_SESSION_TYPE': 'x11', 'COMPIZ_CONFIG_PROFILE': 'mint', 'SHLVL': '1', 'LD_LIBRARY_PATH': '/opt/ros/jazzy/opt/rviz_ogre_vendor/lib:/opt/ros/jazzy/lib/x86_64-linux-gnu:/opt/ros/jazzy/opt/gz_math_vendor/lib:/opt/ros/jazzy/opt/gz_utils_vendor/lib:/opt/ros/jazzy/opt/gz_cmake_vendor/lib:/opt/ros/jazzy/lib', 'HOME': '/home/sharmin', 'DESKTOP_SESSION': 'xfce', 'NVM_BIN': '/home/sharmin/.nvm/versions/node/v20.16.0/bin', 'NVM_INC': '/home/sharmin/.nvm/versions/node/v20.16.0/include/node', 'GIO_LAUNCHED_DESKTOP_FILE': '/home/sharmin/Desktop/xfce4-terminal.desktop', 'ROS_PYTHON_VERSION': '3', 'GTK_MODULES': 'gail:atk-bridge', 'XDG_SEAT_PATH': '/org/freedesktop/DisplayManager/Seat0', 'PAGER': 'cat', 'LC_MONETARY': 'bn_BD', 'DBUS_SESSION_BUS_ADDRESS': 'unix:path=/run/user/1000/bus', 'COLORTERM': 'truecolor', 'ANTIGRAVITY_AGENT': '1', 'GIO_LAUNCHED_DESKTOP_FILE_PID': '2760', 'NVM_DIR': '/home/sharmin/.nvm', 'ROS_DISTRO': 'jazzy', 'GTK_IM_MODULE': 'ibus', 'LOGNAME': 'sharmin', 'WINDOWID': '46137347', '_': '/usr/bin/colcon', 'ROS_VERSION': '2', 'XDG_SESSION_CLASS': 'user', 'CLUTTER_BACKEND': 'x11', 'TERM': 'dumb', 'XDG_SESSION_ID': 'c2', 'PATH': '/home/sharmin/.gemini/antigravity-cli/bin:/opt/ros/jazzy/bin:/home/sharmin/.local/bin:/home/sharmin/.local/bin:/home/sharmin/.local/bin:/home/sharmin/.nvm/versions/node/v20.16.0/bin:/home/sharmin/.local/bin:/home/sharmin/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin', 'SESSION_MANAGER': 'local/sharmin-Satellite-L15W-B:@/tmp/.ICE-unix/1889,unix/sharmin-Satellite-L15W-B:/tmp/.ICE-unix/1889', 'GDM_LANG': 'en_US', 'GTK3_MODULES': 'xapp-gtk3-module', 'XDG_SESSION_PATH': '/org/freedesktop/DisplayManager/Session0', 'XDG_MENU_PREFIX': 'xfce-', 'LC_ADDRESS': 'bn_BD', 'XDG_RUNTIME_DIR': '/run/user/1000', 'DISPLAY': ':0', 'LANG': 'en_US.UTF-8', 'XDG_CURRENT_DESKTOP': 'XFCE', 'ANTIGRAVITY_CONVERSATION_ID': '2cb51940-68b9-4c09-9f07-7059f5ec9b8d', 'LC_TELEPHONE': 'bn_BD', 'XMODIFIERS': '@im=ibus', 'XDG_SESSION_DESKTOP': 'xfce', 'XAUTHORITY': '/home/sharmin/.Xauthority', 'LS_COLORS': 'rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=00:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.zst=01;31:*.tzst=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.cab=01;31:*.wim=01;31:*.swm=01;31:*.dwm=01;31:*.esd=01;31:*.avif=01;35:*.jpg=01;35:*.jpeg=01;35:*.mjpg=01;35:*.mjpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.webp=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.oga=00;36:*.opus=00;36:*.spx=00;36:*.xspf=00;36:*~=00;90:*#=00;90:*.bak=00;90:*.crdownload=00;90:*.dpkg-dist=00;90:*.dpkg-new=00;90:*.dpkg-old=00;90:*.dpkg-tmp=00;90:*.old=00;90:*.orig=00;90:*.part=00;90:*.rej=00;90:*.rpmnew=00;90:*.rpmorig=00;90:*.rpmsave=00;90:*.swp=00;90:*.tmp=00;90:*.ucf-dist=00;90:*.ucf-new=00;90:*.ucf-old=00;90:', 'SSH_AUTH_SOCK': '/tmp/ssh-JtHPXxvijW4c/agent.2082', 'XDG_GREETER_DATA_DIR': '/var/lib/lightdm-data/sharmin', 'AMENT_PREFIX_PATH': '/opt/ros/jazzy', 'ANTIGRAVITY_PROJECT_ID': 'default-cli-project', 'SHELL': '/bin/bash', 'ANTIGRAVITY_LS_ADDRESS': 'localhost:43241', 'LC_NAME': 'bn_BD', 'QT_ACCESSIBILITY': '1', 'GDMSESSION': 'xfce', 'LESSCLOSE': '/usr/bin/lesspipe %s %s', 'LC_MEASUREMENT': 'bn_BD', 'LC_IDENTIFICATION': 'bn_BD', 'ROS_AUTOMATIC_DISCOVERY_RANGE': 'SUBNET', 'GIT_PAGER': 'cat', 'QT_IM_MODULE': 'ibus', 'XDG_VTNR': '7', 'ANTIGRAVITY_TRAJECTORY_ID': '2245608c-1060-45ea-82a4-ee5f1652ccac', 'PWD': '/home/sharmin/Desktop/iot/soccer_bot/build/soccer_vision', 'LC_ALL': 'en_US.UTF-8', 'XDG_CONFIG_DIRS': '/etc/xdg/xdg-xfce:/etc/xdg', 'CLUTTER_IM_MODULE': 'ibus', 'NVM_CD_FLAGS': '', 'XDG_DATA_DIRS': '/usr/share/xfce4:/home/sharmin/.local/share/flatpak/exports/share:/var/lib/flatpak/exports/share:/usr/local/share:/usr/share', 'PYTHONPATH': '/home/sharmin/Desktop/iot/soccer_bot/build/soccer_vision/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/sharmin/Desktop/iot/soccer_bot/install/soccer_vision/lib/python3.12/site-packages:/opt/ros/jazzy/lib/python3.12/site-packages', 'LC_NUMERIC': 'bn_BD', 'LC_PAPER': 'bn_BD', 'COLCON': '1', 'VTE_VERSION': '7600', 'ANTIGRAVITY_CSRF_TOKEN': '', 'CMAKE_PREFIX_PATH': '/opt/ros/jazzy/opt/gz_math_vendor:/opt/ros/jazzy/opt/gz_utils_vendor:/opt/ros/jazzy/opt/gz_cmake_vendor'}, 'shell': False}
+[9.035039] (-) TimerEvent: {}
+[9.135684] (-) TimerEvent: {}
+[9.236298] (-) TimerEvent: {}
+[9.338416] (-) TimerEvent: {}
+[9.439010] (-) TimerEvent: {}
+[9.540521] (-) TimerEvent: {}
+[9.641173] (-) TimerEvent: {}
+[9.742999] (-) TimerEvent: {}
+[9.843626] (-) TimerEvent: {}
+[9.945999] (-) TimerEvent: {}
+[10.046571] (-) TimerEvent: {}
+[10.147709] (-) TimerEvent: {}
+[10.249505] (-) TimerEvent: {}
+[10.350143] (-) TimerEvent: {}
+[10.451001] (-) TimerEvent: {}
+[10.552396] (-) TimerEvent: {}
+[10.653073] (-) TimerEvent: {}
+[10.753635] (-) TimerEvent: {}
+[10.855264] (-) TimerEvent: {}
+[10.957992] (-) TimerEvent: {}
+[11.058545] (-) TimerEvent: {}
+[11.159498] (-) TimerEvent: {}
+[11.260081] (-) TimerEvent: {}
+[11.360572] (-) TimerEvent: {}
+[11.462004] (-) TimerEvent: {}
+[11.562522] (-) TimerEvent: {}
+[11.638120] (soccer_vision) StdoutLine: {'line': b'running egg_info\n'}
+[11.664009] (-) TimerEvent: {}
+[11.764504] (-) TimerEvent: {}
+[11.861140] (soccer_vision) StdoutLine: {'line': b'writing ../../build/soccer_vision/soccer_vision.egg-info/PKG-INFO\n'}
+[11.863038] (soccer_vision) StdoutLine: {'line': b'writing dependency_links to ../../build/soccer_vision/soccer_vision.egg-info/dependency_links.txt\n'}
+[11.865171] (-) TimerEvent: {}
+[11.866062] (soccer_vision) StdoutLine: {'line': b'writing entry points to ../../build/soccer_vision/soccer_vision.egg-info/entry_points.txt\n'}
+[11.868200] (soccer_vision) StdoutLine: {'line': b'writing requirements to ../../build/soccer_vision/soccer_vision.egg-info/requires.txt\n'}
+[11.870122] (soccer_vision) StdoutLine: {'line': b'writing top-level names to ../../build/soccer_vision/soccer_vision.egg-info/top_level.txt\n'}
+[11.966020] (-) TimerEvent: {}
+[12.068237] (-) TimerEvent: {}
+[12.168776] (-) TimerEvent: {}
+[12.271043] (-) TimerEvent: {}
+[12.350572] (soccer_vision) StdoutLine: {'line': b"reading manifest file '../../build/soccer_vision/soccer_vision.egg-info/SOURCES.txt'\n"}
+[12.356270] (soccer_vision) StdoutLine: {'line': b"writing manifest file '../../build/soccer_vision/soccer_vision.egg-info/SOURCES.txt'\n"}
+[12.356797] (soccer_vision) StdoutLine: {'line': b'running build\n'}
+[12.358996] (soccer_vision) StdoutLine: {'line': b'running build_py\n'}
+[12.360060] (soccer_vision) StdoutLine: {'line': b'copying soccer_vision/camera_hub_node.py -> /home/sharmin/Desktop/iot/soccer_bot/build/soccer_vision/build/lib/soccer_vision\n'}
+[12.363267] (soccer_vision) StdoutLine: {'line': b'running install\n'}
+[12.371994] (-) TimerEvent: {}
+[12.408065] (soccer_vision) StdoutLine: {'line': b'running install_lib\n'}
+[12.472131] (-) TimerEvent: {}
+[12.573698] (-) TimerEvent: {}
+[12.643260] (soccer_vision) StdoutLine: {'line': b'copying /home/sharmin/Desktop/iot/soccer_bot/build/soccer_vision/build/lib/soccer_vision/camera_hub_node.py -> /home/sharmin/Desktop/iot/soccer_bot/install/soccer_vision/lib/python3.12/site-packages/soccer_vision\n'}
+[12.649490] (soccer_vision) StdoutLine: {'line': b'byte-compiling /home/sharmin/Desktop/iot/soccer_bot/install/soccer_vision/lib/python3.12/site-packages/soccer_vision/camera_hub_node.py to camera_hub_node.cpython-312.pyc\n'}
+[12.654003] (soccer_vision) StdoutLine: {'line': b'running install_data\n'}
+[12.657777] (soccer_vision) StdoutLine: {'line': b'running install_egg_info\n'}
+[12.673881] (-) TimerEvent: {}
+[12.776022] (-) TimerEvent: {}
+[12.876517] (-) TimerEvent: {}
+[12.898946] (soccer_vision) StdoutLine: {'line': b"removing '/home/sharmin/Desktop/iot/soccer_bot/install/soccer_vision/lib/python3.12/site-packages/soccer_vision-0.0.0-py3.12.egg-info' (and everything under it)\n"}
+[12.899483] (soccer_vision) StdoutLine: {'line': b'Copying ../../build/soccer_vision/soccer_vision.egg-info to /home/sharmin/Desktop/iot/soccer_bot/install/soccer_vision/lib/python3.12/site-packages/soccer_vision-0.0.0-py3.12.egg-info\n'}
+[12.919042] (soccer_vision) StdoutLine: {'line': b'running install_scripts\n'}
+[12.979379] (-) TimerEvent: {}
+[13.080943] (-) TimerEvent: {}
+[13.187062] (-) TimerEvent: {}
+[13.289005] (-) TimerEvent: {}
+[13.389557] (-) TimerEvent: {}
+[13.492359] (-) TimerEvent: {}
+[13.596081] (-) TimerEvent: {}
+[13.697423] (-) TimerEvent: {}
+[13.798086] (-) TimerEvent: {}
+[13.900564] (-) TimerEvent: {}
+[14.010612] (-) TimerEvent: {}
+[14.114123] (-) TimerEvent: {}
+[14.219015] (-) TimerEvent: {}
+[14.220635] (soccer_vision) StdoutLine: {'line': b'Installing ball_tracker script to /home/sharmin/Desktop/iot/soccer_bot/install/soccer_vision/lib/soccer_vision\n'}
+[14.223275] (soccer_vision) StdoutLine: {'line': b'Installing camera_hub script to /home/sharmin/Desktop/iot/soccer_bot/install/soccer_vision/lib/soccer_vision\n'}
+[14.223791] (soccer_vision) StdoutLine: {'line': b'Installing lidar_hub script to /home/sharmin/Desktop/iot/soccer_bot/install/soccer_vision/lib/soccer_vision\n'}
+[14.232380] (soccer_vision) StdoutLine: {'line': b"writing list of installed files to '/home/sharmin/Desktop/iot/soccer_bot/build/soccer_vision/install.log'\n"}
+[14.321871] (-) TimerEvent: {}
+[14.386226] (soccer_vision) CommandEnded: {'returncode': 0}
+[14.445419] (-) TimerEvent: {}
+[14.553074] (-) TimerEvent: {}
+[14.582188] (soccer_vision) JobEnded: {'identifier': 'soccer_vision', 'rc': 0}
+[14.587493] (-) EventReactorShutdown: {}

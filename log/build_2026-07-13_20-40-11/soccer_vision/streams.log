@@ -1,0 +1,26 @@
+[10.645s] Invoking command in '/home/sharmin/Desktop/iot/soccer_bot/src/soccer_vision': PYTHONPATH=/home/sharmin/Desktop/iot/soccer_bot/build/soccer_vision/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/sharmin/Desktop/iot/soccer_bot/install/soccer_vision/lib/python3.12/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../build/soccer_vision build --build-base /home/sharmin/Desktop/iot/soccer_bot/build/soccer_vision/build install --record /home/sharmin/Desktop/iot/soccer_bot/build/soccer_vision/install.log --install-scripts $base/lib/soccer_vision --single-version-externally-managed install_data
+[14.481s] running egg_info
+[14.850s] writing ../../build/soccer_vision/soccer_vision.egg-info/PKG-INFO
+[14.853s] writing dependency_links to ../../build/soccer_vision/soccer_vision.egg-info/dependency_links.txt
+[14.854s] writing entry points to ../../build/soccer_vision/soccer_vision.egg-info/entry_points.txt
+[14.856s] writing requirements to ../../build/soccer_vision/soccer_vision.egg-info/requires.txt
+[14.858s] writing top-level names to ../../build/soccer_vision/soccer_vision.egg-info/top_level.txt
+[15.443s] reading manifest file '../../build/soccer_vision/soccer_vision.egg-info/SOURCES.txt'
+[15.454s] writing manifest file '../../build/soccer_vision/soccer_vision.egg-info/SOURCES.txt'
+[15.454s] running build
+[15.455s] running build_py
+[15.466s] copying soccer_vision/lidar_hub_node.py -> /home/sharmin/Desktop/iot/soccer_bot/build/soccer_vision/build/lib/soccer_vision
+[15.467s] running install
+[15.543s] running install_lib
+[15.909s] copying /home/sharmin/Desktop/iot/soccer_bot/build/soccer_vision/build/lib/soccer_vision/lidar_hub_node.py -> /home/sharmin/Desktop/iot/soccer_bot/install/soccer_vision/lib/python3.12/site-packages/soccer_vision
+[15.912s] byte-compiling /home/sharmin/Desktop/iot/soccer_bot/install/soccer_vision/lib/python3.12/site-packages/soccer_vision/lidar_hub_node.py to lidar_hub_node.cpython-312.pyc
+[15.922s] running install_data
+[15.923s] running install_egg_info
+[16.365s] removing '/home/sharmin/Desktop/iot/soccer_bot/install/soccer_vision/lib/python3.12/site-packages/soccer_vision-0.0.0-py3.12.egg-info' (and everything under it)
+[16.369s] Copying ../../build/soccer_vision/soccer_vision.egg-info to /home/sharmin/Desktop/iot/soccer_bot/install/soccer_vision/lib/python3.12/site-packages/soccer_vision-0.0.0-py3.12.egg-info
+[16.375s] running install_scripts
+[18.165s] Installing ball_tracker script to /home/sharmin/Desktop/iot/soccer_bot/install/soccer_vision/lib/soccer_vision
+[18.168s] Installing camera_hub script to /home/sharmin/Desktop/iot/soccer_bot/install/soccer_vision/lib/soccer_vision
+[18.172s] Installing lidar_hub script to /home/sharmin/Desktop/iot/soccer_bot/install/soccer_vision/lib/soccer_vision
+[18.172s] writing list of installed files to '/home/sharmin/Desktop/iot/soccer_bot/build/soccer_vision/install.log'
+[18.376s] Invoked command in '/home/sharmin/Desktop/iot/soccer_bot/src/soccer_vision' returned '0': PYTHONPATH=/home/sharmin/Desktop/iot/soccer_bot/build/soccer_vision/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/sharmin/Desktop/iot/soccer_bot/install/soccer_vision/lib/python3.12/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../build/soccer_vision build --build-base /home/sharmin/Desktop/iot/soccer_bot/build/soccer_vision/build install --record /home/sharmin/Desktop/iot/soccer_bot/build/soccer_vision/install.log --install-scripts $base/lib/soccer_vision --single-version-externally-managed install_data

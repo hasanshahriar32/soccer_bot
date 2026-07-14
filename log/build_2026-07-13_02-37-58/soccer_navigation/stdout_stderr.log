@@ -1,0 +1,35 @@
+running egg_info
+creating ../../build/soccer_navigation/soccer_navigation.egg-info
+writing ../../build/soccer_navigation/soccer_navigation.egg-info/PKG-INFO
+writing dependency_links to ../../build/soccer_navigation/soccer_navigation.egg-info/dependency_links.txt
+writing entry points to ../../build/soccer_navigation/soccer_navigation.egg-info/entry_points.txt
+writing requirements to ../../build/soccer_navigation/soccer_navigation.egg-info/requires.txt
+writing top-level names to ../../build/soccer_navigation/soccer_navigation.egg-info/top_level.txt
+writing manifest file '../../build/soccer_navigation/soccer_navigation.egg-info/SOURCES.txt'
+reading manifest file '../../build/soccer_navigation/soccer_navigation.egg-info/SOURCES.txt'
+writing manifest file '../../build/soccer_navigation/soccer_navigation.egg-info/SOURCES.txt'
+running build
+running build_py
+creating /home/sharmin/Desktop/iot/soccer_bot/build/soccer_navigation/build
+creating /home/sharmin/Desktop/iot/soccer_bot/build/soccer_navigation/build/lib
+creating /home/sharmin/Desktop/iot/soccer_bot/build/soccer_navigation/build/lib/soccer_navigation
+copying soccer_navigation/obstacle_avoidance_node.py -> /home/sharmin/Desktop/iot/soccer_bot/build/soccer_navigation/build/lib/soccer_navigation
+copying soccer_navigation/__init__.py -> /home/sharmin/Desktop/iot/soccer_bot/build/soccer_navigation/build/lib/soccer_navigation
+running install
+running install_lib
+creating /home/sharmin/Desktop/iot/soccer_bot/install/soccer_navigation/lib/python3.12/site-packages/soccer_navigation
+copying /home/sharmin/Desktop/iot/soccer_bot/build/soccer_navigation/build/lib/soccer_navigation/obstacle_avoidance_node.py -> /home/sharmin/Desktop/iot/soccer_bot/install/soccer_navigation/lib/python3.12/site-packages/soccer_navigation
+copying /home/sharmin/Desktop/iot/soccer_bot/build/soccer_navigation/build/lib/soccer_navigation/__init__.py -> /home/sharmin/Desktop/iot/soccer_bot/install/soccer_navigation/lib/python3.12/site-packages/soccer_navigation
+byte-compiling /home/sharmin/Desktop/iot/soccer_bot/install/soccer_navigation/lib/python3.12/site-packages/soccer_navigation/obstacle_avoidance_node.py to obstacle_avoidance_node.cpython-312.pyc
+byte-compiling /home/sharmin/Desktop/iot/soccer_bot/install/soccer_navigation/lib/python3.12/site-packages/soccer_navigation/__init__.py to __init__.cpython-312.pyc
+running install_data
+creating /home/sharmin/Desktop/iot/soccer_bot/install/soccer_navigation/share/ament_index
+creating /home/sharmin/Desktop/iot/soccer_bot/install/soccer_navigation/share/ament_index/resource_index
+creating /home/sharmin/Desktop/iot/soccer_bot/install/soccer_navigation/share/ament_index/resource_index/packages
+copying resource/soccer_navigation -> /home/sharmin/Desktop/iot/soccer_bot/install/soccer_navigation/share/ament_index/resource_index/packages
+copying package.xml -> /home/sharmin/Desktop/iot/soccer_bot/install/soccer_navigation/share/soccer_navigation
+running install_egg_info
+Copying ../../build/soccer_navigation/soccer_navigation.egg-info to /home/sharmin/Desktop/iot/soccer_bot/install/soccer_navigation/lib/python3.12/site-packages/soccer_navigation-0.0.0-py3.12.egg-info
+running install_scripts
+Installing obstacle_avoidance script to /home/sharmin/Desktop/iot/soccer_bot/install/soccer_navigation/bin
+writing list of installed files to '/home/sharmin/Desktop/iot/soccer_bot/build/soccer_navigation/install.log'

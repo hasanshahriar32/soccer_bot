@@ -1,0 +1,321 @@
+{
+	"artifacts" : 
+	[
+		{
+			"path" : "python/_ydlidar.so"
+		}
+	],
+	"backtrace" : 2,
+	"backtraceGraph" : 
+	{
+		"commands" : 
+		[
+			"add_library",
+			"swig_add_library",
+			"install",
+			"target_link_libraries",
+			"SWIG_LINK_LIBRARIES",
+			"add_dependencies",
+			"add_compile_options",
+			"include_directories",
+			"include",
+			"INCLUDE_DIRECTORIES",
+			"set_property",
+			"SWIG_ADD_SOURCE_TO_MODULE"
+		],
+		"files" : 
+		[
+			"/usr/share/cmake-3.28/Modules/UseSWIG.cmake",
+			"python/CMakeLists.txt",
+			"CMakeLists.txt",
+			"cmake/common/ydlidar_parse.cmake"
+		],
+		"nodes" : 
+		[
+			{
+				"file" : 1
+			},
+			{
+				"command" : 1,
+				"file" : 1,
+				"line" : 35,
+				"parent" : 0
+			},
+			{
+				"command" : 0,
+				"file" : 0,
+				"line" : 939,
+				"parent" : 1
+			},
+			{
+				"command" : 2,
+				"file" : 1,
+				"line" : 54,
+				"parent" : 0
+			},
+			{
+				"command" : 4,
+				"file" : 1,
+				"line" : 38,
+				"parent" : 0
+			},
+			{
+				"command" : 3,
+				"file" : 0,
+				"line" : 1071,
+				"parent" : 4
+			},
+			{
+				"file" : 2
+			},
+			{
+				"command" : 3,
+				"file" : 2,
+				"line" : 123,
+				"parent" : 6
+			},
+			{
+				"command" : 5,
+				"file" : 0,
+				"line" : 946,
+				"parent" : 1
+			},
+			{
+				"command" : 6,
+				"file" : 2,
+				"line" : 26,
+				"parent" : 6
+			},
+			{
+				"command" : 7,
+				"file" : 2,
+				"line" : 84,
+				"parent" : 6
+			},
+			{
+				"command" : 7,
+				"file" : 2,
+				"line" : 85,
+				"parent" : 6
+			},
+			{
+				"command" : 7,
+				"file" : 2,
+				"line" : 86,
+				"parent" : 6
+			},
+			{
+				"command" : 8,
+				"file" : 2,
+				"line" : 101,
+				"parent" : 6
+			},
+			{
+				"file" : 3,
+				"parent" : 13
+			},
+			{
+				"command" : 7,
+				"file" : 3,
+				"line" : 27,
+				"parent" : 14
+			},
+			{
+				"command" : 7,
+				"file" : 2,
+				"line" : 145,
+				"parent" : 6
+			},
+			{
+				"command" : 9,
+				"file" : 1,
+				"line" : 8,
+				"parent" : 0
+			},
+			{
+				"command" : 9,
+				"file" : 1,
+				"line" : 23,
+				"parent" : 0
+			},
+			{
+				"command" : 11,
+				"file" : 0,
+				"line" : 922,
+				"parent" : 1
+			},
+			{
+				"command" : 10,
+				"file" : 0,
+				"line" : 751,
+				"parent" : 19
+			}
+		]
+	},
+	"compileGroups" : 
+	[
+		{
+			"compileCommandFragments" : 
+			[
+				{
+					"fragment" : " -std=c++11 -std=c++11 -fPIC   -std=c++11"
+				},
+				{
+					"backtrace" : 9,
+					"fragment" : "-fPIC"
+				},
+				{
+					"backtrace" : 20,
+					"fragment" : ""
+				}
+			],
+			"defines" : 
+			[
+				{
+					"define" : "_ydlidar_EXPORTS"
+				}
+			],
+			"includes" : 
+			[
+				{
+					"backtrace" : 10,
+					"path" : "/home/sharmin/Desktop/iot/soccer_bot/src/YDLidar-SDK/."
+				},
+				{
+					"backtrace" : 11,
+					"path" : "/home/sharmin/Desktop/iot/soccer_bot/src/YDLidar-SDK/core"
+				},
+				{
+					"backtrace" : 12,
+					"path" : "/home/sharmin/Desktop/iot/soccer_bot/src/YDLidar-SDK/src"
+				},
+				{
+					"backtrace" : 15,
+					"path" : "/home/sharmin/Desktop/iot/soccer_bot/src/YDLidar-SDK"
+				},
+				{
+					"backtrace" : 15,
+					"path" : "/home/sharmin/Desktop/iot/soccer_bot/build/ydlidar_sdk"
+				},
+				{
+					"backtrace" : 16,
+					"path" : "/home/sharmin/Desktop/iot/soccer_bot/src/YDLidar-SDK/python"
+				},
+				{
+					"backtrace" : 17,
+					"path" : "/home/sharmin/Desktop/iot/soccer_bot/src/YDLidar-SDK/.."
+				},
+				{
+					"backtrace" : 17,
+					"path" : "/home/sharmin/Desktop/iot/soccer_bot/build/ydlidar_sdk/python"
+				},
+				{
+					"backtrace" : 18,
+					"path" : "/usr/include/python3.12"
+				}
+			],
+			"language" : "CXX",
+			"sourceIndexes" : 
+			[
+				0
+			]
+		}
+	],
+	"dependencies" : 
+	[
+		{
+			"backtrace" : 5,
+			"id" : "ydlidar_sdk::@6890427a1f51a3e7e1df"
+		},
+		{
+			"backtrace" : 8,
+			"id" : "ydlidar_swig_compilation::@e1ac5446165bc0cf31e4"
+		}
+	],
+	"id" : "_ydlidar::@e1ac5446165bc0cf31e4",
+	"install" : 
+	{
+		"destinations" : 
+		[
+			{
+				"backtrace" : 3,
+				"path" : "lib/python3/dist-packages"
+			}
+		],
+		"prefix" : 
+		{
+			"path" : "/home/sharmin/Desktop/iot/soccer_bot/install/ydlidar_sdk"
+		}
+	},
+	"link" : 
+	{
+		"commandFragments" : 
+		[
+			{
+				"fragment" : "",
+				"role" : "flags"
+			},
+			{
+				"fragment" : "-lpython3.12",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 5,
+				"fragment" : "../libydlidar_sdk.a",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 7,
+				"fragment" : "-lpthread",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 7,
+				"fragment" : "-lrt",
+				"role" : "libraries"
+			}
+		],
+		"language" : "CXX"
+	},
+	"name" : "_ydlidar",
+	"nameOnDisk" : "_ydlidar.so",
+	"paths" : 
+	{
+		"build" : "python",
+		"source" : "python"
+	},
+	"sourceGroups" : 
+	[
+		{
+			"name" : "Source Files",
+			"sourceIndexes" : 
+			[
+				0
+			]
+		},
+		{
+			"name" : "",
+			"sourceIndexes" : 
+			[
+				1
+			]
+		}
+	],
+	"sources" : 
+	[
+		{
+			"backtrace" : 2,
+			"compileGroupIndex" : 0,
+			"isGenerated" : true,
+			"path" : "/home/sharmin/Desktop/iot/soccer_bot/build/ydlidar_sdk/python/CMakeFiles/_ydlidar.dir/ydlidar_sdkPYTHON_wrap.cxx",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 2,
+			"isGenerated" : true,
+			"path" : "/home/sharmin/Desktop/iot/soccer_bot/build/ydlidar_sdk/python/ydlidar.py",
+			"sourceGroupIndex" : 1
+		}
+	],
+	"type" : "MODULE_LIBRARY"
+}

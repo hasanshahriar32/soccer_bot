@@ -1,0 +1,21 @@
+[9.939s] Invoking command in '/home/sharmin/Desktop/iot/soccer_bot/src/soccer_navigation': PYTHONPATH=/home/sharmin/Desktop/iot/soccer_bot/build/soccer_navigation/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/sharmin/Desktop/iot/soccer_bot/install/soccer_navigation/lib/python3.12/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../build/soccer_navigation build --build-base /home/sharmin/Desktop/iot/soccer_bot/build/soccer_navigation/build install --record /home/sharmin/Desktop/iot/soccer_bot/build/soccer_navigation/install.log --single-version-externally-managed install_data
+[12.987s] running egg_info
+[13.222s] writing ../../build/soccer_navigation/soccer_navigation.egg-info/PKG-INFO
+[13.231s] writing dependency_links to ../../build/soccer_navigation/soccer_navigation.egg-info/dependency_links.txt
+[13.232s] writing entry points to ../../build/soccer_navigation/soccer_navigation.egg-info/entry_points.txt
+[13.235s] writing requirements to ../../build/soccer_navigation/soccer_navigation.egg-info/requires.txt
+[13.237s] writing top-level names to ../../build/soccer_navigation/soccer_navigation.egg-info/top_level.txt
+[13.768s] reading manifest file '../../build/soccer_navigation/soccer_navigation.egg-info/SOURCES.txt'
+[13.775s] writing manifest file '../../build/soccer_navigation/soccer_navigation.egg-info/SOURCES.txt'
+[13.775s] running build
+[13.778s] running build_py
+[13.780s] running install
+[13.817s] running install_lib
+[14.024s] running install_data
+[14.024s] running install_egg_info
+[14.342s] removing '/home/sharmin/Desktop/iot/soccer_bot/install/soccer_navigation/lib/python3.12/site-packages/soccer_navigation-0.0.0-py3.12.egg-info' (and everything under it)
+[14.349s] Copying ../../build/soccer_navigation/soccer_navigation.egg-info to /home/sharmin/Desktop/iot/soccer_bot/install/soccer_navigation/lib/python3.12/site-packages/soccer_navigation-0.0.0-py3.12.egg-info
+[14.361s] running install_scripts
+[15.850s] Installing obstacle_avoidance script to /home/sharmin/Desktop/iot/soccer_bot/install/soccer_navigation/bin
+[15.857s] writing list of installed files to '/home/sharmin/Desktop/iot/soccer_bot/build/soccer_navigation/install.log'
+[16.012s] Invoked command in '/home/sharmin/Desktop/iot/soccer_bot/src/soccer_navigation' returned '0': PYTHONPATH=/home/sharmin/Desktop/iot/soccer_bot/build/soccer_navigation/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/sharmin/Desktop/iot/soccer_bot/install/soccer_navigation/lib/python3.12/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../build/soccer_navigation build --build-base /home/sharmin/Desktop/iot/soccer_bot/build/soccer_navigation/build install --record /home/sharmin/Desktop/iot/soccer_bot/build/soccer_navigation/install.log --single-version-externally-managed install_data

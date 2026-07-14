@@ -1,0 +1,687 @@
+[ 25%] [32mBuilding CXX object CMakeFiles/ydlidar_ros2_driver_client.dir/src/ydlidar_ros2_driver_client.cpp.o[0m
+[ 50%] [32mBuilding CXX object CMakeFiles/ydlidar_ros2_driver_node.dir/src/ydlidar_ros2_driver_node.cpp.o[0m
+/home/sharmin/Desktop/iot/soccer_bot/src/ydlidar_ros2_driver/src/ydlidar_ros2_driver_node.cpp: In function ‘int main(int, char**)’:
+/home/sharmin/Desktop/iot/soccer_bot/src/ydlidar_ros2_driver/src/ydlidar_ros2_driver_node.cpp:47:26: error: no matching function for call to ‘rclcpp::Node::declare_parameter(const char [5])’
+   47 |   node->declare_parameter("port");
+      |   ~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~
+In file included from /opt/ros/jazzy/include/rclcpp/rclcpp/executors/single_threaded_executor.hpp:28,
+                 from /opt/ros/jazzy/include/rclcpp/rclcpp/executors.hpp:22,
+                 from /opt/ros/jazzy/include/rclcpp/rclcpp/rclcpp.hpp:176,
+                 from /home/sharmin/Desktop/iot/soccer_bot/src/ydlidar_ros2_driver/src/ydlidar_ros2_driver_node.cpp:23:
+/opt/ros/jazzy/include/rclcpp/rclcpp/node.hpp:500:3: note: candidate: ‘template<class ParameterT> auto rclcpp::Node::declare_parameter(const std::string&, const ParameterT&, const rcl_interfaces::msg::ParameterDescriptor&, bool)’
+  500 |   declare_parameter(
+      |   ^~~~~~~~~~~~~~~~~
+/opt/ros/jazzy/include/rclcpp/rclcpp/node.hpp:500:3: note:   template argument deduction/substitution failed:
+/home/sharmin/Desktop/iot/soccer_bot/src/ydlidar_ros2_driver/src/ydlidar_ros2_driver_node.cpp:47:26: note:   candidate expects 4 arguments, 1 provided
+   47 |   node->declare_parameter("port");
+      |   ~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~
+/opt/ros/jazzy/include/rclcpp/rclcpp/node.hpp:513:3: note: candidate: ‘template<class ParameterT> auto rclcpp::Node::declare_parameter(const std::string&, const rcl_interfaces::msg::ParameterDescriptor&, bool)’
+  513 |   declare_parameter(
+      |   ^~~~~~~~~~~~~~~~~
+/opt/ros/jazzy/include/rclcpp/rclcpp/node.hpp:513:3: note:   template argument deduction/substitution failed:
+/home/sharmin/Desktop/iot/soccer_bot/src/ydlidar_ros2_driver/src/ydlidar_ros2_driver_node.cpp:47:26: note:   couldn’t deduce template parameter ‘ParameterT’
+   47 |   node->declare_parameter("port");
+      |   ~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~
+/opt/ros/jazzy/include/rclcpp/rclcpp/node.hpp:445:3: note: candidate: ‘const rclcpp::ParameterValue& rclcpp::Node::declare_parameter(const std::string&, const rclcpp::ParameterValue&, const rcl_interfaces::msg::ParameterDescriptor&, bool)’
+  445 |   declare_parameter(
+      |   ^~~~~~~~~~~~~~~~~
+/opt/ros/jazzy/include/rclcpp/rclcpp/node.hpp:445:3: note:   candidate expects 4 arguments, 1 provided
+/opt/ros/jazzy/include/rclcpp/rclcpp/node.hpp:470:3: note: candidate: ‘const rclcpp::ParameterValue& rclcpp::Node::declare_parameter(const std::string&, rclcpp::ParameterType, const rcl_interfaces::msg::ParameterDescriptor&, bool)’
+  470 |   declare_parameter(
+      |   ^~~~~~~~~~~~~~~~~
+/opt/ros/jazzy/include/rclcpp/rclcpp/node.hpp:470:3: note:   candidate expects 4 arguments, 1 provided
+/home/sharmin/Desktop/iot/soccer_bot/src/ydlidar_ros2_driver/src/ydlidar_ros2_driver_node.cpp:54:26: error: no matching function for call to ‘rclcpp::Node::declare_parameter(const char [13])’
+   54 |   node->declare_parameter("ignore_array");
+      |   ~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~
+/opt/ros/jazzy/include/rclcpp/rclcpp/node.hpp:500:3: note: candidate: ‘template<class ParameterT> auto rclcpp::Node::declare_parameter(const std::string&, const ParameterT&, const rcl_interfaces::msg::ParameterDescriptor&, bool)’
+  500 |   declare_parameter(
+      |   ^~~~~~~~~~~~~~~~~
+/opt/ros/jazzy/include/rclcpp/rclcpp/node.hpp:500:3: note:   template argument deduction/substitution failed:
+/home/sharmin/Desktop/iot/soccer_bot/src/ydlidar_ros2_driver/src/ydlidar_ros2_driver_node.cpp:54:26: note:   candidate expects 4 arguments, 1 provided
+   54 |   node->declare_parameter("ignore_array");
+      |   ~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~
+/opt/ros/jazzy/include/rclcpp/rclcpp/node.hpp:513:3: note: candidate: ‘template<class ParameterT> auto rclcpp::Node::declare_parameter(const std::string&, const rcl_interfaces::msg::ParameterDescriptor&, bool)’
+  513 |   declare_parameter(
+      |   ^~~~~~~~~~~~~~~~~
+/opt/ros/jazzy/include/rclcpp/rclcpp/node.hpp:513:3: note:   template argument deduction/substitution failed:
+/home/sharmin/Desktop/iot/soccer_bot/src/ydlidar_ros2_driver/src/ydlidar_ros2_driver_node.cpp:54:26: note:   couldn’t deduce template parameter ‘ParameterT’
+   54 |   node->declare_parameter("ignore_array");
+      |   ~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~
+/opt/ros/jazzy/include/rclcpp/rclcpp/node.hpp:445:3: note: candidate: ‘const rclcpp::ParameterValue& rclcpp::Node::declare_parameter(const std::string&, const rclcpp::ParameterValue&, const rcl_interfaces::msg::ParameterDescriptor&, bool)’
+  445 |   declare_parameter(
+      |   ^~~~~~~~~~~~~~~~~
+/opt/ros/jazzy/include/rclcpp/rclcpp/node.hpp:445:3: note:   candidate expects 4 arguments, 1 provided
+/opt/ros/jazzy/include/rclcpp/rclcpp/node.hpp:470:3: note: candidate: ‘const rclcpp::ParameterValue& rclcpp::Node::declare_parameter(const std::string&, rclcpp::ParameterType, const rcl_interfaces::msg::ParameterDescriptor&, bool)’
+  470 |   declare_parameter(
+      |   ^~~~~~~~~~~~~~~~~
+/opt/ros/jazzy/include/rclcpp/rclcpp/node.hpp:470:3: note:   candidate expects 4 arguments, 1 provided
+/home/sharmin/Desktop/iot/soccer_bot/src/ydlidar_ros2_driver/src/ydlidar_ros2_driver_node.cpp:59:26: error: no matching function for call to ‘rclcpp::Node::declare_parameter(const char [9])’
+   59 |   node->declare_parameter("frame_id");
+      |   ~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~
+/opt/ros/jazzy/include/rclcpp/rclcpp/node.hpp:500:3: note: candidate: ‘template<class ParameterT> auto rclcpp::Node::declare_parameter(const std::string&, const ParameterT&, const rcl_interfaces::msg::ParameterDescriptor&, bool)’
+  500 |   declare_parameter(
+      |   ^~~~~~~~~~~~~~~~~
+/opt/ros/jazzy/include/rclcpp/rclcpp/node.hpp:500:3: note:   template argument deduction/substitution failed:
+/home/sharmin/Desktop/iot/soccer_bot/src/ydlidar_ros2_driver/src/ydlidar_ros2_driver_node.cpp:59:26: note:   candidate expects 4 arguments, 1 provided
+   59 |   node->declare_parameter("frame_id");
+      |   ~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~
+/opt/ros/jazzy/include/rclcpp/rclcpp/node.hpp:513:3: note: candidate: ‘template<class ParameterT> auto rclcpp::Node::declare_parameter(const std::string&, const rcl_interfaces::msg::ParameterDescriptor&, bool)’
+  513 |   declare_parameter(
+      |   ^~~~~~~~~~~~~~~~~
+/opt/ros/jazzy/include/rclcpp/rclcpp/node.hpp:513:3: note:   template argument deduction/substitution failed:
+/home/sharmin/Desktop/iot/soccer_bot/src/ydlidar_ros2_driver/src/ydlidar_ros2_driver_node.cpp:59:26: note:   couldn’t deduce template parameter ‘ParameterT’
+   59 |   node->declare_parameter("frame_id");
+      |   ~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~
+/opt/ros/jazzy/include/rclcpp/rclcpp/node.hpp:445:3: note: candidate: ‘const rclcpp::ParameterValue& rclcpp::Node::declare_parameter(const std::string&, const rclcpp::ParameterValue&, const rcl_interfaces::msg::ParameterDescriptor&, bool)’
+  445 |   declare_parameter(
+      |   ^~~~~~~~~~~~~~~~~
+/opt/ros/jazzy/include/rclcpp/rclcpp/node.hpp:445:3: note:   candidate expects 4 arguments, 1 provided
+/opt/ros/jazzy/include/rclcpp/rclcpp/node.hpp:470:3: note: candidate: ‘const rclcpp::ParameterValue& rclcpp::Node::declare_parameter(const std::string&, rclcpp::ParameterType, const rcl_interfaces::msg::ParameterDescriptor&, bool)’
+  470 |   declare_parameter(
+      |   ^~~~~~~~~~~~~~~~~
+/opt/ros/jazzy/include/rclcpp/rclcpp/node.hpp:470:3: note:   candidate expects 4 arguments, 1 provided
+/home/sharmin/Desktop/iot/soccer_bot/src/ydlidar_ros2_driver/src/ydlidar_ros2_driver_node.cpp:65:26: error: no matching function for call to ‘rclcpp::Node::declare_parameter(const char [9])’
+   65 |   node->declare_parameter("baudrate");
+      |   ~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~
+/opt/ros/jazzy/include/rclcpp/rclcpp/node.hpp:500:3: note: candidate: ‘template<class ParameterT> auto rclcpp::Node::declare_parameter(const std::string&, const ParameterT&, const rcl_interfaces::msg::ParameterDescriptor&, bool)’
+  500 |   declare_parameter(
+      |   ^~~~~~~~~~~~~~~~~
+/opt/ros/jazzy/include/rclcpp/rclcpp/node.hpp:500:3: note:   template argument deduction/substitution failed:
+/home/sharmin/Desktop/iot/soccer_bot/src/ydlidar_ros2_driver/src/ydlidar_ros2_driver_node.cpp:65:26: note:   candidate expects 4 arguments, 1 provided
+   65 |   node->declare_parameter("baudrate");
+      |   ~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~
+/opt/ros/jazzy/include/rclcpp/rclcpp/node.hpp:513:3: note: candidate: ‘template<class ParameterT> auto rclcpp::Node::declare_parameter(const std::string&, const rcl_interfaces::msg::ParameterDescriptor&, bool)’
+  513 |   declare_parameter(
+      |   ^~~~~~~~~~~~~~~~~
+/opt/ros/jazzy/include/rclcpp/rclcpp/node.hpp:513:3: note:   template argument deduction/substitution failed:
+/home/sharmin/Desktop/iot/soccer_bot/src/ydlidar_ros2_driver/src/ydlidar_ros2_driver_node.cpp:65:26: note:   couldn’t deduce template parameter ‘ParameterT’
+   65 |   node->declare_parameter("baudrate");
+      |   ~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~
+/opt/ros/jazzy/include/rclcpp/rclcpp/node.hpp:445:3: note: candidate: ‘const rclcpp::ParameterValue& rclcpp::Node::declare_parameter(const std::string&, const rclcpp::ParameterValue&, const rcl_interfaces::msg::ParameterDescriptor&, bool)’
+  445 |   declare_parameter(
+      |   ^~~~~~~~~~~~~~~~~
+/opt/ros/jazzy/include/rclcpp/rclcpp/node.hpp:445:3: note:   candidate expects 4 arguments, 1 provided
+/opt/ros/jazzy/include/rclcpp/rclcpp/node.hpp:470:3: note: candidate: ‘const rclcpp::ParameterValue& rclcpp::Node::declare_parameter(const std::string&, rclcpp::ParameterType, const rcl_interfaces::msg::ParameterDescriptor&, bool)’
+  470 |   declare_parameter(
+      |   ^~~~~~~~~~~~~~~~~
+/opt/ros/jazzy/include/rclcpp/rclcpp/node.hpp:470:3: note:   candidate expects 4 arguments, 1 provided
+/home/sharmin/Desktop/iot/soccer_bot/src/ydlidar_ros2_driver/src/ydlidar_ros2_driver_node.cpp:70:26: error: no matching function for call to ‘rclcpp::Node::declare_parameter(const char [11])’
+   70 |   node->declare_parameter("lidar_type");
+      |   ~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~
+/opt/ros/jazzy/include/rclcpp/rclcpp/node.hpp:500:3: note: candidate: ‘template<class ParameterT> auto rclcpp::Node::declare_parameter(const std::string&, const ParameterT&, const rcl_interfaces::msg::ParameterDescriptor&, bool)’
+  500 |   declare_parameter(
+      |   ^~~~~~~~~~~~~~~~~
+/opt/ros/jazzy/include/rclcpp/rclcpp/node.hpp:500:3: note:   template argument deduction/substitution failed:
+/home/sharmin/Desktop/iot/soccer_bot/src/ydlidar_ros2_driver/src/ydlidar_ros2_driver_node.cpp:70:26: note:   candidate expects 4 arguments, 1 provided
+   70 |   node->declare_parameter("lidar_type");
+      |   ~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~
+/opt/ros/jazzy/include/rclcpp/rclcpp/node.hpp:513:3: note: candidate: ‘template<class ParameterT> auto rclcpp::Node::declare_parameter(const std::string&, const rcl_interfaces::msg::ParameterDescriptor&, bool)’
+  513 |   declare_parameter(
+      |   ^~~~~~~~~~~~~~~~~
+/opt/ros/jazzy/include/rclcpp/rclcpp/node.hpp:513:3: note:   template argument deduction/substitution failed:
+/home/sharmin/Desktop/iot/soccer_bot/src/ydlidar_ros2_driver/src/ydlidar_ros2_driver_node.cpp:70:26: note:   couldn’t deduce template parameter ‘ParameterT’
+   70 |   node->declare_parameter("lidar_type");
+      |   ~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~
+/opt/ros/jazzy/include/rclcpp/rclcpp/node.hpp:445:3: note: candidate: ‘const rclcpp::ParameterValue& rclcpp::Node::declare_parameter(const std::string&, const rclcpp::ParameterValue&, const rcl_interfaces::msg::ParameterDescriptor&, bool)’
+  445 |   declare_parameter(
+      |   ^~~~~~~~~~~~~~~~~
+/opt/ros/jazzy/include/rclcpp/rclcpp/node.hpp:445:3: note:   candidate expects 4 arguments, 1 provided
+/opt/ros/jazzy/include/rclcpp/rclcpp/node.hpp:470:3: note: candidate: ‘const rclcpp::ParameterValue& rclcpp::Node::declare_parameter(const std::string&, rclcpp::ParameterType, const rcl_interfaces::msg::ParameterDescriptor&, bool)’
+  470 |   declare_parameter(
+      |   ^~~~~~~~~~~~~~~~~
+/opt/ros/jazzy/include/rclcpp/rclcpp/node.hpp:470:3: note:   candidate expects 4 arguments, 1 provided
+/home/sharmin/Desktop/iot/soccer_bot/src/ydlidar_ros2_driver/src/ydlidar_ros2_driver_node.cpp:75:26: error: no matching function for call to ‘rclcpp::Node::declare_parameter(const char [12])’
+   75 |   node->declare_parameter("device_type");
+      |   ~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~
+/opt/ros/jazzy/include/rclcpp/rclcpp/node.hpp:500:3: note: candidate: ‘template<class ParameterT> auto rclcpp::Node::declare_parameter(const std::string&, const ParameterT&, const rcl_interfaces::msg::ParameterDescriptor&, bool)’
+  500 |   declare_parameter(
+      |   ^~~~~~~~~~~~~~~~~
+/opt/ros/jazzy/include/rclcpp/rclcpp/node.hpp:500:3: note:   template argument deduction/substitution failed:
+/home/sharmin/Desktop/iot/soccer_bot/src/ydlidar_ros2_driver/src/ydlidar_ros2_driver_node.cpp:75:26: note:   candidate expects 4 arguments, 1 provided
+   75 |   node->declare_parameter("device_type");
+      |   ~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~
+/opt/ros/jazzy/include/rclcpp/rclcpp/node.hpp:513:3: note: candidate: ‘template<class ParameterT> auto rclcpp::Node::declare_parameter(const std::string&, const rcl_interfaces::msg::ParameterDescriptor&, bool)’
+  513 |   declare_parameter(
+      |   ^~~~~~~~~~~~~~~~~
+/opt/ros/jazzy/include/rclcpp/rclcpp/node.hpp:513:3: note:   template argument deduction/substitution failed:
+/home/sharmin/Desktop/iot/soccer_bot/src/ydlidar_ros2_driver/src/ydlidar_ros2_driver_node.cpp:75:26: note:   couldn’t deduce template parameter ‘ParameterT’
+   75 |   node->declare_parameter("device_type");
+      |   ~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~
+/opt/ros/jazzy/include/rclcpp/rclcpp/node.hpp:445:3: note: candidate: ‘const rclcpp::ParameterValue& rclcpp::Node::declare_parameter(const std::string&, const rclcpp::ParameterValue&, const rcl_interfaces::msg::ParameterDescriptor&, bool)’
+  445 |   declare_parameter(
+      |   ^~~~~~~~~~~~~~~~~
+/opt/ros/jazzy/include/rclcpp/rclcpp/node.hpp:445:3: note:   candidate expects 4 arguments, 1 provided
+/opt/ros/jazzy/include/rclcpp/rclcpp/node.hpp:470:3: note: candidate: ‘const rclcpp::ParameterValue& rclcpp::Node::declare_parameter(const std::string&, rclcpp::ParameterType, const rcl_interfaces::msg::ParameterDescriptor&, bool)’
+  470 |   declare_parameter(
+      |   ^~~~~~~~~~~~~~~~~
+/opt/ros/jazzy/include/rclcpp/rclcpp/node.hpp:470:3: note:   candidate expects 4 arguments, 1 provided
+/home/sharmin/Desktop/iot/soccer_bot/src/ydlidar_ros2_driver/src/ydlidar_ros2_driver_node.cpp:80:26: error: no matching function for call to ‘rclcpp::Node::declare_parameter(const char [12])’
+   80 |   node->declare_parameter("sample_rate");
+      |   ~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~
+/opt/ros/jazzy/include/rclcpp/rclcpp/node.hpp:500:3: note: candidate: ‘template<class ParameterT> auto rclcpp::Node::declare_parameter(const std::string&, const ParameterT&, const rcl_interfaces::msg::ParameterDescriptor&, bool)’
+  500 |   declare_parameter(
+      |   ^~~~~~~~~~~~~~~~~
+/opt/ros/jazzy/include/rclcpp/rclcpp/node.hpp:500:3: note:   template argument deduction/substitution failed:
+/home/sharmin/Desktop/iot/soccer_bot/src/ydlidar_ros2_driver/src/ydlidar_ros2_driver_node.cpp:80:26: note:   candidate expects 4 arguments, 1 provided
+   80 |   node->declare_parameter("sample_rate");
+      |   ~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~
+/opt/ros/jazzy/include/rclcpp/rclcpp/node.hpp:513:3: note: candidate: ‘template<class ParameterT> auto rclcpp::Node::declare_parameter(const std::string&, const rcl_interfaces::msg::ParameterDescriptor&, bool)’
+  513 |   declare_parameter(
+      |   ^~~~~~~~~~~~~~~~~
+/opt/ros/jazzy/include/rclcpp/rclcpp/node.hpp:513:3: note:   template argument deduction/substitution failed:
+/home/sharmin/Desktop/iot/soccer_bot/src/ydlidar_ros2_driver/src/ydlidar_ros2_driver_node.cpp:80:26: note:   couldn’t deduce template parameter ‘ParameterT’
+   80 |   node->declare_parameter("sample_rate");
+      |   ~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~
+/opt/ros/jazzy/include/rclcpp/rclcpp/node.hpp:445:3: note: candidate: ‘const rclcpp::ParameterValue& rclcpp::Node::declare_parameter(const std::string&, const rclcpp::ParameterValue&, const rcl_interfaces::msg::ParameterDescriptor&, bool)’
+  445 |   declare_parameter(
+      |   ^~~~~~~~~~~~~~~~~
+/opt/ros/jazzy/include/rclcpp/rclcpp/node.hpp:445:3: note:   candidate expects 4 arguments, 1 provided
+/opt/ros/jazzy/include/rclcpp/rclcpp/node.hpp:470:3: note: candidate: ‘const rclcpp::ParameterValue& rclcpp::Node::declare_parameter(const std::string&, rclcpp::ParameterType, const rcl_interfaces::msg::ParameterDescriptor&, bool)’
+  470 |   declare_parameter(
+      |   ^~~~~~~~~~~~~~~~~
+/opt/ros/jazzy/include/rclcpp/rclcpp/node.hpp:470:3: note:   candidate expects 4 arguments, 1 provided
+/home/sharmin/Desktop/iot/soccer_bot/src/ydlidar_ros2_driver/src/ydlidar_ros2_driver_node.cpp:85:26: error: no matching function for call to ‘rclcpp::Node::declare_parameter(const char [21])’
+   85 |   node->declare_parameter("abnormal_check_count");
+      |   ~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~
+/opt/ros/jazzy/include/rclcpp/rclcpp/node.hpp:500:3: note: candidate: ‘template<class ParameterT> auto rclcpp::Node::declare_parameter(const std::string&, const ParameterT&, const rcl_interfaces::msg::ParameterDescriptor&, bool)’
+  500 |   declare_parameter(
+      |   ^~~~~~~~~~~~~~~~~
+/opt/ros/jazzy/include/rclcpp/rclcpp/node.hpp:500:3: note:   template argument deduction/substitution failed:
+/home/sharmin/Desktop/iot/soccer_bot/src/ydlidar_ros2_driver/src/ydlidar_ros2_driver_node.cpp:85:26: note:   candidate expects 4 arguments, 1 provided
+   85 |   node->declare_parameter("abnormal_check_count");
+      |   ~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~
+/opt/ros/jazzy/include/rclcpp/rclcpp/node.hpp:513:3: note: candidate: ‘template<class ParameterT> auto rclcpp::Node::declare_parameter(const std::string&, const rcl_interfaces::msg::ParameterDescriptor&, bool)’
+  513 |   declare_parameter(
+      |   ^~~~~~~~~~~~~~~~~
+/opt/ros/jazzy/include/rclcpp/rclcpp/node.hpp:513:3: note:   template argument deduction/substitution failed:
+/home/sharmin/Desktop/iot/soccer_bot/src/ydlidar_ros2_driver/src/ydlidar_ros2_driver_node.cpp:85:26: note:   couldn’t deduce template parameter ‘ParameterT’
+   85 |   node->declare_parameter("abnormal_check_count");
+      |   ~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~
+/opt/ros/jazzy/include/rclcpp/rclcpp/node.hpp:445:3: note: candidate: ‘const rclcpp::ParameterValue& rclcpp::Node::declare_parameter(const std::string&, const rclcpp::ParameterValue&, const rcl_interfaces::msg::ParameterDescriptor&, bool)’
+  445 |   declare_parameter(
+      |   ^~~~~~~~~~~~~~~~~
+/opt/ros/jazzy/include/rclcpp/rclcpp/node.hpp:445:3: note:   candidate expects 4 arguments, 1 provided
+/opt/ros/jazzy/include/rclcpp/rclcpp/node.hpp:470:3: note: candidate: ‘const rclcpp::ParameterValue& rclcpp::Node::declare_parameter(const std::string&, rclcpp::ParameterType, const rcl_interfaces::msg::ParameterDescriptor&, bool)’
+  470 |   declare_parameter(
+      |   ^~~~~~~~~~~~~~~~~
+/opt/ros/jazzy/include/rclcpp/rclcpp/node.hpp:470:3: note:   candidate expects 4 arguments, 1 provided
+/home/sharmin/Desktop/iot/soccer_bot/src/ydlidar_ros2_driver/src/ydlidar_ros2_driver_node.cpp:91:26: error: no matching function for call to ‘rclcpp::Node::declare_parameter(const char [14])’
+   91 |   node->declare_parameter("intensity_bit");
+      |   ~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~
+/opt/ros/jazzy/include/rclcpp/rclcpp/node.hpp:500:3: note: candidate: ‘template<class ParameterT> auto rclcpp::Node::declare_parameter(const std::string&, const ParameterT&, const rcl_interfaces::msg::ParameterDescriptor&, bool)’
+  500 |   declare_parameter(
+      |   ^~~~~~~~~~~~~~~~~
+/opt/ros/jazzy/include/rclcpp/rclcpp/node.hpp:500:3: note:   template argument deduction/substitution failed:
+/home/sharmin/Desktop/iot/soccer_bot/src/ydlidar_ros2_driver/src/ydlidar_ros2_driver_node.cpp:91:26: note:   candidate expects 4 arguments, 1 provided
+   91 |   node->declare_parameter("intensity_bit");
+      |   ~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~
+/opt/ros/jazzy/include/rclcpp/rclcpp/node.hpp:513:3: note: candidate: ‘template<class ParameterT> auto rclcpp::Node::declare_parameter(const std::string&, const rcl_interfaces::msg::ParameterDescriptor&, bool)’
+  513 |   declare_parameter(
+      |   ^~~~~~~~~~~~~~~~~
+/opt/ros/jazzy/include/rclcpp/rclcpp/node.hpp:513:3: note:   template argument deduction/substitution failed:
+/home/sharmin/Desktop/iot/soccer_bot/src/ydlidar_ros2_driver/src/ydlidar_ros2_driver_node.cpp:91:26: note:   couldn’t deduce template parameter ‘ParameterT’
+   91 |   node->declare_parameter("intensity_bit");
+      |   ~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~
+/opt/ros/jazzy/include/rclcpp/rclcpp/node.hpp:445:3: note: candidate: ‘const rclcpp::ParameterValue& rclcpp::Node::declare_parameter(const std::string&, const rclcpp::ParameterValue&, const rcl_interfaces::msg::ParameterDescriptor&, bool)’
+  445 |   declare_parameter(
+      |   ^~~~~~~~~~~~~~~~~
+/opt/ros/jazzy/include/rclcpp/rclcpp/node.hpp:445:3: note:   candidate expects 4 arguments, 1 provided
+/opt/ros/jazzy/include/rclcpp/rclcpp/node.hpp:470:3: note: candidate: ‘const rclcpp::ParameterValue& rclcpp::Node::declare_parameter(const std::string&, rclcpp::ParameterType, const rcl_interfaces::msg::ParameterDescriptor&, bool)’
+  470 |   declare_parameter(
+      |   ^~~~~~~~~~~~~~~~~
+/opt/ros/jazzy/include/rclcpp/rclcpp/node.hpp:470:3: note:   candidate expects 4 arguments, 1 provided
+/home/sharmin/Desktop/iot/soccer_bot/src/ydlidar_ros2_driver/src/ydlidar_ros2_driver_node.cpp:98:26: error: no matching function for call to ‘rclcpp::Node::declare_parameter(const char [17])’
+   98 |   node->declare_parameter("fixed_resolution");
+      |   ~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~
+/opt/ros/jazzy/include/rclcpp/rclcpp/node.hpp:500:3: note: candidate: ‘template<class ParameterT> auto rclcpp::Node::declare_parameter(const std::string&, const ParameterT&, const rcl_interfaces::msg::ParameterDescriptor&, bool)’
+  500 |   declare_parameter(
+      |   ^~~~~~~~~~~~~~~~~
+/opt/ros/jazzy/include/rclcpp/rclcpp/node.hpp:500:3: note:   template argument deduction/substitution failed:
+/home/sharmin/Desktop/iot/soccer_bot/src/ydlidar_ros2_driver/src/ydlidar_ros2_driver_node.cpp:98:26: note:   candidate expects 4 arguments, 1 provided
+   98 |   node->declare_parameter("fixed_resolution");
+      |   ~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~
+/opt/ros/jazzy/include/rclcpp/rclcpp/node.hpp:513:3: note: candidate: ‘template<class ParameterT> auto rclcpp::Node::declare_parameter(const std::string&, const rcl_interfaces::msg::ParameterDescriptor&, bool)’
+  513 |   declare_parameter(
+      |   ^~~~~~~~~~~~~~~~~
+/opt/ros/jazzy/include/rclcpp/rclcpp/node.hpp:513:3: note:   template argument deduction/substitution failed:
+/home/sharmin/Desktop/iot/soccer_bot/src/ydlidar_ros2_driver/src/ydlidar_ros2_driver_node.cpp:98:26: note:   couldn’t deduce template parameter ‘ParameterT’
+   98 |   node->declare_parameter("fixed_resolution");
+      |   ~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~
+/opt/ros/jazzy/include/rclcpp/rclcpp/node.hpp:445:3: note: candidate: ‘const rclcpp::ParameterValue& rclcpp::Node::declare_parameter(const std::string&, const rclcpp::ParameterValue&, const rcl_interfaces::msg::ParameterDescriptor&, bool)’
+  445 |   declare_parameter(
+      |   ^~~~~~~~~~~~~~~~~
+/opt/ros/jazzy/include/rclcpp/rclcpp/node.hpp:445:3: note:   candidate expects 4 arguments, 1 provided
+/opt/ros/jazzy/include/rclcpp/rclcpp/node.hpp:470:3: note: candidate: ‘const rclcpp::ParameterValue& rclcpp::Node::declare_parameter(const std::string&, rclcpp::ParameterType, const rcl_interfaces::msg::ParameterDescriptor&, bool)’
+  470 |   declare_parameter(
+      |   ^~~~~~~~~~~~~~~~~
+/opt/ros/jazzy/include/rclcpp/rclcpp/node.hpp:470:3: note:   candidate expects 4 arguments, 1 provided
+/home/sharmin/Desktop/iot/soccer_bot/src/ydlidar_ros2_driver/src/ydlidar_ros2_driver_node.cpp:103:26: error: no matching function for call to ‘rclcpp::Node::declare_parameter(const char [10])’
+  103 |   node->declare_parameter("reversion");
+      |   ~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~
+/opt/ros/jazzy/include/rclcpp/rclcpp/node.hpp:500:3: note: candidate: ‘template<class ParameterT> auto rclcpp::Node::declare_parameter(const std::string&, const ParameterT&, const rcl_interfaces::msg::ParameterDescriptor&, bool)’
+  500 |   declare_parameter(
+      |   ^~~~~~~~~~~~~~~~~
+/opt/ros/jazzy/include/rclcpp/rclcpp/node.hpp:500:3: note:   template argument deduction/substitution failed:
+/home/sharmin/Desktop/iot/soccer_bot/src/ydlidar_ros2_driver/src/ydlidar_ros2_driver_node.cpp:103:26: note:   candidate expects 4 arguments, 1 provided
+  103 |   node->declare_parameter("reversion");
+      |   ~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~
+/opt/ros/jazzy/include/rclcpp/rclcpp/node.hpp:513:3: note: candidate: ‘template<class ParameterT> auto rclcpp::Node::declare_parameter(const std::string&, const rcl_interfaces::msg::ParameterDescriptor&, bool)’
+  513 |   declare_parameter(
+      |   ^~~~~~~~~~~~~~~~~
+/opt/ros/jazzy/include/rclcpp/rclcpp/node.hpp:513:3: note:   template argument deduction/substitution failed:
+/home/sharmin/Desktop/iot/soccer_bot/src/ydlidar_ros2_driver/src/ydlidar_ros2_driver_node.cpp:103:26: note:   couldn’t deduce template parameter ‘ParameterT’
+  103 |   node->declare_parameter("reversion");
+      |   ~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~
+/opt/ros/jazzy/include/rclcpp/rclcpp/node.hpp:445:3: note: candidate: ‘const rclcpp::ParameterValue& rclcpp::Node::declare_parameter(const std::string&, const rclcpp::ParameterValue&, const rcl_interfaces::msg::ParameterDescriptor&, bool)’
+  445 |   declare_parameter(
+      |   ^~~~~~~~~~~~~~~~~
+/opt/ros/jazzy/include/rclcpp/rclcpp/node.hpp:445:3: note:   candidate expects 4 arguments, 1 provided
+/opt/ros/jazzy/include/rclcpp/rclcpp/node.hpp:470:3: note: candidate: ‘const rclcpp::ParameterValue& rclcpp::Node::declare_parameter(const std::string&, rclcpp::ParameterType, const rcl_interfaces::msg::ParameterDescriptor&, bool)’
+  470 |   declare_parameter(
+      |   ^~~~~~~~~~~~~~~~~
+/opt/ros/jazzy/include/rclcpp/rclcpp/node.hpp:470:3: note:   candidate expects 4 arguments, 1 provided
+/home/sharmin/Desktop/iot/soccer_bot/src/ydlidar_ros2_driver/src/ydlidar_ros2_driver_node.cpp:108:26: error: no matching function for call to ‘rclcpp::Node::declare_parameter(const char [9])’
+  108 |   node->declare_parameter("inverted");
+      |   ~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~
+/opt/ros/jazzy/include/rclcpp/rclcpp/node.hpp:500:3: note: candidate: ‘template<class ParameterT> auto rclcpp::Node::declare_parameter(const std::string&, const ParameterT&, const rcl_interfaces::msg::ParameterDescriptor&, bool)’
+  500 |   declare_parameter(
+      |   ^~~~~~~~~~~~~~~~~
+/opt/ros/jazzy/include/rclcpp/rclcpp/node.hpp:500:3: note:   template argument deduction/substitution failed:
+/home/sharmin/Desktop/iot/soccer_bot/src/ydlidar_ros2_driver/src/ydlidar_ros2_driver_node.cpp:108:26: note:   candidate expects 4 arguments, 1 provided
+  108 |   node->declare_parameter("inverted");
+      |   ~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~
+/opt/ros/jazzy/include/rclcpp/rclcpp/node.hpp:513:3: note: candidate: ‘template<class ParameterT> auto rclcpp::Node::declare_parameter(const std::string&, const rcl_interfaces::msg::ParameterDescriptor&, bool)’
+  513 |   declare_parameter(
+      |   ^~~~~~~~~~~~~~~~~
+/opt/ros/jazzy/include/rclcpp/rclcpp/node.hpp:513:3: note:   template argument deduction/substitution failed:
+/home/sharmin/Desktop/iot/soccer_bot/src/ydlidar_ros2_driver/src/ydlidar_ros2_driver_node.cpp:108:26: note:   couldn’t deduce template parameter ‘ParameterT’
+  108 |   node->declare_parameter("inverted");
+      |   ~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~
+/opt/ros/jazzy/include/rclcpp/rclcpp/node.hpp:445:3: note: candidate: ‘const rclcpp::ParameterValue& rclcpp::Node::declare_parameter(const std::string&, const rclcpp::ParameterValue&, const rcl_interfaces::msg::ParameterDescriptor&, bool)’
+  445 |   declare_parameter(
+      |   ^~~~~~~~~~~~~~~~~
+/opt/ros/jazzy/include/rclcpp/rclcpp/node.hpp:445:3: note:   candidate expects 4 arguments, 1 provided
+/opt/ros/jazzy/include/rclcpp/rclcpp/node.hpp:470:3: note: candidate: ‘const rclcpp::ParameterValue& rclcpp::Node::declare_parameter(const std::string&, rclcpp::ParameterType, const rcl_interfaces::msg::ParameterDescriptor&, bool)’
+  470 |   declare_parameter(
+      |   ^~~~~~~~~~~~~~~~~
+/opt/ros/jazzy/include/rclcpp/rclcpp/node.hpp:470:3: note:   candidate expects 4 arguments, 1 provided
+/home/sharmin/Desktop/iot/soccer_bot/src/ydlidar_ros2_driver/src/ydlidar_ros2_driver_node.cpp:112:26: error: no matching function for call to ‘rclcpp::Node::declare_parameter(const char [15])’
+  112 |   node->declare_parameter("auto_reconnect");
+      |   ~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~
+/opt/ros/jazzy/include/rclcpp/rclcpp/node.hpp:500:3: note: candidate: ‘template<class ParameterT> auto rclcpp::Node::declare_parameter(const std::string&, const ParameterT&, const rcl_interfaces::msg::ParameterDescriptor&, bool)’
+  500 |   declare_parameter(
+      |   ^~~~~~~~~~~~~~~~~
+/opt/ros/jazzy/include/rclcpp/rclcpp/node.hpp:500:3: note:   template argument deduction/substitution failed:
+/home/sharmin/Desktop/iot/soccer_bot/src/ydlidar_ros2_driver/src/ydlidar_ros2_driver_node.cpp:112:26: note:   candidate expects 4 arguments, 1 provided
+  112 |   node->declare_parameter("auto_reconnect");
+      |   ~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~
+/opt/ros/jazzy/include/rclcpp/rclcpp/node.hpp:513:3: note: candidate: ‘template<class ParameterT> auto rclcpp::Node::declare_parameter(const std::string&, const rcl_interfaces::msg::ParameterDescriptor&, bool)’
+  513 |   declare_parameter(
+      |   ^~~~~~~~~~~~~~~~~
+/opt/ros/jazzy/include/rclcpp/rclcpp/node.hpp:513:3: note:   template argument deduction/substitution failed:
+/home/sharmin/Desktop/iot/soccer_bot/src/ydlidar_ros2_driver/src/ydlidar_ros2_driver_node.cpp:112:26: note:   couldn’t deduce template parameter ‘ParameterT’
+  112 |   node->declare_parameter("auto_reconnect");
+      |   ~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~
+/opt/ros/jazzy/include/rclcpp/rclcpp/node.hpp:445:3: note: candidate: ‘const rclcpp::ParameterValue& rclcpp::Node::declare_parameter(const std::string&, const rclcpp::ParameterValue&, const rcl_interfaces::msg::ParameterDescriptor&, bool)’
+  445 |   declare_parameter(
+      |   ^~~~~~~~~~~~~~~~~
+/opt/ros/jazzy/include/rclcpp/rclcpp/node.hpp:445:3: note:   candidate expects 4 arguments, 1 provided
+/opt/ros/jazzy/include/rclcpp/rclcpp/node.hpp:470:3: note: candidate: ‘const rclcpp::ParameterValue& rclcpp::Node::declare_parameter(const std::string&, rclcpp::ParameterType, const rcl_interfaces::msg::ParameterDescriptor&, bool)’
+  470 |   declare_parameter(
+      |   ^~~~~~~~~~~~~~~~~
+/opt/ros/jazzy/include/rclcpp/rclcpp/node.hpp:470:3: note:   candidate expects 4 arguments, 1 provided
+/home/sharmin/Desktop/iot/soccer_bot/src/ydlidar_ros2_driver/src/ydlidar_ros2_driver_node.cpp:117:26: error: no matching function for call to ‘rclcpp::Node::declare_parameter(const char [16])’
+  117 |   node->declare_parameter("isSingleChannel");
+      |   ~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~
+/opt/ros/jazzy/include/rclcpp/rclcpp/node.hpp:500:3: note: candidate: ‘template<class ParameterT> auto rclcpp::Node::declare_parameter(const std::string&, const ParameterT&, const rcl_interfaces::msg::ParameterDescriptor&, bool)’
+  500 |   declare_parameter(
+      |   ^~~~~~~~~~~~~~~~~
+/opt/ros/jazzy/include/rclcpp/rclcpp/node.hpp:500:3: note:   template argument deduction/substitution failed:
+/home/sharmin/Desktop/iot/soccer_bot/src/ydlidar_ros2_driver/src/ydlidar_ros2_driver_node.cpp:117:26: note:   candidate expects 4 arguments, 1 provided
+  117 |   node->declare_parameter("isSingleChannel");
+      |   ~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~
+/opt/ros/jazzy/include/rclcpp/rclcpp/node.hpp:513:3: note: candidate: ‘template<class ParameterT> auto rclcpp::Node::declare_parameter(const std::string&, const rcl_interfaces::msg::ParameterDescriptor&, bool)’
+  513 |   declare_parameter(
+      |   ^~~~~~~~~~~~~~~~~
+/opt/ros/jazzy/include/rclcpp/rclcpp/node.hpp:513:3: note:   template argument deduction/substitution failed:
+/home/sharmin/Desktop/iot/soccer_bot/src/ydlidar_ros2_driver/src/ydlidar_ros2_driver_node.cpp:117:26: note:   couldn’t deduce template parameter ‘ParameterT’
+  117 |   node->declare_parameter("isSingleChannel");
+      |   ~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~
+/opt/ros/jazzy/include/rclcpp/rclcpp/node.hpp:445:3: note: candidate: ‘const rclcpp::ParameterValue& rclcpp::Node::declare_parameter(const std::string&, const rclcpp::ParameterValue&, const rcl_interfaces::msg::ParameterDescriptor&, bool)’
+  445 |   declare_parameter(
+      |   ^~~~~~~~~~~~~~~~~
+/opt/ros/jazzy/include/rclcpp/rclcpp/node.hpp:445:3: note:   candidate expects 4 arguments, 1 provided
+/opt/ros/jazzy/include/rclcpp/rclcpp/node.hpp:470:3: note: candidate: ‘const rclcpp::ParameterValue& rclcpp::Node::declare_parameter(const std::string&, rclcpp::ParameterType, const rcl_interfaces::msg::ParameterDescriptor&, bool)’
+  470 |   declare_parameter(
+      |   ^~~~~~~~~~~~~~~~~
+/opt/ros/jazzy/include/rclcpp/rclcpp/node.hpp:470:3: note:   candidate expects 4 arguments, 1 provided
+/home/sharmin/Desktop/iot/soccer_bot/src/ydlidar_ros2_driver/src/ydlidar_ros2_driver_node.cpp:122:26: error: no matching function for call to ‘rclcpp::Node::declare_parameter(const char [10])’
+  122 |   node->declare_parameter("intensity");
+      |   ~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~
+/opt/ros/jazzy/include/rclcpp/rclcpp/node.hpp:500:3: note: candidate: ‘template<class ParameterT> auto rclcpp::Node::declare_parameter(const std::string&, const ParameterT&, const rcl_interfaces::msg::ParameterDescriptor&, bool)’
+  500 |   declare_parameter(
+      |   ^~~~~~~~~~~~~~~~~
+/opt/ros/jazzy/include/rclcpp/rclcpp/node.hpp:500:3: note:   template argument deduction/substitution failed:
+/home/sharmin/Desktop/iot/soccer_bot/src/ydlidar_ros2_driver/src/ydlidar_ros2_driver_node.cpp:122:26: note:   candidate expects 4 arguments, 1 provided
+  122 |   node->declare_parameter("intensity");
+      |   ~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~
+/opt/ros/jazzy/include/rclcpp/rclcpp/node.hpp:513:3: note: candidate: ‘template<class ParameterT> auto rclcpp::Node::declare_parameter(const std::string&, const rcl_interfaces::msg::ParameterDescriptor&, bool)’
+  513 |   declare_parameter(
+      |   ^~~~~~~~~~~~~~~~~
+/opt/ros/jazzy/include/rclcpp/rclcpp/node.hpp:513:3: note:   template argument deduction/substitution failed:
+/home/sharmin/Desktop/iot/soccer_bot/src/ydlidar_ros2_driver/src/ydlidar_ros2_driver_node.cpp:122:26: note:   couldn’t deduce template parameter ‘ParameterT’
+  122 |   node->declare_parameter("intensity");
+      |   ~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~
+/opt/ros/jazzy/include/rclcpp/rclcpp/node.hpp:445:3: note: candidate: ‘const rclcpp::ParameterValue& rclcpp::Node::declare_parameter(const std::string&, const rclcpp::ParameterValue&, const rcl_interfaces::msg::ParameterDescriptor&, bool)’
+  445 |   declare_parameter(
+      |   ^~~~~~~~~~~~~~~~~
+/opt/ros/jazzy/include/rclcpp/rclcpp/node.hpp:445:3: note:   candidate expects 4 arguments, 1 provided
+/opt/ros/jazzy/include/rclcpp/rclcpp/node.hpp:470:3: note: candidate: ‘const rclcpp::ParameterValue& rclcpp::Node::declare_parameter(const std::string&, rclcpp::ParameterType, const rcl_interfaces::msg::ParameterDescriptor&, bool)’
+  470 |   declare_parameter(
+      |   ^~~~~~~~~~~~~~~~~
+/opt/ros/jazzy/include/rclcpp/rclcpp/node.hpp:470:3: note:   candidate expects 4 arguments, 1 provided
+/home/sharmin/Desktop/iot/soccer_bot/src/ydlidar_ros2_driver/src/ydlidar_ros2_driver_node.cpp:127:26: error: no matching function for call to ‘rclcpp::Node::declare_parameter(const char [18])’
+  127 |   node->declare_parameter("support_motor_dtr");
+      |   ~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~
+/opt/ros/jazzy/include/rclcpp/rclcpp/node.hpp:500:3: note: candidate: ‘template<class ParameterT> auto rclcpp::Node::declare_parameter(const std::string&, const ParameterT&, const rcl_interfaces::msg::ParameterDescriptor&, bool)’
+  500 |   declare_parameter(
+      |   ^~~~~~~~~~~~~~~~~
+/opt/ros/jazzy/include/rclcpp/rclcpp/node.hpp:500:3: note:   template argument deduction/substitution failed:
+/home/sharmin/Desktop/iot/soccer_bot/src/ydlidar_ros2_driver/src/ydlidar_ros2_driver_node.cpp:127:26: note:   candidate expects 4 arguments, 1 provided
+  127 |   node->declare_parameter("support_motor_dtr");
+      |   ~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~
+/opt/ros/jazzy/include/rclcpp/rclcpp/node.hpp:513:3: note: candidate: ‘template<class ParameterT> auto rclcpp::Node::declare_parameter(const std::string&, const rcl_interfaces::msg::ParameterDescriptor&, bool)’
+  513 |   declare_parameter(
+      |   ^~~~~~~~~~~~~~~~~
+/opt/ros/jazzy/include/rclcpp/rclcpp/node.hpp:513:3: note:   template argument deduction/substitution failed:
+/home/sharmin/Desktop/iot/soccer_bot/src/ydlidar_ros2_driver/src/ydlidar_ros2_driver_node.cpp:127:26: note:   couldn’t deduce template parameter ‘ParameterT’
+  127 |   node->declare_parameter("support_motor_dtr");
+      |   ~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~
+/opt/ros/jazzy/include/rclcpp/rclcpp/node.hpp:445:3: note: candidate: ‘const rclcpp::ParameterValue& rclcpp::Node::declare_parameter(const std::string&, const rclcpp::ParameterValue&, const rcl_interfaces::msg::ParameterDescriptor&, bool)’
+  445 |   declare_parameter(
+      |   ^~~~~~~~~~~~~~~~~
+/opt/ros/jazzy/include/rclcpp/rclcpp/node.hpp:445:3: note:   candidate expects 4 arguments, 1 provided
+/opt/ros/jazzy/include/rclcpp/rclcpp/node.hpp:470:3: note: candidate: ‘const rclcpp::ParameterValue& rclcpp::Node::declare_parameter(const std::string&, rclcpp::ParameterType, const rcl_interfaces::msg::ParameterDescriptor&, bool)’
+  470 |   declare_parameter(
+      |   ^~~~~~~~~~~~~~~~~
+/opt/ros/jazzy/include/rclcpp/rclcpp/node.hpp:470:3: note:   candidate expects 4 arguments, 1 provided
+/home/sharmin/Desktop/iot/soccer_bot/src/ydlidar_ros2_driver/src/ydlidar_ros2_driver_node.cpp:132:26: error: no matching function for call to ‘rclcpp::Node::declare_parameter(const char [6])’
+  132 |   node->declare_parameter("debug");
+      |   ~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~
+/opt/ros/jazzy/include/rclcpp/rclcpp/node.hpp:500:3: note: candidate: ‘template<class ParameterT> auto rclcpp::Node::declare_parameter(const std::string&, const ParameterT&, const rcl_interfaces::msg::ParameterDescriptor&, bool)’
+  500 |   declare_parameter(
+      |   ^~~~~~~~~~~~~~~~~
+/opt/ros/jazzy/include/rclcpp/rclcpp/node.hpp:500:3: note:   template argument deduction/substitution failed:
+/home/sharmin/Desktop/iot/soccer_bot/src/ydlidar_ros2_driver/src/ydlidar_ros2_driver_node.cpp:132:26: note:   candidate expects 4 arguments, 1 provided
+  132 |   node->declare_parameter("debug");
+      |   ~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~
+/opt/ros/jazzy/include/rclcpp/rclcpp/node.hpp:513:3: note: candidate: ‘template<class ParameterT> auto rclcpp::Node::declare_parameter(const std::string&, const rcl_interfaces::msg::ParameterDescriptor&, bool)’
+  513 |   declare_parameter(
+      |   ^~~~~~~~~~~~~~~~~
+/opt/ros/jazzy/include/rclcpp/rclcpp/node.hpp:513:3: note:   template argument deduction/substitution failed:
+/home/sharmin/Desktop/iot/soccer_bot/src/ydlidar_ros2_driver/src/ydlidar_ros2_driver_node.cpp:132:26: note:   couldn’t deduce template parameter ‘ParameterT’
+  132 |   node->declare_parameter("debug");
+      |   ~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~
+/opt/ros/jazzy/include/rclcpp/rclcpp/node.hpp:445:3: note: candidate: ‘const rclcpp::ParameterValue& rclcpp::Node::declare_parameter(const std::string&, const rclcpp::ParameterValue&, const rcl_interfaces::msg::ParameterDescriptor&, bool)’
+  445 |   declare_parameter(
+      |   ^~~~~~~~~~~~~~~~~
+/opt/ros/jazzy/include/rclcpp/rclcpp/node.hpp:445:3: note:   candidate expects 4 arguments, 1 provided
+/opt/ros/jazzy/include/rclcpp/rclcpp/node.hpp:470:3: note: candidate: ‘const rclcpp::ParameterValue& rclcpp::Node::declare_parameter(const std::string&, rclcpp::ParameterType, const rcl_interfaces::msg::ParameterDescriptor&, bool)’
+  470 |   declare_parameter(
+      |   ^~~~~~~~~~~~~~~~~
+/opt/ros/jazzy/include/rclcpp/rclcpp/node.hpp:470:3: note:   candidate expects 4 arguments, 1 provided
+/home/sharmin/Desktop/iot/soccer_bot/src/ydlidar_ros2_driver/src/ydlidar_ros2_driver_node.cpp:139:26: error: no matching function for call to ‘rclcpp::Node::declare_parameter(const char [10])’
+  139 |   node->declare_parameter("angle_max");
+      |   ~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~
+/opt/ros/jazzy/include/rclcpp/rclcpp/node.hpp:500:3: note: candidate: ‘template<class ParameterT> auto rclcpp::Node::declare_parameter(const std::string&, const ParameterT&, const rcl_interfaces::msg::ParameterDescriptor&, bool)’
+  500 |   declare_parameter(
+      |   ^~~~~~~~~~~~~~~~~
+/opt/ros/jazzy/include/rclcpp/rclcpp/node.hpp:500:3: note:   template argument deduction/substitution failed:
+/home/sharmin/Desktop/iot/soccer_bot/src/ydlidar_ros2_driver/src/ydlidar_ros2_driver_node.cpp:139:26: note:   candidate expects 4 arguments, 1 provided
+  139 |   node->declare_parameter("angle_max");
+      |   ~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~
+/opt/ros/jazzy/include/rclcpp/rclcpp/node.hpp:513:3: note: candidate: ‘template<class ParameterT> auto rclcpp::Node::declare_parameter(const std::string&, const rcl_interfaces::msg::ParameterDescriptor&, bool)’
+  513 |   declare_parameter(
+      |   ^~~~~~~~~~~~~~~~~
+/opt/ros/jazzy/include/rclcpp/rclcpp/node.hpp:513:3: note:   template argument deduction/substitution failed:
+/home/sharmin/Desktop/iot/soccer_bot/src/ydlidar_ros2_driver/src/ydlidar_ros2_driver_node.cpp:139:26: note:   couldn’t deduce template parameter ‘ParameterT’
+  139 |   node->declare_parameter("angle_max");
+      |   ~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~
+/opt/ros/jazzy/include/rclcpp/rclcpp/node.hpp:445:3: note: candidate: ‘const rclcpp::ParameterValue& rclcpp::Node::declare_parameter(const std::string&, const rclcpp::ParameterValue&, const rcl_interfaces::msg::ParameterDescriptor&, bool)’
+  445 |   declare_parameter(
+      |   ^~~~~~~~~~~~~~~~~
+/opt/ros/jazzy/include/rclcpp/rclcpp/node.hpp:445:3: note:   candidate expects 4 arguments, 1 provided
+/opt/ros/jazzy/include/rclcpp/rclcpp/node.hpp:470:3: note: candidate: ‘const rclcpp::ParameterValue& rclcpp::Node::declare_parameter(const std::string&, rclcpp::ParameterType, const rcl_interfaces::msg::ParameterDescriptor&, bool)’
+  470 |   declare_parameter(
+      |   ^~~~~~~~~~~~~~~~~
+/opt/ros/jazzy/include/rclcpp/rclcpp/node.hpp:470:3: note:   candidate expects 4 arguments, 1 provided
+/home/sharmin/Desktop/iot/soccer_bot/src/ydlidar_ros2_driver/src/ydlidar_ros2_driver_node.cpp:143:26: error: no matching function for call to ‘rclcpp::Node::declare_parameter(const char [10])’
+  143 |   node->declare_parameter("angle_min");
+      |   ~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~
+/opt/ros/jazzy/include/rclcpp/rclcpp/node.hpp:500:3: note: candidate: ‘template<class ParameterT> auto rclcpp::Node::declare_parameter(const std::string&, const ParameterT&, const rcl_interfaces::msg::ParameterDescriptor&, bool)’
+  500 |   declare_parameter(
+      |   ^~~~~~~~~~~~~~~~~
+/opt/ros/jazzy/include/rclcpp/rclcpp/node.hpp:500:3: note:   template argument deduction/substitution failed:
+/home/sharmin/Desktop/iot/soccer_bot/src/ydlidar_ros2_driver/src/ydlidar_ros2_driver_node.cpp:143:26: note:   candidate expects 4 arguments, 1 provided
+  143 |   node->declare_parameter("angle_min");
+      |   ~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~
+/opt/ros/jazzy/include/rclcpp/rclcpp/node.hpp:513:3: note: candidate: ‘template<class ParameterT> auto rclcpp::Node::declare_parameter(const std::string&, const rcl_interfaces::msg::ParameterDescriptor&, bool)’
+  513 |   declare_parameter(
+      |   ^~~~~~~~~~~~~~~~~
+/opt/ros/jazzy/include/rclcpp/rclcpp/node.hpp:513:3: note:   template argument deduction/substitution failed:
+/home/sharmin/Desktop/iot/soccer_bot/src/ydlidar_ros2_driver/src/ydlidar_ros2_driver_node.cpp:143:26: note:   couldn’t deduce template parameter ‘ParameterT’
+  143 |   node->declare_parameter("angle_min");
+      |   ~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~
+/opt/ros/jazzy/include/rclcpp/rclcpp/node.hpp:445:3: note: candidate: ‘const rclcpp::ParameterValue& rclcpp::Node::declare_parameter(const std::string&, const rclcpp::ParameterValue&, const rcl_interfaces::msg::ParameterDescriptor&, bool)’
+  445 |   declare_parameter(
+      |   ^~~~~~~~~~~~~~~~~
+/opt/ros/jazzy/include/rclcpp/rclcpp/node.hpp:445:3: note:   candidate expects 4 arguments, 1 provided
+/opt/ros/jazzy/include/rclcpp/rclcpp/node.hpp:470:3: note: candidate: ‘const rclcpp::ParameterValue& rclcpp::Node::declare_parameter(const std::string&, rclcpp::ParameterType, const rcl_interfaces::msg::ParameterDescriptor&, bool)’
+  470 |   declare_parameter(
+      |   ^~~~~~~~~~~~~~~~~
+/opt/ros/jazzy/include/rclcpp/rclcpp/node.hpp:470:3: note:   candidate expects 4 arguments, 1 provided
+/home/sharmin/Desktop/iot/soccer_bot/src/ydlidar_ros2_driver/src/ydlidar_ros2_driver_node.cpp:148:26: error: no matching function for call to ‘rclcpp::Node::declare_parameter(const char [10])’
+  148 |   node->declare_parameter("range_max");
+      |   ~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~
+/opt/ros/jazzy/include/rclcpp/rclcpp/node.hpp:500:3: note: candidate: ‘template<class ParameterT> auto rclcpp::Node::declare_parameter(const std::string&, const ParameterT&, const rcl_interfaces::msg::ParameterDescriptor&, bool)’
+  500 |   declare_parameter(
+      |   ^~~~~~~~~~~~~~~~~
+/opt/ros/jazzy/include/rclcpp/rclcpp/node.hpp:500:3: note:   template argument deduction/substitution failed:
+/home/sharmin/Desktop/iot/soccer_bot/src/ydlidar_ros2_driver/src/ydlidar_ros2_driver_node.cpp:148:26: note:   candidate expects 4 arguments, 1 provided
+  148 |   node->declare_parameter("range_max");
+      |   ~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~
+/opt/ros/jazzy/include/rclcpp/rclcpp/node.hpp:513:3: note: candidate: ‘template<class ParameterT> auto rclcpp::Node::declare_parameter(const std::string&, const rcl_interfaces::msg::ParameterDescriptor&, bool)’
+  513 |   declare_parameter(
+      |   ^~~~~~~~~~~~~~~~~
+/opt/ros/jazzy/include/rclcpp/rclcpp/node.hpp:513:3: note:   template argument deduction/substitution failed:
+/home/sharmin/Desktop/iot/soccer_bot/src/ydlidar_ros2_driver/src/ydlidar_ros2_driver_node.cpp:148:26: note:   couldn’t deduce template parameter ‘ParameterT’
+  148 |   node->declare_parameter("range_max");
+      |   ~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~
+/opt/ros/jazzy/include/rclcpp/rclcpp/node.hpp:445:3: note: candidate: ‘const rclcpp::ParameterValue& rclcpp::Node::declare_parameter(const std::string&, const rclcpp::ParameterValue&, const rcl_interfaces::msg::ParameterDescriptor&, bool)’
+  445 |   declare_parameter(
+      |   ^~~~~~~~~~~~~~~~~
+/opt/ros/jazzy/include/rclcpp/rclcpp/node.hpp:445:3: note:   candidate expects 4 arguments, 1 provided
+/opt/ros/jazzy/include/rclcpp/rclcpp/node.hpp:470:3: note: candidate: ‘const rclcpp::ParameterValue& rclcpp::Node::declare_parameter(const std::string&, rclcpp::ParameterType, const rcl_interfaces::msg::ParameterDescriptor&, bool)’
+  470 |   declare_parameter(
+      |   ^~~~~~~~~~~~~~~~~
+/opt/ros/jazzy/include/rclcpp/rclcpp/node.hpp:470:3: note:   candidate expects 4 arguments, 1 provided
+/home/sharmin/Desktop/iot/soccer_bot/src/ydlidar_ros2_driver/src/ydlidar_ros2_driver_node.cpp:152:26: error: no matching function for call to ‘rclcpp::Node::declare_parameter(const char [10])’
+  152 |   node->declare_parameter("range_min");
+      |   ~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~
+/opt/ros/jazzy/include/rclcpp/rclcpp/node.hpp:500:3: note: candidate: ‘template<class ParameterT> auto rclcpp::Node::declare_parameter(const std::string&, const ParameterT&, const rcl_interfaces::msg::ParameterDescriptor&, bool)’
+  500 |   declare_parameter(
+      |   ^~~~~~~~~~~~~~~~~
+/opt/ros/jazzy/include/rclcpp/rclcpp/node.hpp:500:3: note:   template argument deduction/substitution failed:
+/home/sharmin/Desktop/iot/soccer_bot/src/ydlidar_ros2_driver/src/ydlidar_ros2_driver_node.cpp:152:26: note:   candidate expects 4 arguments, 1 provided
+  152 |   node->declare_parameter("range_min");
+      |   ~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~
+/opt/ros/jazzy/include/rclcpp/rclcpp/node.hpp:513:3: note: candidate: ‘template<class ParameterT> auto rclcpp::Node::declare_parameter(const std::string&, const rcl_interfaces::msg::ParameterDescriptor&, bool)’
+  513 |   declare_parameter(
+      |   ^~~~~~~~~~~~~~~~~
+/opt/ros/jazzy/include/rclcpp/rclcpp/node.hpp:513:3: note:   template argument deduction/substitution failed:
+/home/sharmin/Desktop/iot/soccer_bot/src/ydlidar_ros2_driver/src/ydlidar_ros2_driver_node.cpp:152:26: note:   couldn’t deduce template parameter ‘ParameterT’
+  152 |   node->declare_parameter("range_min");
+      |   ~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~
+/opt/ros/jazzy/include/rclcpp/rclcpp/node.hpp:445:3: note: candidate: ‘const rclcpp::ParameterValue& rclcpp::Node::declare_parameter(const std::string&, const rclcpp::ParameterValue&, const rcl_interfaces::msg::ParameterDescriptor&, bool)’
+  445 |   declare_parameter(
+      |   ^~~~~~~~~~~~~~~~~
+/opt/ros/jazzy/include/rclcpp/rclcpp/node.hpp:445:3: note:   candidate expects 4 arguments, 1 provided
+/opt/ros/jazzy/include/rclcpp/rclcpp/node.hpp:470:3: note: candidate: ‘const rclcpp::ParameterValue& rclcpp::Node::declare_parameter(const std::string&, rclcpp::ParameterType, const rcl_interfaces::msg::ParameterDescriptor&, bool)’
+  470 |   declare_parameter(
+      |   ^~~~~~~~~~~~~~~~~
+/opt/ros/jazzy/include/rclcpp/rclcpp/node.hpp:470:3: note:   candidate expects 4 arguments, 1 provided
+/home/sharmin/Desktop/iot/soccer_bot/src/ydlidar_ros2_driver/src/ydlidar_ros2_driver_node.cpp:157:26: error: no matching function for call to ‘rclcpp::Node::declare_parameter(const char [10])’
+  157 |   node->declare_parameter("frequency");
+      |   ~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~
+/opt/ros/jazzy/include/rclcpp/rclcpp/node.hpp:500:3: note: candidate: ‘template<class ParameterT> auto rclcpp::Node::declare_parameter(const std::string&, const ParameterT&, const rcl_interfaces::msg::ParameterDescriptor&, bool)’
+  500 |   declare_parameter(
+      |   ^~~~~~~~~~~~~~~~~
+/opt/ros/jazzy/include/rclcpp/rclcpp/node.hpp:500:3: note:   template argument deduction/substitution failed:
+/home/sharmin/Desktop/iot/soccer_bot/src/ydlidar_ros2_driver/src/ydlidar_ros2_driver_node.cpp:157:26: note:   candidate expects 4 arguments, 1 provided
+  157 |   node->declare_parameter("frequency");
+      |   ~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~
+/opt/ros/jazzy/include/rclcpp/rclcpp/node.hpp:513:3: note: candidate: ‘template<class ParameterT> auto rclcpp::Node::declare_parameter(const std::string&, const rcl_interfaces::msg::ParameterDescriptor&, bool)’
+  513 |   declare_parameter(
+      |   ^~~~~~~~~~~~~~~~~
+/opt/ros/jazzy/include/rclcpp/rclcpp/node.hpp:513:3: note:   template argument deduction/substitution failed:
+/home/sharmin/Desktop/iot/soccer_bot/src/ydlidar_ros2_driver/src/ydlidar_ros2_driver_node.cpp:157:26: note:   couldn’t deduce template parameter ‘ParameterT’
+  157 |   node->declare_parameter("frequency");
+      |   ~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~
+/opt/ros/jazzy/include/rclcpp/rclcpp/node.hpp:445:3: note: candidate: ‘const rclcpp::ParameterValue& rclcpp::Node::declare_parameter(const std::string&, const rclcpp::ParameterValue&, const rcl_interfaces::msg::ParameterDescriptor&, bool)’
+  445 |   declare_parameter(
+      |   ^~~~~~~~~~~~~~~~~
+/opt/ros/jazzy/include/rclcpp/rclcpp/node.hpp:445:3: note:   candidate expects 4 arguments, 1 provided
+/opt/ros/jazzy/include/rclcpp/rclcpp/node.hpp:470:3: note: candidate: ‘const rclcpp::ParameterValue& rclcpp::Node::declare_parameter(const std::string&, rclcpp::ParameterType, const rcl_interfaces::msg::ParameterDescriptor&, bool)’
+  470 |   declare_parameter(
+      |   ^~~~~~~~~~~~~~~~~
+/opt/ros/jazzy/include/rclcpp/rclcpp/node.hpp:470:3: note:   candidate expects 4 arguments, 1 provided
+/home/sharmin/Desktop/iot/soccer_bot/src/ydlidar_ros2_driver/src/ydlidar_ros2_driver_node.cpp:162:26: error: no matching function for call to ‘rclcpp::Node::declare_parameter(const char [21])’
+  162 |   node->declare_parameter("invalid_range_is_inf");
+      |   ~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~
+/opt/ros/jazzy/include/rclcpp/rclcpp/node.hpp:500:3: note: candidate: ‘template<class ParameterT> auto rclcpp::Node::declare_parameter(const std::string&, const ParameterT&, const rcl_interfaces::msg::ParameterDescriptor&, bool)’
+  500 |   declare_parameter(
+      |   ^~~~~~~~~~~~~~~~~
+/opt/ros/jazzy/include/rclcpp/rclcpp/node.hpp:500:3: note:   template argument deduction/substitution failed:
+/home/sharmin/Desktop/iot/soccer_bot/src/ydlidar_ros2_driver/src/ydlidar_ros2_driver_node.cpp:162:26: note:   candidate expects 4 arguments, 1 provided
+  162 |   node->declare_parameter("invalid_range_is_inf");
+      |   ~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~
+/opt/ros/jazzy/include/rclcpp/rclcpp/node.hpp:513:3: note: candidate: ‘template<class ParameterT> auto rclcpp::Node::declare_parameter(const std::string&, const rcl_interfaces::msg::ParameterDescriptor&, bool)’
+  513 |   declare_parameter(
+      |   ^~~~~~~~~~~~~~~~~
+/opt/ros/jazzy/include/rclcpp/rclcpp/node.hpp:513:3: note:   template argument deduction/substitution failed:
+/home/sharmin/Desktop/iot/soccer_bot/src/ydlidar_ros2_driver/src/ydlidar_ros2_driver_node.cpp:162:26: note:   couldn’t deduce template parameter ‘ParameterT’
+  162 |   node->declare_parameter("invalid_range_is_inf");
+      |   ~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~
+/opt/ros/jazzy/include/rclcpp/rclcpp/node.hpp:445:3: note: candidate: ‘const rclcpp::ParameterValue& rclcpp::Node::declare_parameter(const std::string&, const rclcpp::ParameterValue&, const rcl_interfaces::msg::ParameterDescriptor&, bool)’
+  445 |   declare_parameter(
+      |   ^~~~~~~~~~~~~~~~~
+/opt/ros/jazzy/include/rclcpp/rclcpp/node.hpp:445:3: note:   candidate expects 4 arguments, 1 provided
+/opt/ros/jazzy/include/rclcpp/rclcpp/node.hpp:470:3: note: candidate: ‘const rclcpp::ParameterValue& rclcpp::Node::declare_parameter(const std::string&, rclcpp::ParameterType, const rcl_interfaces::msg::ParameterDescriptor&, bool)’
+  470 |   declare_parameter(
+      |   ^~~~~~~~~~~~~~~~~
+/opt/ros/jazzy/include/rclcpp/rclcpp/node.hpp:470:3: note:   candidate expects 4 arguments, 1 provided
+/home/sharmin/Desktop/iot/soccer_bot/src/ydlidar_ros2_driver/src/ydlidar_ros2_driver_node.cpp:171:28: error: no matching function for call to ‘rclcpp::Node::declare_parameter(const char [8])’
+  171 |     node->declare_parameter("m1_mode");
+      |     ~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~
+/opt/ros/jazzy/include/rclcpp/rclcpp/node.hpp:500:3: note: candidate: ‘template<class ParameterT> auto rclcpp::Node::declare_parameter(const std::string&, const ParameterT&, const rcl_interfaces::msg::ParameterDescriptor&, bool)’
+  500 |   declare_parameter(
+      |   ^~~~~~~~~~~~~~~~~
+/opt/ros/jazzy/include/rclcpp/rclcpp/node.hpp:500:3: note:   template argument deduction/substitution failed:
+/home/sharmin/Desktop/iot/soccer_bot/src/ydlidar_ros2_driver/src/ydlidar_ros2_driver_node.cpp:171:28: note:   candidate expects 4 arguments, 1 provided
+  171 |     node->declare_parameter("m1_mode");
+      |     ~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~
+/opt/ros/jazzy/include/rclcpp/rclcpp/node.hpp:513:3: note: candidate: ‘template<class ParameterT> auto rclcpp::Node::declare_parameter(const std::string&, const rcl_interfaces::msg::ParameterDescriptor&, bool)’
+  513 |   declare_parameter(
+      |   ^~~~~~~~~~~~~~~~~
+/opt/ros/jazzy/include/rclcpp/rclcpp/node.hpp:513:3: note:   template argument deduction/substitution failed:
+/home/sharmin/Desktop/iot/soccer_bot/src/ydlidar_ros2_driver/src/ydlidar_ros2_driver_node.cpp:171:28: note:   couldn’t deduce template parameter ‘ParameterT’
+  171 |     node->declare_parameter("m1_mode");
+      |     ~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~
+/opt/ros/jazzy/include/rclcpp/rclcpp/node.hpp:445:3: note: candidate: ‘const rclcpp::ParameterValue& rclcpp::Node::declare_parameter(const std::string&, const rclcpp::ParameterValue&, const rcl_interfaces::msg::ParameterDescriptor&, bool)’
+  445 |   declare_parameter(
+      |   ^~~~~~~~~~~~~~~~~
+/opt/ros/jazzy/include/rclcpp/rclcpp/node.hpp:445:3: note:   candidate expects 4 arguments, 1 provided
+/opt/ros/jazzy/include/rclcpp/rclcpp/node.hpp:470:3: note: candidate: ‘const rclcpp::ParameterValue& rclcpp::Node::declare_parameter(const std::string&, rclcpp::ParameterType, const rcl_interfaces::msg::ParameterDescriptor&, bool)’
+  470 |   declare_parameter(
+      |   ^~~~~~~~~~~~~~~~~
+/opt/ros/jazzy/include/rclcpp/rclcpp/node.hpp:470:3: note:   candidate expects 4 arguments, 1 provided
+/home/sharmin/Desktop/iot/soccer_bot/src/ydlidar_ros2_driver/src/ydlidar_ros2_driver_node.cpp:175:28: error: no matching function for call to ‘rclcpp::Node::declare_parameter(const char [8])’
+  175 |     node->declare_parameter("m2_mode");
+      |     ~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~
+/opt/ros/jazzy/include/rclcpp/rclcpp/node.hpp:500:3: note: candidate: ‘template<class ParameterT> auto rclcpp::Node::declare_parameter(const std::string&, const ParameterT&, const rcl_interfaces::msg::ParameterDescriptor&, bool)’
+  500 |   declare_parameter(
+      |   ^~~~~~~~~~~~~~~~~
+/opt/ros/jazzy/include/rclcpp/rclcpp/node.hpp:500:3: note:   template argument deduction/substitution failed:
+/home/sharmin/Desktop/iot/soccer_bot/src/ydlidar_ros2_driver/src/ydlidar_ros2_driver_node.cpp:175:28: note:   candidate expects 4 arguments, 1 provided
+  175 |     node->declare_parameter("m2_mode");
+      |     ~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~
+/opt/ros/jazzy/include/rclcpp/rclcpp/node.hpp:513:3: note: candidate: ‘template<class ParameterT> auto rclcpp::Node::declare_parameter(const std::string&, const rcl_interfaces::msg::ParameterDescriptor&, bool)’
+  513 |   declare_parameter(
+      |   ^~~~~~~~~~~~~~~~~
+/opt/ros/jazzy/include/rclcpp/rclcpp/node.hpp:513:3: note:   template argument deduction/substitution failed:
+/home/sharmin/Desktop/iot/soccer_bot/src/ydlidar_ros2_driver/src/ydlidar_ros2_driver_node.cpp:175:28: note:   couldn’t deduce template parameter ‘ParameterT’
+  175 |     node->declare_parameter("m2_mode");
+      |     ~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~
+/opt/ros/jazzy/include/rclcpp/rclcpp/node.hpp:445:3: note: candidate: ‘const rclcpp::ParameterValue& rclcpp::Node::declare_parameter(const std::string&, const rclcpp::ParameterValue&, const rcl_interfaces::msg::ParameterDescriptor&, bool)’
+  445 |   declare_parameter(
+      |   ^~~~~~~~~~~~~~~~~
+/opt/ros/jazzy/include/rclcpp/rclcpp/node.hpp:445:3: note:   candidate expects 4 arguments, 1 provided
+/opt/ros/jazzy/include/rclcpp/rclcpp/node.hpp:470:3: note: candidate: ‘const rclcpp::ParameterValue& rclcpp::Node::declare_parameter(const std::string&, rclcpp::ParameterType, const rcl_interfaces::msg::ParameterDescriptor&, bool)’
+  470 |   declare_parameter(
+      |   ^~~~~~~~~~~~~~~~~
+/opt/ros/jazzy/include/rclcpp/rclcpp/node.hpp:470:3: note:   candidate expects 4 arguments, 1 provided
+/home/sharmin/Desktop/iot/soccer_bot/src/ydlidar_ros2_driver/src/ydlidar_ros2_driver_node.cpp:179:28: error: no matching function for call to ‘rclcpp::Node::declare_parameter(const char [8])’
+  179 |     node->declare_parameter("m3_mode");
+      |     ~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~
+/opt/ros/jazzy/include/rclcpp/rclcpp/node.hpp:500:3: note: candidate: ‘template<class ParameterT> auto rclcpp::Node::declare_parameter(const std::string&, const ParameterT&, const rcl_interfaces::msg::ParameterDescriptor&, bool)’
+  500 |   declare_parameter(
+      |   ^~~~~~~~~~~~~~~~~
+/opt/ros/jazzy/include/rclcpp/rclcpp/node.hpp:500:3: note:   template argument deduction/substitution failed:
+/home/sharmin/Desktop/iot/soccer_bot/src/ydlidar_ros2_driver/src/ydlidar_ros2_driver_node.cpp:179:28: note:   candidate expects 4 arguments, 1 provided
+  179 |     node->declare_parameter("m3_mode");
+      |     ~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~
+/opt/ros/jazzy/include/rclcpp/rclcpp/node.hpp:513:3: note: candidate: ‘template<class ParameterT> auto rclcpp::Node::declare_parameter(const std::string&, const rcl_interfaces::msg::ParameterDescriptor&, bool)’
+  513 |   declare_parameter(
+      |   ^~~~~~~~~~~~~~~~~
+/opt/ros/jazzy/include/rclcpp/rclcpp/node.hpp:513:3: note:   template argument deduction/substitution failed:
+/home/sharmin/Desktop/iot/soccer_bot/src/ydlidar_ros2_driver/src/ydlidar_ros2_driver_node.cpp:179:28: note:   couldn’t deduce template parameter ‘ParameterT’
+  179 |     node->declare_parameter("m3_mode");
+      |     ~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~
+/opt/ros/jazzy/include/rclcpp/rclcpp/node.hpp:445:3: note: candidate: ‘const rclcpp::ParameterValue& rclcpp::Node::declare_parameter(const std::string&, const rclcpp::ParameterValue&, const rcl_interfaces::msg::ParameterDescriptor&, bool)’
+  445 |   declare_parameter(
+      |   ^~~~~~~~~~~~~~~~~
+/opt/ros/jazzy/include/rclcpp/rclcpp/node.hpp:445:3: note:   candidate expects 4 arguments, 1 provided
+/opt/ros/jazzy/include/rclcpp/rclcpp/node.hpp:470:3: note: candidate: ‘const rclcpp::ParameterValue& rclcpp::Node::declare_parameter(const std::string&, rclcpp::ParameterType, const rcl_interfaces::msg::ParameterDescriptor&, bool)’
+  470 |   declare_parameter(
+      |   ^~~~~~~~~~~~~~~~~
+/opt/ros/jazzy/include/rclcpp/rclcpp/node.hpp:470:3: note:   candidate expects 4 arguments, 1 provided
+/home/sharmin/Desktop/iot/soccer_bot/src/ydlidar_ros2_driver/src/ydlidar_ros2_driver_node.cpp: In lambda function:
+/home/sharmin/Desktop/iot/soccer_bot/src/ydlidar_ros2_driver/src/ydlidar_ros2_driver_node.cpp:193:54: warning: unused parameter ‘request_header’ [-Wunused-parameter]
+  193 |     [&laser](const std::shared_ptr<rmw_request_id_t> request_header,
+      |              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~
+/home/sharmin/Desktop/iot/soccer_bot/src/ydlidar_ros2_driver/src/ydlidar_ros2_driver_node.cpp:194:56: warning: unused parameter ‘req’ [-Wunused-parameter]
+  194 |   const std::shared_ptr<std_srvs::srv::Empty::Request> req,
+      |   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~
+/home/sharmin/Desktop/iot/soccer_bot/src/ydlidar_ros2_driver/src/ydlidar_ros2_driver_node.cpp:195:51: warning: unused parameter ‘response’ [-Wunused-parameter]
+  195 |   std::shared_ptr<std_srvs::srv::Empty::Response> response) -> bool
+      |   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~
+/home/sharmin/Desktop/iot/soccer_bot/src/ydlidar_ros2_driver/src/ydlidar_ros2_driver_node.cpp: In lambda function:
+/home/sharmin/Desktop/iot/soccer_bot/src/ydlidar_ros2_driver/src/ydlidar_ros2_driver_node.cpp:203:54: warning: unused parameter ‘request_header’ [-Wunused-parameter]
+  203 |     [&laser](const std::shared_ptr<rmw_request_id_t> request_header,
+      |              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~
+/home/sharmin/Desktop/iot/soccer_bot/src/ydlidar_ros2_driver/src/ydlidar_ros2_driver_node.cpp:204:56: warning: unused parameter ‘req’ [-Wunused-parameter]
+  204 |   const std::shared_ptr<std_srvs::srv::Empty::Request> req,
+      |   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~
+/home/sharmin/Desktop/iot/soccer_bot/src/ydlidar_ros2_driver/src/ydlidar_ros2_driver_node.cpp:205:51: warning: unused parameter ‘response’ [-Wunused-parameter]
+  205 |   std::shared_ptr<std_srvs::srv::Empty::Response> response) -> bool
+      |   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~
+/home/sharmin/Desktop/iot/soccer_bot/src/ydlidar_ros2_driver/src/ydlidar_ros2_driver_node.cpp: In function ‘int main(int, char**)’:
+/home/sharmin/Desktop/iot/soccer_bot/src/ydlidar_ros2_driver/src/ydlidar_ros2_driver_node.cpp:238:21: warning: unused variable ‘p’ [-Wunused-variable]
+  238 |         const auto& p = scan.points.at(i);
+      |                     ^
+gmake[2]: *** [CMakeFiles/ydlidar_ros2_driver_node.dir/build.make:76: CMakeFiles/ydlidar_ros2_driver_node.dir/src/ydlidar_ros2_driver_node.cpp.o] Error 1
+gmake[1]: *** [CMakeFiles/Makefile2:139: CMakeFiles/ydlidar_ros2_driver_node.dir/all] Error 2
+gmake[1]: *** Waiting for unfinished jobs....
+[ 75%] [32m[1mLinking CXX executable ydlidar_ros2_driver_client[0m
+[ 75%] Built target ydlidar_ros2_driver_client
+gmake: *** [Makefile:146: all] Error 2

@@ -1,0 +1,278 @@
+[0.000000] (-) TimerEvent: {}
+[0.001358] (-) JobUnselected: {'identifier': 'soccer_navigation'}
+[0.001509] (-) JobUnselected: {'identifier': 'ydlidar_ros2_driver'}
+[0.001600] (-) JobUnselected: {'identifier': 'ydlidar_sdk'}
+[0.001676] (soccer_vision) JobQueued: {'identifier': 'soccer_vision', 'dependencies': OrderedDict()}
+[0.004167] (soccer_vision) JobStarted: {'identifier': 'soccer_vision'}
+[0.098839] (-) TimerEvent: {}
+[0.202392] (-) TimerEvent: {}
+[0.303166] (-) TimerEvent: {}
+[0.406299] (-) TimerEvent: {}
+[0.508560] (-) TimerEvent: {}
+[0.610466] (-) TimerEvent: {}
+[0.714670] (-) TimerEvent: {}
+[0.816654] (-) TimerEvent: {}
+[0.919508] (-) TimerEvent: {}
+[1.020324] (-) TimerEvent: {}
+[1.122301] (-) TimerEvent: {}
+[1.222904] (-) TimerEvent: {}
+[1.326927] (-) TimerEvent: {}
+[1.429330] (-) TimerEvent: {}
+[1.529907] (-) TimerEvent: {}
+[1.631056] (-) TimerEvent: {}
+[1.733900] (-) TimerEvent: {}
+[1.836786] (-) TimerEvent: {}
+[1.940838] (-) TimerEvent: {}
+[2.041879] (-) TimerEvent: {}
+[2.142417] (-) TimerEvent: {}
+[2.243554] (-) TimerEvent: {}
+[2.345523] (-) TimerEvent: {}
+[2.446499] (-) TimerEvent: {}
+[2.547070] (-) TimerEvent: {}
+[2.650300] (-) TimerEvent: {}
+[2.750939] (-) TimerEvent: {}
+[2.851751] (-) TimerEvent: {}
+[2.954509] (-) TimerEvent: {}
+[3.061071] (-) TimerEvent: {}
+[3.161694] (-) TimerEvent: {}
+[3.263003] (-) TimerEvent: {}
+[3.364578] (-) TimerEvent: {}
+[3.466525] (-) TimerEvent: {}
+[3.574265] (-) TimerEvent: {}
+[3.676266] (-) TimerEvent: {}
+[3.777659] (-) TimerEvent: {}
+[3.880309] (-) TimerEvent: {}
+[3.982289] (-) TimerEvent: {}
+[4.087081] (-) TimerEvent: {}
+[4.194295] (-) TimerEvent: {}
+[4.294861] (-) TimerEvent: {}
+[4.400239] (-) TimerEvent: {}
+[4.501441] (-) TimerEvent: {}
+[4.606292] (-) TimerEvent: {}
+[4.708316] (-) TimerEvent: {}
+[4.812303] (-) TimerEvent: {}
+[4.919499] (-) TimerEvent: {}
+[5.023274] (-) TimerEvent: {}
+[5.125308] (-) TimerEvent: {}
+[5.235000] (-) TimerEvent: {}
+[5.341266] (-) TimerEvent: {}
+[5.442780] (-) TimerEvent: {}
+[5.545301] (-) TimerEvent: {}
+[5.646089] (-) TimerEvent: {}
+[5.747635] (-) TimerEvent: {}
+[5.849618] (-) TimerEvent: {}
+[5.952281] (-) TimerEvent: {}
+[6.053165] (-) TimerEvent: {}
+[6.153769] (-) TimerEvent: {}
+[6.256464] (-) TimerEvent: {}
+[6.358017] (-) TimerEvent: {}
+[6.458602] (-) TimerEvent: {}
+[6.559272] (-) TimerEvent: {}
+[6.661300] (-) TimerEvent: {}
+[6.761892] (-) TimerEvent: {}
+[6.862465] (-) TimerEvent: {}
+[6.964647] (-) TimerEvent: {}
+[7.067280] (-) TimerEvent: {}
+[7.169541] (-) TimerEvent: {}
+[7.271303] (-) TimerEvent: {}
+[7.371882] (-) TimerEvent: {}
+[7.472653] (-) TimerEvent: {}
+[7.575440] (-) TimerEvent: {}
+[7.676029] (-) TimerEvent: {}
+[7.776551] (-) TimerEvent: {}
+[7.878306] (-) TimerEvent: {}
+[7.981305] (-) TimerEvent: {}
+[8.082073] (-) TimerEvent: {}
+[8.182742] (-) TimerEvent: {}
+[8.285370] (-) TimerEvent: {}
+[8.385985] (-) TimerEvent: {}
+[8.488282] (-) TimerEvent: {}
+[8.588845] (-) TimerEvent: {}
+[8.689428] (-) TimerEvent: {}
+[8.791284] (-) TimerEvent: {}
+[8.891840] (-) TimerEvent: {}
+[8.993008] (-) TimerEvent: {}
+[9.094332] (-) TimerEvent: {}
+[9.198276] (-) TimerEvent: {}
+[9.298835] (-) TimerEvent: {}
+[9.399450] (-) TimerEvent: {}
+[9.499976] (-) TimerEvent: {}
+[9.600699] (-) TimerEvent: {}
+[9.611691] (soccer_vision) Command: {'cmd': ['/usr/bin/python3', '-W', 'ignore:setup.py install is deprecated', '-W', 'ignore:easy_install command is deprecated', 'setup.py', 'develop', '--uninstall', '--editable', '--build-directory', '/home/sharmin/Desktop/iot/soccer_bot/build/soccer_vision/build'], 'cwd': '/home/sharmin/Desktop/iot/soccer_bot/build/soccer_vision', 'env': {'XDG_ACTIVATION_TOKEN': 'nemo-desktop-2159-sharmin-Satellite-L15W-B-xfce4-terminal-0_TIME296255', 'LESSOPEN': '| /usr/bin/lesspipe %s', 'LANGUAGE': 'en_US', 'USER': 'sharmin', 'ANTIGRAVITY_SOURCE_METADATA': '{"tool":{"conversationId":"2cb51940-68b9-4c09-9f07-7059f5ec9b8d", "stepIndex":587, "toolCall":{"id":"lga27f2h", "name":"run_command", "argumentsJson":"{\\"CommandLine\\":\\"python3 scripts/final_pi_fix.py \\\\u0026\\\\u0026 source /opt/ros/jazzy/setup.bash \\\\u0026\\\\u0026 colcon build --packages-select soccer_vision\\",\\"Cwd\\":\\"/home/sharmin/Desktop/iot/soccer_bot\\",\\"WaitMsBeforeAsync\\":8000,\\"toolAction\\":\\"Fixing Pi camera and socat issues, and rebuilding laptop camera hub\\",\\"toolSummary\\":\\"Run final fixes and rebuild\\"}", "thinkingSignature":"ErQLCrELARFNMg9Pok3aUF8yNN6ZxOaiLlHRHIm/ukgrijzA3swbBcrR5NRXo5VphF5OUVmq2CKbrHk6fCKiH2FyNstdgkkkOG6aCPlPMPHaC+o9/FGLx6LofHGJg9VbB7xLKQJmnlAWLHR06/yObPZ1eHEn1CjXGEVpbXcuC4rP0iczSkqCMw1Vi6LGIW1wgaa++8O9dAwR7KBd/ceFPGi9W+iw2MnjZIMcVVD1Qvpp4Bbdnb9x30R7tac+pxWn3p29KuGReFdJFtF+RX3eWetDoKeKTzehkZmbl34PvkCFhvZv77xSDQvhGSVeYN39OEEIAvPmnIxTyduoorT0GjEDeR1RMWtKgMczCu6vFJnwqeRQChKVpntOpu9DapVz1dRnWw3wKK9FERi0JctmQSmPuHiIpaQqBdFEqFNruea5jpzn0jzR03VxDjKyYow9QQMbiCVB7idDzFvWRYiIvGahPxOI6xdUxq9q3jLYlye7MVaJvg36U9GQ737++CMRt40ahjZLbsAwYiJmnTKZWuFcu4hQSoGlAG9m4YUElAbVahHe/Wu2Tt60Z9BksCdklmhqcjUSfn7WKsz5vSE2HIjsejkzRELGEwtVjyR9+tE85kVHoJtyQnVT7P+/JzS8VXi/PUTnAvztfr1rw6d1qnltPoiNW2b1ycJdNtogWHpotmbUxaDIytPGNtLyHKJEvBK7Vb2E8C8fuz7VjXXkYaI3eS/WXKoUTSzVQc9xxBZiIWsNV6t2FTh0HY/ydtJnbBmh4lKz9WeqNuwiTD77VH5lWQ3ei9j29WpBSRFSrr3JYSQbTHPqtXRjPceOecRRmIDW4If1QfmOfPeOxFNzeuZG8EByRXZnEn02JpQvc9EBkcKJr+J3ZB9mAs0N/AGhhyPCBmuvMHMKZv2r4/EFivOJnG7ohPSQpNrqryljDeXfb3Tz5zNKUonj0sUrCL64SnLOuOWW4FX9BxqQPHWzelu7gsopHYST9huICtO9o9IE0Xw6MPMstVbMDcOcgXWz+0zzuJ6vQZpbrAI5yWY2MJ8us4IW5YUOUduLlDyczrNT5+lmLC6DjQZOFghZJF72TVflqe55toMcDRLqecnmFIhjosgHzuggOAZGLrsxxT6hoXbgvX58u3luVikrjp6VCTTOUDpExFt74RjGPFboKJ7AwqczTvXU8Z/Qm0T4yVKPBU8MwJLxdvEQYlg7V6bqZuJ/rV4utl/trBZmuaLmeuGze44x2kuS34bhYpFo7+jyPQL+C3XrRMSFjPz8t7szpxT1P9ymfbjOwjKn+vpXmrKRMQMERxDO8cw60JDXqFnujeWBF5QnFHmSXzxMqcpz1P2gU+Li3RgVWgPQ2Ea/9vkT8dAle/Gb8G5nfxhYb/bSGyFPdTHNkK4msndXWKc3DVIXDuSwgU13Ejy4bUJl3jDt8JoeslxvSz0qJGOceKJbWotnN6oAFTwS4uVhc7TKH5Z4+oywwSL9IJXSUbPlqDwr0RPMxLO++2A5fiWhHgEQKsW2mp6/wvxrzLqIrPWqjHH6qarBqOCChFKL6Pj1pUYgTQEHhMZoTRN1gQUlS7xN2IKyrE2RTMI2BmvkE1Q21dqTvuLtlZhIiKEoDQTwL0GhHIfrpEGWc9kNGYjEFj4Vij7i9bEzfHxg1eMKsCvyG8Vb7OGFOJZkkuHQ/UYQBuBNq2zaaaxVwUROOLNbij/iurmjekO3qol/S9s8MH3wCjJM8qw9PAjJzu4JP1FPtp4Bcoe6G4acll/eVn04bdZJ5BPNkDDN3iwPVR8NmzPC98usKoUd21GLxFsIHB0wYuTabL02x4Q7t78E2MATfyciH0q2wIGjCYDsxP87YzmxWUEt1Cy10YoaAneLyZCGWONVzEoa+1n8BTue2sHW0rijwldLm2cUsDXTEPFTH4qKWibWQMXqveWTx1D+k81PFWmzRsMo5Tw=", "originalName":"run_command"}}}', 'XDG_SEAT': 'seat0', 'ANTIGRAVITY_SAFECLIS_DIR': '/home/sharmin/.gemini/antigravity-cli/bin/safeclis', 'PT8HOME': '/opt/pt', 'SSH_AGENT_PID': '2085', 'XDG_SESSION_TYPE': 'x11', 'COMPIZ_CONFIG_PROFILE': 'mint', 'SHLVL': '1', 'LD_LIBRARY_PATH': '/opt/ros/jazzy/opt/rviz_ogre_vendor/lib:/opt/ros/jazzy/lib/x86_64-linux-gnu:/opt/ros/jazzy/opt/gz_math_vendor/lib:/opt/ros/jazzy/opt/gz_utils_vendor/lib:/opt/ros/jazzy/opt/gz_cmake_vendor/lib:/opt/ros/jazzy/lib', 'HOME': '/home/sharmin', 'DESKTOP_SESSION': 'xfce', 'NVM_BIN': '/home/sharmin/.nvm/versions/node/v20.16.0/bin', 'NVM_INC': '/home/sharmin/.nvm/versions/node/v20.16.0/include/node', 'GIO_LAUNCHED_DESKTOP_FILE': '/home/sharmin/Desktop/xfce4-terminal.desktop', 'ROS_PYTHON_VERSION': '3', 'GTK_MODULES': 'gail:atk-bridge', 'XDG_SEAT_PATH': '/org/freedesktop/DisplayManager/Seat0', 'PAGER': 'cat', 'LC_MONETARY': 'bn_BD', 'DBUS_SESSION_BUS_ADDRESS': 'unix:path=/run/user/1000/bus', 'COLORTERM': 'truecolor', 'ANTIGRAVITY_AGENT': '1', 'GIO_LAUNCHED_DESKTOP_FILE_PID': '2760', 'NVM_DIR': '/home/sharmin/.nvm', 'ROS_DISTRO': 'jazzy', 'GTK_IM_MODULE': 'ibus', 'LOGNAME': 'sharmin', 'WINDOWID': '46137347', '_': '/usr/bin/colcon', 'ROS_VERSION': '2', 'XDG_SESSION_CLASS': 'user', 'CLUTTER_BACKEND': 'x11', 'TERM': 'dumb', 'XDG_SESSION_ID': 'c2', 'PATH': '/home/sharmin/.gemini/antigravity-cli/bin:/opt/ros/jazzy/bin:/home/sharmin/.local/bin:/home/sharmin/.local/bin:/home/sharmin/.local/bin:/home/sharmin/.nvm/versions/node/v20.16.0/bin:/home/sharmin/.local/bin:/home/sharmin/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin', 'SESSION_MANAGER': 'local/sharmin-Satellite-L15W-B:@/tmp/.ICE-unix/1889,unix/sharmin-Satellite-L15W-B:/tmp/.ICE-unix/1889', 'GDM_LANG': 'en_US', 'GTK3_MODULES': 'xapp-gtk3-module', 'XDG_SESSION_PATH': '/org/freedesktop/DisplayManager/Session0', 'XDG_MENU_PREFIX': 'xfce-', 'LC_ADDRESS': 'bn_BD', 'XDG_RUNTIME_DIR': '/run/user/1000', 'DISPLAY': ':0', 'LANG': 'en_US.UTF-8', 'XDG_CURRENT_DESKTOP': 'XFCE', 'ANTIGRAVITY_CONVERSATION_ID': '2cb51940-68b9-4c09-9f07-7059f5ec9b8d', 'LC_TELEPHONE': 'bn_BD', 'XMODIFIERS': '@im=ibus', 'XDG_SESSION_DESKTOP': 'xfce', 'XAUTHORITY': '/home/sharmin/.Xauthority', 'LS_COLORS': 'rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=00:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.zst=01;31:*.tzst=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.cab=01;31:*.wim=01;31:*.swm=01;31:*.dwm=01;31:*.esd=01;31:*.avif=01;35:*.jpg=01;35:*.jpeg=01;35:*.mjpg=01;35:*.mjpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.webp=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.oga=00;36:*.opus=00;36:*.spx=00;36:*.xspf=00;36:*~=00;90:*#=00;90:*.bak=00;90:*.crdownload=00;90:*.dpkg-dist=00;90:*.dpkg-new=00;90:*.dpkg-old=00;90:*.dpkg-tmp=00;90:*.old=00;90:*.orig=00;90:*.part=00;90:*.rej=00;90:*.rpmnew=00;90:*.rpmorig=00;90:*.rpmsave=00;90:*.swp=00;90:*.tmp=00;90:*.ucf-dist=00;90:*.ucf-new=00;90:*.ucf-old=00;90:', 'SSH_AUTH_SOCK': '/tmp/ssh-JtHPXxvijW4c/agent.2082', 'XDG_GREETER_DATA_DIR': '/var/lib/lightdm-data/sharmin', 'AMENT_PREFIX_PATH': '/opt/ros/jazzy', 'ANTIGRAVITY_PROJECT_ID': 'default-cli-project', 'SHELL': '/bin/bash', 'ANTIGRAVITY_LS_ADDRESS': 'localhost:43241', 'LC_NAME': 'bn_BD', 'QT_ACCESSIBILITY': '1', 'GDMSESSION': 'xfce', 'LESSCLOSE': '/usr/bin/lesspipe %s %s', 'LC_MEASUREMENT': 'bn_BD', 'LC_IDENTIFICATION': 'bn_BD', 'ROS_AUTOMATIC_DISCOVERY_RANGE': 'SUBNET', 'GIT_PAGER': 'cat', 'QT_IM_MODULE': 'ibus', 'XDG_VTNR': '7', 'ANTIGRAVITY_TRAJECTORY_ID': '2245608c-1060-45ea-82a4-ee5f1652ccac', 'PWD': '/home/sharmin/Desktop/iot/soccer_bot/build/soccer_vision', 'LC_ALL': 'en_US.UTF-8', 'XDG_CONFIG_DIRS': '/etc/xdg/xdg-xfce:/etc/xdg', 'CLUTTER_IM_MODULE': 'ibus', 'NVM_CD_FLAGS': '', 'XDG_DATA_DIRS': '/usr/share/xfce4:/home/sharmin/.local/share/flatpak/exports/share:/var/lib/flatpak/exports/share:/usr/local/share:/usr/share', 'PYTHONPATH': '/home/sharmin/Desktop/iot/soccer_bot/build/soccer_vision/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/sharmin/Desktop/iot/soccer_bot/install/soccer_vision/lib/python3.12/site-packages:/opt/ros/jazzy/lib/python3.12/site-packages', 'LC_NUMERIC': 'bn_BD', 'LC_PAPER': 'bn_BD', 'COLCON': '1', 'VTE_VERSION': '7600', 'ANTIGRAVITY_CSRF_TOKEN': '', 'CMAKE_PREFIX_PATH': '/opt/ros/jazzy/opt/gz_math_vendor:/opt/ros/jazzy/opt/gz_utils_vendor:/opt/ros/jazzy/opt/gz_cmake_vendor'}, 'shell': False}
+[9.700871] (-) TimerEvent: {}
+[9.803301] (-) TimerEvent: {}
+[9.903901] (-) TimerEvent: {}
+[10.004600] (-) TimerEvent: {}
+[10.106524] (-) TimerEvent: {}
+[10.210289] (-) TimerEvent: {}
+[10.310855] (-) TimerEvent: {}
+[10.411537] (-) TimerEvent: {}
+[10.512762] (-) TimerEvent: {}
+[10.615280] (-) TimerEvent: {}
+[10.721315] (-) TimerEvent: {}
+[10.821786] (-) TimerEvent: {}
+[10.925275] (-) TimerEvent: {}
+[11.025846] (-) TimerEvent: {}
+[11.126380] (-) TimerEvent: {}
+[11.227099] (-) TimerEvent: {}
+[11.327605] (-) TimerEvent: {}
+[11.428107] (-) TimerEvent: {}
+[11.532277] (-) TimerEvent: {}
+[11.632917] (-) TimerEvent: {}
+[11.733446] (-) TimerEvent: {}
+[11.833948] (-) TimerEvent: {}
+[11.934763] (-) TimerEvent: {}
+[12.038820] (-) TimerEvent: {}
+[12.139401] (-) TimerEvent: {}
+[12.240799] (-) TimerEvent: {}
+[12.341315] (-) TimerEvent: {}
+[12.448594] (-) TimerEvent: {}
+[12.558352] (-) TimerEvent: {}
+[12.662272] (-) TimerEvent: {}
+[12.765809] (-) TimerEvent: {}
+[12.869550] (-) TimerEvent: {}
+[12.970059] (-) TimerEvent: {}
+[13.075053] (-) TimerEvent: {}
+[13.175567] (-) TimerEvent: {}
+[13.276149] (-) TimerEvent: {}
+[13.378556] (-) TimerEvent: {}
+[13.413026] (soccer_vision) StdoutLine: {'line': b'running develop\n'}
+[13.480314] (-) TimerEvent: {}
+[13.581081] (-) TimerEvent: {}
+[13.683515] (-) TimerEvent: {}
+[13.784465] (-) TimerEvent: {}
+[13.885355] (-) TimerEvent: {}
+[13.989326] (-) TimerEvent: {}
+[14.089856] (-) TimerEvent: {}
+[14.190441] (-) TimerEvent: {}
+[14.292442] (-) TimerEvent: {}
+[14.393026] (-) TimerEvent: {}
+[14.493655] (-) TimerEvent: {}
+[14.595571] (-) TimerEvent: {}
+[14.696147] (-) TimerEvent: {}
+[14.797512] (-) TimerEvent: {}
+[14.898084] (-) TimerEvent: {}
+[15.000730] (-) TimerEvent: {}
+[15.102528] (-) TimerEvent: {}
+[15.204281] (-) TimerEvent: {}
+[15.304847] (-) TimerEvent: {}
+[15.405398] (-) TimerEvent: {}
+[15.508724] (-) TimerEvent: {}
+[15.609270] (-) TimerEvent: {}
+[15.709839] (-) TimerEvent: {}
+[15.811297] (-) TimerEvent: {}
+[15.913535] (-) TimerEvent: {}
+[16.015662] (-) TimerEvent: {}
+[16.116230] (-) TimerEvent: {}
+[16.216746] (-) TimerEvent: {}
+[16.317282] (-) TimerEvent: {}
+[16.419338] (-) TimerEvent: {}
+[16.521298] (-) TimerEvent: {}
+[16.621911] (-) TimerEvent: {}
+[16.723573] (-) TimerEvent: {}
+[16.824337] (-) TimerEvent: {}
+[16.853457] (soccer_vision) StdoutLine: {'line': b'Removing /home/sharmin/Desktop/iot/soccer_bot/install/soccer_vision/lib/python3.12/site-packages/soccer-vision.egg-link (link to .)\n'}
+[16.924488] (-) TimerEvent: {}
+[17.010998] (soccer_vision) CommandEnded: {'returncode': 0}
+[17.017721] (soccer_vision) Command: {'cmd': ['/usr/bin/python3', '-W', 'ignore:setup.py install is deprecated', '-W', 'ignore:easy_install command is deprecated', 'setup.py', 'egg_info', '--egg-base', '../../build/soccer_vision', 'build', '--build-base', '/home/sharmin/Desktop/iot/soccer_bot/build/soccer_vision/build', 'install', '--record', '/home/sharmin/Desktop/iot/soccer_bot/build/soccer_vision/install.log', '--install-scripts', '$base/lib/soccer_vision', '--single-version-externally-managed', 'install_data', '--force'], 'cwd': '/home/sharmin/Desktop/iot/soccer_bot/src/soccer_vision', 'env': {'XDG_ACTIVATION_TOKEN': 'nemo-desktop-2159-sharmin-Satellite-L15W-B-xfce4-terminal-0_TIME296255', 'LESSOPEN': '| /usr/bin/lesspipe %s', 'LANGUAGE': 'en_US', 'USER': 'sharmin', 'ANTIGRAVITY_SOURCE_METADATA': '{"tool":{"conversationId":"2cb51940-68b9-4c09-9f07-7059f5ec9b8d", "stepIndex":587, "toolCall":{"id":"lga27f2h", "name":"run_command", "argumentsJson":"{\\"CommandLine\\":\\"python3 scripts/final_pi_fix.py \\\\u0026\\\\u0026 source /opt/ros/jazzy/setup.bash \\\\u0026\\\\u0026 colcon build --packages-select soccer_vision\\",\\"Cwd\\":\\"/home/sharmin/Desktop/iot/soccer_bot\\",\\"WaitMsBeforeAsync\\":8000,\\"toolAction\\":\\"Fixing Pi camera and socat issues, and rebuilding laptop camera hub\\",\\"toolSummary\\":\\"Run final fixes and rebuild\\"}", "thinkingSignature":"ErQLCrELARFNMg9Pok3aUF8yNN6ZxOaiLlHRHIm/ukgrijzA3swbBcrR5NRXo5VphF5OUVmq2CKbrHk6fCKiH2FyNstdgkkkOG6aCPlPMPHaC+o9/FGLx6LofHGJg9VbB7xLKQJmnlAWLHR06/yObPZ1eHEn1CjXGEVpbXcuC4rP0iczSkqCMw1Vi6LGIW1wgaa++8O9dAwR7KBd/ceFPGi9W+iw2MnjZIMcVVD1Qvpp4Bbdnb9x30R7tac+pxWn3p29KuGReFdJFtF+RX3eWetDoKeKTzehkZmbl34PvkCFhvZv77xSDQvhGSVeYN39OEEIAvPmnIxTyduoorT0GjEDeR1RMWtKgMczCu6vFJnwqeRQChKVpntOpu9DapVz1dRnWw3wKK9FERi0JctmQSmPuHiIpaQqBdFEqFNruea5jpzn0jzR03VxDjKyYow9QQMbiCVB7idDzFvWRYiIvGahPxOI6xdUxq9q3jLYlye7MVaJvg36U9GQ737++CMRt40ahjZLbsAwYiJmnTKZWuFcu4hQSoGlAG9m4YUElAbVahHe/Wu2Tt60Z9BksCdklmhqcjUSfn7WKsz5vSE2HIjsejkzRELGEwtVjyR9+tE85kVHoJtyQnVT7P+/JzS8VXi/PUTnAvztfr1rw6d1qnltPoiNW2b1ycJdNtogWHpotmbUxaDIytPGNtLyHKJEvBK7Vb2E8C8fuz7VjXXkYaI3eS/WXKoUTSzVQc9xxBZiIWsNV6t2FTh0HY/ydtJnbBmh4lKz9WeqNuwiTD77VH5lWQ3ei9j29WpBSRFSrr3JYSQbTHPqtXRjPceOecRRmIDW4If1QfmOfPeOxFNzeuZG8EByRXZnEn02JpQvc9EBkcKJr+J3ZB9mAs0N/AGhhyPCBmuvMHMKZv2r4/EFivOJnG7ohPSQpNrqryljDeXfb3Tz5zNKUonj0sUrCL64SnLOuOWW4FX9BxqQPHWzelu7gsopHYST9huICtO9o9IE0Xw6MPMstVbMDcOcgXWz+0zzuJ6vQZpbrAI5yWY2MJ8us4IW5YUOUduLlDyczrNT5+lmLC6DjQZOFghZJF72TVflqe55toMcDRLqecnmFIhjosgHzuggOAZGLrsxxT6hoXbgvX58u3luVikrjp6VCTTOUDpExFt74RjGPFboKJ7AwqczTvXU8Z/Qm0T4yVKPBU8MwJLxdvEQYlg7V6bqZuJ/rV4utl/trBZmuaLmeuGze44x2kuS34bhYpFo7+jyPQL+C3XrRMSFjPz8t7szpxT1P9ymfbjOwjKn+vpXmrKRMQMERxDO8cw60JDXqFnujeWBF5QnFHmSXzxMqcpz1P2gU+Li3RgVWgPQ2Ea/9vkT8dAle/Gb8G5nfxhYb/bSGyFPdTHNkK4msndXWKc3DVIXDuSwgU13Ejy4bUJl3jDt8JoeslxvSz0qJGOceKJbWotnN6oAFTwS4uVhc7TKH5Z4+oywwSL9IJXSUbPlqDwr0RPMxLO++2A5fiWhHgEQKsW2mp6/wvxrzLqIrPWqjHH6qarBqOCChFKL6Pj1pUYgTQEHhMZoTRN1gQUlS7xN2IKyrE2RTMI2BmvkE1Q21dqTvuLtlZhIiKEoDQTwL0GhHIfrpEGWc9kNGYjEFj4Vij7i9bEzfHxg1eMKsCvyG8Vb7OGFOJZkkuHQ/UYQBuBNq2zaaaxVwUROOLNbij/iurmjekO3qol/S9s8MH3wCjJM8qw9PAjJzu4JP1FPtp4Bcoe6G4acll/eVn04bdZJ5BPNkDDN3iwPVR8NmzPC98usKoUd21GLxFsIHB0wYuTabL02x4Q7t78E2MATfyciH0q2wIGjCYDsxP87YzmxWUEt1Cy10YoaAneLyZCGWONVzEoa+1n8BTue2sHW0rijwldLm2cUsDXTEPFTH4qKWibWQMXqveWTx1D+k81PFWmzRsMo5Tw=", "originalName":"run_command"}}}', 'XDG_SEAT': 'seat0', 'ANTIGRAVITY_SAFECLIS_DIR': '/home/sharmin/.gemini/antigravity-cli/bin/safeclis', 'PT8HOME': '/opt/pt', 'SSH_AGENT_PID': '2085', 'XDG_SESSION_TYPE': 'x11', 'COMPIZ_CONFIG_PROFILE': 'mint', 'SHLVL': '1', 'LD_LIBRARY_PATH': '/opt/ros/jazzy/opt/rviz_ogre_vendor/lib:/opt/ros/jazzy/lib/x86_64-linux-gnu:/opt/ros/jazzy/opt/gz_math_vendor/lib:/opt/ros/jazzy/opt/gz_utils_vendor/lib:/opt/ros/jazzy/opt/gz_cmake_vendor/lib:/opt/ros/jazzy/lib', 'HOME': '/home/sharmin', 'DESKTOP_SESSION': 'xfce', 'NVM_BIN': '/home/sharmin/.nvm/versions/node/v20.16.0/bin', 'NVM_INC': '/home/sharmin/.nvm/versions/node/v20.16.0/include/node', 'GIO_LAUNCHED_DESKTOP_FILE': '/home/sharmin/Desktop/xfce4-terminal.desktop', 'ROS_PYTHON_VERSION': '3', 'GTK_MODULES': 'gail:atk-bridge', 'XDG_SEAT_PATH': '/org/freedesktop/DisplayManager/Seat0', 'PAGER': 'cat', 'LC_MONETARY': 'bn_BD', 'DBUS_SESSION_BUS_ADDRESS': 'unix:path=/run/user/1000/bus', 'COLORTERM': 'truecolor', 'ANTIGRAVITY_AGENT': '1', 'GIO_LAUNCHED_DESKTOP_FILE_PID': '2760', 'NVM_DIR': '/home/sharmin/.nvm', 'ROS_DISTRO': 'jazzy', 'GTK_IM_MODULE': 'ibus', 'LOGNAME': 'sharmin', 'WINDOWID': '46137347', '_': '/usr/bin/colcon', 'ROS_VERSION': '2', 'XDG_SESSION_CLASS': 'user', 'CLUTTER_BACKEND': 'x11', 'TERM': 'dumb', 'XDG_SESSION_ID': 'c2', 'PATH': '/home/sharmin/.gemini/antigravity-cli/bin:/opt/ros/jazzy/bin:/home/sharmin/.local/bin:/home/sharmin/.local/bin:/home/sharmin/.local/bin:/home/sharmin/.nvm/versions/node/v20.16.0/bin:/home/sharmin/.local/bin:/home/sharmin/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin', 'SESSION_MANAGER': 'local/sharmin-Satellite-L15W-B:@/tmp/.ICE-unix/1889,unix/sharmin-Satellite-L15W-B:/tmp/.ICE-unix/1889', 'GDM_LANG': 'en_US', 'GTK3_MODULES': 'xapp-gtk3-module', 'XDG_SESSION_PATH': '/org/freedesktop/DisplayManager/Session0', 'XDG_MENU_PREFIX': 'xfce-', 'LC_ADDRESS': 'bn_BD', 'XDG_RUNTIME_DIR': '/run/user/1000', 'DISPLAY': ':0', 'LANG': 'en_US.UTF-8', 'XDG_CURRENT_DESKTOP': 'XFCE', 'ANTIGRAVITY_CONVERSATION_ID': '2cb51940-68b9-4c09-9f07-7059f5ec9b8d', 'LC_TELEPHONE': 'bn_BD', 'XMODIFIERS': '@im=ibus', 'XDG_SESSION_DESKTOP': 'xfce', 'XAUTHORITY': '/home/sharmin/.Xauthority', 'LS_COLORS': 'rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=00:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.zst=01;31:*.tzst=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.cab=01;31:*.wim=01;31:*.swm=01;31:*.dwm=01;31:*.esd=01;31:*.avif=01;35:*.jpg=01;35:*.jpeg=01;35:*.mjpg=01;35:*.mjpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.webp=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.oga=00;36:*.opus=00;36:*.spx=00;36:*.xspf=00;36:*~=00;90:*#=00;90:*.bak=00;90:*.crdownload=00;90:*.dpkg-dist=00;90:*.dpkg-new=00;90:*.dpkg-old=00;90:*.dpkg-tmp=00;90:*.old=00;90:*.orig=00;90:*.part=00;90:*.rej=00;90:*.rpmnew=00;90:*.rpmorig=00;90:*.rpmsave=00;90:*.swp=00;90:*.tmp=00;90:*.ucf-dist=00;90:*.ucf-new=00;90:*.ucf-old=00;90:', 'SSH_AUTH_SOCK': '/tmp/ssh-JtHPXxvijW4c/agent.2082', 'XDG_GREETER_DATA_DIR': '/var/lib/lightdm-data/sharmin', 'AMENT_PREFIX_PATH': '/opt/ros/jazzy', 'ANTIGRAVITY_PROJECT_ID': 'default-cli-project', 'SHELL': '/bin/bash', 'ANTIGRAVITY_LS_ADDRESS': 'localhost:43241', 'LC_NAME': 'bn_BD', 'QT_ACCESSIBILITY': '1', 'GDMSESSION': 'xfce', 'LESSCLOSE': '/usr/bin/lesspipe %s %s', 'LC_MEASUREMENT': 'bn_BD', 'LC_IDENTIFICATION': 'bn_BD', 'ROS_AUTOMATIC_DISCOVERY_RANGE': 'SUBNET', 'GIT_PAGER': 'cat', 'QT_IM_MODULE': 'ibus', 'XDG_VTNR': '7', 'ANTIGRAVITY_TRAJECTORY_ID': '2245608c-1060-45ea-82a4-ee5f1652ccac', 'PWD': '/home/sharmin/Desktop/iot/soccer_bot/build/soccer_vision', 'LC_ALL': 'en_US.UTF-8', 'XDG_CONFIG_DIRS': '/etc/xdg/xdg-xfce:/etc/xdg', 'CLUTTER_IM_MODULE': 'ibus', 'NVM_CD_FLAGS': '', 'XDG_DATA_DIRS': '/usr/share/xfce4:/home/sharmin/.local/share/flatpak/exports/share:/var/lib/flatpak/exports/share:/usr/local/share:/usr/share', 'PYTHONPATH': '/home/sharmin/Desktop/iot/soccer_bot/build/soccer_vision/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/sharmin/Desktop/iot/soccer_bot/install/soccer_vision/lib/python3.12/site-packages:/opt/ros/jazzy/lib/python3.12/site-packages', 'LC_NUMERIC': 'bn_BD', 'LC_PAPER': 'bn_BD', 'COLCON': '1', 'VTE_VERSION': '7600', 'ANTIGRAVITY_CSRF_TOKEN': '', 'CMAKE_PREFIX_PATH': '/opt/ros/jazzy/opt/gz_math_vendor:/opt/ros/jazzy/opt/gz_utils_vendor:/opt/ros/jazzy/opt/gz_cmake_vendor'}, 'shell': False}
+[17.025324] (-) TimerEvent: {}
+[17.125894] (-) TimerEvent: {}
+[17.227485] (-) TimerEvent: {}
+[17.330282] (-) TimerEvent: {}
+[17.430872] (-) TimerEvent: {}
+[17.531504] (-) TimerEvent: {}
+[17.632111] (-) TimerEvent: {}
+[17.734644] (-) TimerEvent: {}
+[17.835268] (-) TimerEvent: {}
+[17.937286] (-) TimerEvent: {}
+[18.037856] (-) TimerEvent: {}
+[18.138509] (-) TimerEvent: {}
+[18.241285] (-) TimerEvent: {}
+[18.341840] (-) TimerEvent: {}
+[18.442436] (-) TimerEvent: {}
+[18.544533] (-) TimerEvent: {}
+[18.646264] (-) TimerEvent: {}
+[18.746807] (-) TimerEvent: {}
+[18.848513] (-) TimerEvent: {}
+[18.949042] (-) TimerEvent: {}
+[19.050659] (-) TimerEvent: {}
+[19.151276] (-) TimerEvent: {}
+[19.252482] (-) TimerEvent: {}
+[19.353102] (-) TimerEvent: {}
+[19.453684] (-) TimerEvent: {}
+[19.554469] (-) TimerEvent: {}
+[19.654960] (-) TimerEvent: {}
+[19.755577] (-) TimerEvent: {}
+[19.857509] (-) TimerEvent: {}
+[19.957979] (-) TimerEvent: {}
+[20.062504] (-) TimerEvent: {}
+[20.153419] (soccer_vision) StdoutLine: {'line': b'running egg_info\n'}
+[20.164265] (-) TimerEvent: {}
+[20.264774] (-) TimerEvent: {}
+[20.368212] (-) TimerEvent: {}
+[20.468858] (-) TimerEvent: {}
+[20.569461] (-) TimerEvent: {}
+[20.677048] (-) TimerEvent: {}
+[20.689495] (soccer_vision) StdoutLine: {'line': b'writing ../../build/soccer_vision/soccer_vision.egg-info/PKG-INFO\n'}
+[20.697265] (soccer_vision) StdoutLine: {'line': b'writing dependency_links to ../../build/soccer_vision/soccer_vision.egg-info/dependency_links.txt\n'}
+[20.703538] (soccer_vision) StdoutLine: {'line': b'writing entry points to ../../build/soccer_vision/soccer_vision.egg-info/entry_points.txt\n'}
+[20.712529] (soccer_vision) StdoutLine: {'line': b'writing requirements to ../../build/soccer_vision/soccer_vision.egg-info/requires.txt\n'}
+[20.716200] (soccer_vision) StdoutLine: {'line': b'writing top-level names to ../../build/soccer_vision/soccer_vision.egg-info/top_level.txt\n'}
+[20.778311] (-) TimerEvent: {}
+[20.880781] (-) TimerEvent: {}
+[20.994429] (-) TimerEvent: {}
+[21.097015] (-) TimerEvent: {}
+[21.200833] (-) TimerEvent: {}
+[21.305645] (-) TimerEvent: {}
+[21.412198] (-) TimerEvent: {}
+[21.421528] (soccer_vision) StdoutLine: {'line': b"reading manifest file '../../build/soccer_vision/soccer_vision.egg-info/SOURCES.txt'\n"}
+[21.426310] (soccer_vision) StdoutLine: {'line': b"writing manifest file '../../build/soccer_vision/soccer_vision.egg-info/SOURCES.txt'\n"}
+[21.427630] (soccer_vision) StdoutLine: {'line': b'running build\n'}
+[21.431691] (soccer_vision) StdoutLine: {'line': b'running build_py\n'}
+[21.433365] (soccer_vision) StdoutLine: {'line': b'running install\n'}
+[21.503621] (soccer_vision) StdoutLine: {'line': b'running install_lib\n'}
+[21.512302] (-) TimerEvent: {}
+[21.614542] (-) TimerEvent: {}
+[21.715278] (-) TimerEvent: {}
+[21.774998] (soccer_vision) StdoutLine: {'line': b'creating /home/sharmin/Desktop/iot/soccer_bot/install/soccer_vision/lib/python3.12/site-packages/soccer_vision\n'}
+[21.776496] (soccer_vision) StdoutLine: {'line': b'copying /home/sharmin/Desktop/iot/soccer_bot/build/soccer_vision/build/lib/soccer_vision/ball_tracker_node.py -> /home/sharmin/Desktop/iot/soccer_bot/install/soccer_vision/lib/python3.12/site-packages/soccer_vision\n'}
+[21.780279] (soccer_vision) StdoutLine: {'line': b'copying /home/sharmin/Desktop/iot/soccer_bot/build/soccer_vision/build/lib/soccer_vision/__init__.py -> /home/sharmin/Desktop/iot/soccer_bot/install/soccer_vision/lib/python3.12/site-packages/soccer_vision\n'}
+[21.780825] (soccer_vision) StdoutLine: {'line': b'copying /home/sharmin/Desktop/iot/soccer_bot/build/soccer_vision/build/lib/soccer_vision/camera_hub_node.py -> /home/sharmin/Desktop/iot/soccer_bot/install/soccer_vision/lib/python3.12/site-packages/soccer_vision\n'}
+[21.785303] (soccer_vision) StdoutLine: {'line': b'byte-compiling /home/sharmin/Desktop/iot/soccer_bot/install/soccer_vision/lib/python3.12/site-packages/soccer_vision/ball_tracker_node.py to ball_tracker_node.cpython-312.pyc\n'}
+[21.789087] (soccer_vision) StdoutLine: {'line': b'byte-compiling /home/sharmin/Desktop/iot/soccer_bot/install/soccer_vision/lib/python3.12/site-packages/soccer_vision/__init__.py to __init__.cpython-312.pyc\n'}
+[21.791404] (soccer_vision) StdoutLine: {'line': b'byte-compiling /home/sharmin/Desktop/iot/soccer_bot/install/soccer_vision/lib/python3.12/site-packages/soccer_vision/camera_hub_node.py to camera_hub_node.cpython-312.pyc\n'}
+[21.797331] (soccer_vision) StdoutLine: {'line': b'running install_data\n'}
+[21.798004] (soccer_vision) StdoutLine: {'line': b'copying resource/soccer_vision -> /home/sharmin/Desktop/iot/soccer_bot/install/soccer_vision/share/ament_index/resource_index/packages\n'}
+[21.798470] (soccer_vision) StdoutLine: {'line': b'copying package.xml -> /home/sharmin/Desktop/iot/soccer_bot/install/soccer_vision/share/soccer_vision\n'}
+[21.801297] (soccer_vision) StdoutLine: {'line': b'running install_egg_info\n'}
+[21.817283] (-) TimerEvent: {}
+[21.918020] (-) TimerEvent: {}
+[22.018594] (-) TimerEvent: {}
+[22.053950] (soccer_vision) StdoutLine: {'line': b'Copying ../../build/soccer_vision/soccer_vision.egg-info to /home/sharmin/Desktop/iot/soccer_bot/install/soccer_vision/lib/python3.12/site-packages/soccer_vision-0.0.0-py3.12.egg-info\n'}
+[22.060263] (soccer_vision) StdoutLine: {'line': b'running install_scripts\n'}
+[22.120065] (-) TimerEvent: {}
+[22.220801] (-) TimerEvent: {}
+[22.322479] (-) TimerEvent: {}
+[22.424554] (-) TimerEvent: {}
+[22.527789] (-) TimerEvent: {}
+[22.630578] (-) TimerEvent: {}
+[22.731107] (-) TimerEvent: {}
+[22.831647] (-) TimerEvent: {}
+[22.935293] (-) TimerEvent: {}
+[23.035867] (-) TimerEvent: {}
+[23.139289] (-) TimerEvent: {}
+[23.239874] (-) TimerEvent: {}
+[23.340463] (-) TimerEvent: {}
+[23.441111] (-) TimerEvent: {}
+[23.542798] (-) TimerEvent: {}
+[23.645316] (-) TimerEvent: {}
+[23.745917] (-) TimerEvent: {}
+[23.761326] (soccer_vision) StdoutLine: {'line': b'Installing ball_tracker script to /home/sharmin/Desktop/iot/soccer_bot/install/soccer_vision/lib/soccer_vision\n'}
+[23.764756] (soccer_vision) StdoutLine: {'line': b'Installing camera_hub script to /home/sharmin/Desktop/iot/soccer_bot/install/soccer_vision/lib/soccer_vision\n'}
+[23.773820] (soccer_vision) StdoutLine: {'line': b"writing list of installed files to '/home/sharmin/Desktop/iot/soccer_bot/build/soccer_vision/install.log'\n"}
+[23.848371] (-) TimerEvent: {}
+[23.949292] (-) TimerEvent: {}
+[24.018644] (soccer_vision) CommandEnded: {'returncode': 0}
+[24.049803] (-) TimerEvent: {}
+[24.113423] (soccer_vision) JobEnded: {'identifier': 'soccer_vision', 'rc': 0}
+[24.118324] (-) EventReactorShutdown: {}

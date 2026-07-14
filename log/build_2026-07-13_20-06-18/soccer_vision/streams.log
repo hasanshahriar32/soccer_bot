@@ -1,0 +1,20 @@
+[16.419s] Invoking command in '/home/sharmin/Desktop/iot/soccer_bot/build/soccer_vision': PYTHONPATH=/home/sharmin/Desktop/iot/soccer_bot/build/soccer_vision/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/sharmin/Desktop/iot/soccer_bot/install/soccer_vision/lib/python3.12/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py develop --editable --build-directory /home/sharmin/Desktop/iot/soccer_bot/build/soccer_vision/build --no-deps symlink_data --force
+[21.784s] running develop
+[26.892s] running egg_info
+[27.411s] writing soccer_vision.egg-info/PKG-INFO
+[27.416s] writing dependency_links to soccer_vision.egg-info/dependency_links.txt
+[27.418s] writing entry points to soccer_vision.egg-info/entry_points.txt
+[27.422s] writing requirements to soccer_vision.egg-info/requires.txt
+[27.422s] writing top-level names to soccer_vision.egg-info/top_level.txt
+[28.510s] reading manifest file 'soccer_vision.egg-info/SOURCES.txt'
+[28.517s] writing manifest file 'soccer_vision.egg-info/SOURCES.txt'
+[28.770s] running build_ext
+[28.772s] Creating /home/sharmin/Desktop/iot/soccer_bot/install/soccer_vision/lib/python3.12/site-packages/soccer-vision.egg-link (link to .)
+[28.776s] Installing ball_tracker script to /home/sharmin/Desktop/iot/soccer_bot/install/soccer_vision/bin
+[28.777s] Installing camera_hub script to /home/sharmin/Desktop/iot/soccer_bot/install/soccer_vision/bin
+[28.784s] 
+[28.785s] Installed /home/sharmin/Desktop/iot/soccer_bot/build/soccer_vision
+[28.785s] running symlink_data
+[28.789s] symbolically linking /home/sharmin/Desktop/iot/soccer_bot/build/soccer_vision/resource/soccer_vision -> /home/sharmin/Desktop/iot/soccer_bot/install/soccer_vision/share/ament_index/resource_index/packages
+[28.790s] symbolically linking /home/sharmin/Desktop/iot/soccer_bot/build/soccer_vision/package.xml -> /home/sharmin/Desktop/iot/soccer_bot/install/soccer_vision/share/soccer_vision
+[29.032s] Invoked command in '/home/sharmin/Desktop/iot/soccer_bot/build/soccer_vision' returned '0': PYTHONPATH=/home/sharmin/Desktop/iot/soccer_bot/build/soccer_vision/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/sharmin/Desktop/iot/soccer_bot/install/soccer_vision/lib/python3.12/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py develop --editable --build-directory /home/sharmin/Desktop/iot/soccer_bot/build/soccer_vision/build --no-deps symlink_data --force

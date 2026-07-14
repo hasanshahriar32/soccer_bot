@@ -1,0 +1,37 @@
+[18.666s] Invoking command in '/home/sharmin/Desktop/iot/soccer_bot/src/soccer_vision': PYTHONPATH=/home/sharmin/Desktop/iot/soccer_bot/build/soccer_vision/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/sharmin/Desktop/iot/soccer_bot/install/soccer_vision/lib/python3.12/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../build/soccer_vision build --build-base /home/sharmin/Desktop/iot/soccer_bot/build/soccer_vision/build install --record /home/sharmin/Desktop/iot/soccer_bot/build/soccer_vision/install.log --single-version-externally-managed install_data
+[23.564s] running egg_info
+[23.568s] creating ../../build/soccer_vision/soccer_vision.egg-info
+[24.016s] writing ../../build/soccer_vision/soccer_vision.egg-info/PKG-INFO
+[24.018s] writing dependency_links to ../../build/soccer_vision/soccer_vision.egg-info/dependency_links.txt
+[24.024s] writing entry points to ../../build/soccer_vision/soccer_vision.egg-info/entry_points.txt
+[24.025s] writing requirements to ../../build/soccer_vision/soccer_vision.egg-info/requires.txt
+[24.025s] writing top-level names to ../../build/soccer_vision/soccer_vision.egg-info/top_level.txt
+[24.028s] writing manifest file '../../build/soccer_vision/soccer_vision.egg-info/SOURCES.txt'
+[24.877s] reading manifest file '../../build/soccer_vision/soccer_vision.egg-info/SOURCES.txt'
+[24.881s] writing manifest file '../../build/soccer_vision/soccer_vision.egg-info/SOURCES.txt'
+[24.886s] running build
+[24.893s] running build_py
+[24.894s] creating /home/sharmin/Desktop/iot/soccer_bot/build/soccer_vision/build
+[24.899s] creating /home/sharmin/Desktop/iot/soccer_bot/build/soccer_vision/build/lib
+[24.899s] creating /home/sharmin/Desktop/iot/soccer_bot/build/soccer_vision/build/lib/soccer_vision
+[24.900s] copying soccer_vision/ball_tracker_node.py -> /home/sharmin/Desktop/iot/soccer_bot/build/soccer_vision/build/lib/soccer_vision
+[24.907s] copying soccer_vision/__init__.py -> /home/sharmin/Desktop/iot/soccer_bot/build/soccer_vision/build/lib/soccer_vision
+[24.908s] running install
+[24.994s] running install_lib
+[25.563s] creating /home/sharmin/Desktop/iot/soccer_bot/install/soccer_vision/lib/python3.12/site-packages/soccer_vision
+[25.563s] copying /home/sharmin/Desktop/iot/soccer_bot/build/soccer_vision/build/lib/soccer_vision/ball_tracker_node.py -> /home/sharmin/Desktop/iot/soccer_bot/install/soccer_vision/lib/python3.12/site-packages/soccer_vision
+[25.570s] copying /home/sharmin/Desktop/iot/soccer_bot/build/soccer_vision/build/lib/soccer_vision/__init__.py -> /home/sharmin/Desktop/iot/soccer_bot/install/soccer_vision/lib/python3.12/site-packages/soccer_vision
+[25.572s] byte-compiling /home/sharmin/Desktop/iot/soccer_bot/install/soccer_vision/lib/python3.12/site-packages/soccer_vision/ball_tracker_node.py to ball_tracker_node.cpython-312.pyc
+[25.576s] byte-compiling /home/sharmin/Desktop/iot/soccer_bot/install/soccer_vision/lib/python3.12/site-packages/soccer_vision/__init__.py to __init__.cpython-312.pyc
+[25.580s] running install_data
+[25.584s] creating /home/sharmin/Desktop/iot/soccer_bot/install/soccer_vision/share/ament_index
+[25.585s] creating /home/sharmin/Desktop/iot/soccer_bot/install/soccer_vision/share/ament_index/resource_index
+[25.585s] creating /home/sharmin/Desktop/iot/soccer_bot/install/soccer_vision/share/ament_index/resource_index/packages
+[25.588s] copying resource/soccer_vision -> /home/sharmin/Desktop/iot/soccer_bot/install/soccer_vision/share/ament_index/resource_index/packages
+[25.591s] copying package.xml -> /home/sharmin/Desktop/iot/soccer_bot/install/soccer_vision/share/soccer_vision
+[25.591s] running install_egg_info
+[26.073s] Copying ../../build/soccer_vision/soccer_vision.egg-info to /home/sharmin/Desktop/iot/soccer_bot/install/soccer_vision/lib/python3.12/site-packages/soccer_vision-0.0.0-py3.12.egg-info
+[26.089s] running install_scripts
+[28.425s] Installing ball_tracker script to /home/sharmin/Desktop/iot/soccer_bot/install/soccer_vision/bin
+[28.430s] writing list of installed files to '/home/sharmin/Desktop/iot/soccer_bot/build/soccer_vision/install.log'
+[28.740s] Invoked command in '/home/sharmin/Desktop/iot/soccer_bot/src/soccer_vision' returned '0': PYTHONPATH=/home/sharmin/Desktop/iot/soccer_bot/build/soccer_vision/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/sharmin/Desktop/iot/soccer_bot/install/soccer_vision/lib/python3.12/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../build/soccer_vision build --build-base /home/sharmin/Desktop/iot/soccer_bot/build/soccer_vision/build install --record /home/sharmin/Desktop/iot/soccer_bot/build/soccer_vision/install.log --single-version-externally-managed install_data

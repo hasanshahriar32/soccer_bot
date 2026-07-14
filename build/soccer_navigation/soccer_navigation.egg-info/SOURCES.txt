@@ -1,0 +1,12 @@
+package.xml
+setup.py
+../../build/soccer_navigation/soccer_navigation.egg-info/PKG-INFO
+../../build/soccer_navigation/soccer_navigation.egg-info/SOURCES.txt
+../../build/soccer_navigation/soccer_navigation.egg-info/dependency_links.txt
+../../build/soccer_navigation/soccer_navigation.egg-info/entry_points.txt
+../../build/soccer_navigation/soccer_navigation.egg-info/requires.txt
+../../build/soccer_navigation/soccer_navigation.egg-info/top_level.txt
+../../build/soccer_navigation/soccer_navigation.egg-info/zip-safe
+resource/soccer_navigation
+soccer_navigation/__init__.py
+soccer_navigation/obstacle_avoidance_node.py

@@ -1,0 +1,2 @@
+[console_scripts]
+obstacle_avoidance = soccer_navigation.obstacle_avoidance_node:main

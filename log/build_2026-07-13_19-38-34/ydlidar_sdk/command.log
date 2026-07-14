@@ -1,0 +1,3 @@
+Invoking command in '/home/sharmin/Desktop/iot/soccer_bot/build/ydlidar_sdk': /usr/bin/cmake /home/sharmin/Desktop/iot/soccer_bot/src/YDLidar-SDK -DCMAKE_INSTALL_PREFIX=/home/sharmin/Desktop/iot/soccer_bot/install/ydlidar_sdk
+Invoked command in '/home/sharmin/Desktop/iot/soccer_bot/build/ydlidar_sdk' returned '0': /usr/bin/cmake /home/sharmin/Desktop/iot/soccer_bot/src/YDLidar-SDK -DCMAKE_INSTALL_PREFIX=/home/sharmin/Desktop/iot/soccer_bot/install/ydlidar_sdk
+Invoking command in '/home/sharmin/Desktop/iot/soccer_bot/build/ydlidar_sdk': /usr/bin/cmake --build /home/sharmin/Desktop/iot/soccer_bot/build/ydlidar_sdk -- -j2 -l2
