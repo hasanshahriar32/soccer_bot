@@ -28,8 +28,9 @@ const int RIGHT_IN3 = 11;
 const int RIGHT_IN4 = 12;
 const int RIGHT_ENB = 5;   // PWM pin
 
-// --- Default Speed (0-255) ---
-const int SPEED = 150;
+// --- Speed Settings (0-255, tune these to match your encoder motors) ---
+const int SPEED_FORWARD  = 80;   // forward/backward speed
+const int SPEED_TURN     = 70;   // turning speed (usually a bit less)
 
 // -------------------------------------------------------
 // Motor Control Functions
@@ -63,11 +64,11 @@ void setRight(int dir, int spd) {
   analogWrite(RIGHT_ENB, spd);
 }
 
-void moveForward()  { setLeft(1, SPEED);  setRight(1, SPEED);  }
-void moveBackward() { setLeft(-1, SPEED); setRight(-1, SPEED); }
-void turnLeft()     { setLeft(-1, SPEED); setRight(1, SPEED);  }
-void turnRight()    { setLeft(1, SPEED);  setRight(-1, SPEED); }
-void stopMotors()   { setLeft(0, 0);      setRight(0, 0);      }
+void moveForward()  { setLeft(1, SPEED_FORWARD);  setRight(1, SPEED_FORWARD);  }
+void moveBackward() { setLeft(-1, SPEED_FORWARD); setRight(-1, SPEED_FORWARD); }
+void turnLeft()     { setLeft(-1, SPEED_TURN);    setRight(1, SPEED_TURN);     }
+void turnRight()    { setLeft(1, SPEED_TURN);     setRight(-1, SPEED_TURN);    }
+void stopMotors()   { setLeft(0, 0);              setRight(0, 0);              }
 
 // -------------------------------------------------------
 void setup() {
