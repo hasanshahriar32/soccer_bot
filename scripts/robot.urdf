@@ -40,8 +40,8 @@
   <joint name="chassis_to_left_wheel" type="fixed">
     <parent link="chassis"/>
     <child link="left_wheel"/>
-    <!-- 5cm from back (-0.115), 10.5cm from center to the left, 3.3cm from ground -->
-    <origin xyz="-0.115 0.105 0.033" rpy="-1.5708 0 0"/>
+    <!-- 5cm from back → flip: now 5cm from front (+0.115 from center) -->
+    <origin xyz="0.115 0.105 0.033" rpy="-1.5708 0 0"/>
   </joint>
 
   <!-- Right Wheel -->
@@ -59,7 +59,7 @@
   <joint name="chassis_to_right_wheel" type="fixed">
     <parent link="chassis"/>
     <child link="right_wheel"/>
-    <origin xyz="-0.115 -0.105 0.033" rpy="-1.5708 0 0"/>
+    <origin xyz="0.115 -0.105 0.033" rpy="-1.5708 0 0"/>
   </joint>
 
   <!-- Lidar Sensor (YDLidar X4) -->

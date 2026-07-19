@@ -28,9 +28,16 @@ const int RIGHT_IN3 = 11;
 const int RIGHT_IN4 = 12;
 const int RIGHT_ENB = 5;   // PWM pin
 
-// --- Speed Settings (0-255, tune these to match your encoder motors) ---
-const int SPEED_FORWARD  = 80;   // forward/backward speed
-const int SPEED_TURN     = 70;   // turning speed (usually a bit less)
+// --- Speed Settings (0-255) ---
+const int SPEED_FORWARD  = 100;
+const int SPEED_BACKWARD = 255;   // MAX — diagnostic test
+const int SPEED_TURN     = 100;
+
+// --- Per-motor trim (increase right to match left, keep left at 0) ---
+// If robot drifts RIGHT → increase RIGHT_TRIM
+// If robot drifts LEFT  → increase LEFT_TRIM
+const int LEFT_TRIM  = 0;
+const int RIGHT_TRIM = 40;  // right motor needs ~40 more PWM to match left
 
 // -------------------------------------------------------
 // Motor Control Functions
@@ -64,11 +71,11 @@ void setRight(int dir, int spd) {
   analogWrite(RIGHT_ENB, spd);
 }
 
-void moveForward()  { setLeft(1, SPEED_FORWARD);  setRight(1, SPEED_FORWARD);  }
-void moveBackward() { setLeft(-1, SPEED_FORWARD); setRight(-1, SPEED_FORWARD); }
-void turnLeft()     { setLeft(-1, SPEED_TURN);    setRight(1, SPEED_TURN);     }
-void turnRight()    { setLeft(1, SPEED_TURN);     setRight(-1, SPEED_TURN);    }
-void stopMotors()   { setLeft(0, 0);              setRight(0, 0);              }
+void moveForward()  { setLeft(1, SPEED_FORWARD + LEFT_TRIM);   setRight(1, SPEED_FORWARD + RIGHT_TRIM);   }
+void moveBackward() { setLeft(-1, SPEED_BACKWARD + LEFT_TRIM); setRight(-1, SPEED_BACKWARD + RIGHT_TRIM); }
+void turnLeft()     { setLeft(-1, SPEED_TURN + LEFT_TRIM);     setRight(1, SPEED_TURN + RIGHT_TRIM);      }
+void turnRight()    { setLeft(1, SPEED_TURN + LEFT_TRIM);      setRight(-1, SPEED_TURN + RIGHT_TRIM);     }
+void stopMotors()   { setLeft(0, 0);                           setRight(0, 0);                            }
 
 // -------------------------------------------------------
 void setup() {
