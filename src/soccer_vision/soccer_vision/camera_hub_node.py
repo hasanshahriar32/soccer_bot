@@ -59,6 +59,8 @@ class CameraHubNode(Node):
                         frame = cv2.imdecode(np.frombuffer(jpg, dtype=np.uint8), cv2.IMREAD_COLOR)
                         if frame is not None:
                             msg = self.bridge.cv2_to_imgmsg(frame, "bgr8")
+                            msg.header.stamp = self.get_clock().now().to_msg()
+                            msg.header.frame_id = "camera_link"
                             self.publisher_.publish(msg)
                             
             except Exception as e:

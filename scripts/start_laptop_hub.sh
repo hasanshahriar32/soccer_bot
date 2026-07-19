@@ -13,11 +13,14 @@ pkill -f camera_hub 2>/dev/null
 
 
 echo "Starting native Pi Camera TCP stream..."
-sshpass -p "grammarpro" ssh -o StrictHostKeyChecking=no hasan@192.168.0.135 'pkill -f start_camera.sh; pkill -f rpicam-vid || true; nohup ~/start_camera.sh </dev/null >/dev/null 2>&1 &'
+sshpass -p "grammarpro" ssh -o StrictHostKeyChecking=no hasan@192.168.0.135 'pkill -f start_camera.sh || true; pkill -f rpicam-vid || true; nohup ~/start_camera.sh </dev/null >/dev/null 2>&1 &'
 sleep 2
 
 echo "Launching Camera Receiver Node..."
 ros2 run soccer_vision camera_hub &
+
+echo "Launching 3D URDF Robot Model (Robot State Publisher)..."
+ros2 run robot_state_publisher robot_state_publisher /home/sharmin/Desktop/iot/soccer_bot/scripts/robot.urdf &
 
 echo ""
 echo "Hub is fully running! To visualize the data, open a NEW terminal and run:"
