@@ -1,38 +1,36 @@
 # Motor Driver Wiring Notes (Arduino Uno + L298N)
 
-## Pin Mapping (from user's existing sketch)
+## Verified Hardware Pin Mapping
 
 | Arduino Pin | L298N Pin | Function |
 |-------------|-----------|----------|
-| 8           | IN1       | Left Motor Direction A |
-| 9           | IN2       | Left Motor Direction B |
-| 10          | ENA       | Left Motor Speed (PWM) |
-| 11          | IN3       | Right Motor Direction A |
-| 12          | IN4       | Right Motor Direction B |
-| 5           | ENB       | Right Motor Speed (PWM) |
+| Pin 5       | ENA       | Left Motor Speed (PWM) |
+| Pin 9       | IN1       | Left Motor Direction A |
+| Pin 10      | IN2       | Left Motor Direction B |
+| Pin 6       | ENB       | Right Motor Speed (PWM) |
+| Pin 11      | IN3       | Right Motor Direction A |
+| Pin 12      | IN4       | Right Motor Direction B |
 
-## Current Behavior
-- On power-up, both motors immediately spin **forward** at PWM speed `80` (out of 255, ~31%).
-- No loop logic — it's a one-shot `setup()` only.
+## Motor Logic (Verified Physical Polarity)
 
-## Planned Upgrade: ROS 2 Serial Control
-The goal is to replace the hardcoded setup with a serial listener so ROS 2 on the Raspberry Pi can send commands to the Arduino via USB.
+* **Left Motor**:
+  * Forward: `IN1 = HIGH`, `IN2 = LOW`
+  * Backward: `IN1 = LOW`, `IN2 = HIGH`
 
-### Communication Protocol (Serial, 9600 baud)
-The Arduino will listen for single-byte commands:
-| Byte | Command |
-|------|---------|
-| `F`  | Forward |
-| `B`  | Backward |
-| `L`  | Turn Left |
-| `R`  | Turn Right |
-| `S`  | Stop |
+* **Right Motor** (Physically reversed on L298N terminals):
+  * Forward: `IN3 = LOW`, `IN4 = HIGH`
+  * Backward: `IN3 = HIGH`, `IN4 = LOW`
 
-### Motor Logic
-| Direction | IN1 | IN2 | IN3 | IN4 |
-|-----------|-----|-----|-----|-----|
-| Forward   | H   | L   | H   | L   |
-| Backward  | L   | H   | L   | H   |
-| Left      | L   | H   | H   | L   |
-| Right     | H   | L   | L   | H   |
-| Stop      | L   | L   | L   | L   |
+## Action Table
+
+| Movement | Left Motor (IN1, IN2) | Right Motor (IN3, IN4) | Default PWM |
+|----------|------------------------|-------------------------|-------------|
+| **Forward** (`F`) | HIGH, LOW | LOW, HIGH | 180 |
+| **Backward** (`B`) | LOW, HIGH | HIGH, LOW | 180 |
+| **Left Turn** (`L`) | LOW, HIGH (Rev) | LOW, HIGH (Fwd) | 180 |
+| **Right Turn** (`R`) | HIGH, LOW (Fwd) | HIGH, LOW (Rev) | 180 |
+| **Stop** (`S`) | LOW, LOW | LOW, LOW | 0 |
+
+## Serial Control Protocol
+* Baud rate: `9600`
+* Single-character commands: `'F'`, `'B'`, `'L'`, `'R'`, `'S'`
