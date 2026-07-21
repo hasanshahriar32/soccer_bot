@@ -33,7 +33,7 @@ ros2 topic pub --once /cmd_vel geometry_msgs/msg/Twist "{linear: {x: 0.0}, angul
 sleep 1
 
 echo "Sending Right Turn command (angular.z = -0.5)..."
-ros2 topic pub --once /cmd_vel geometry_msgs/msg/Twist "{linear: {x: 0.0}, angular: {-0.5}}"
+ros2 topic pub --once /cmd_vel geometry_msgs/msg/Twist "{linear: {x: 0.0}, angular: {z: -0.5}}"
 sleep 1.5
 
 echo "Sending final Stop command..."
