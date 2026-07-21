@@ -23,8 +23,9 @@ const int ENB = 6;   // Right Motor PWM Speed
 const int IN3 = 11;  // Right Motor Dir A
 const int IN4 = 12;  // Right Motor Dir B
 
-// --- Default Speed (0 - 255) ---
-int motorSpeed = 195;
+// --- Ultra Smooth & Slow Speed Settings (0 - 255) ---
+int forwardSpeed = 115;  // Gentle forward drive speed
+int turnSpeed    = 85;   // Super smooth & slow turning speed
 
 void setup()
 {
@@ -85,8 +86,8 @@ void forward()
   digitalWrite(IN3, LOW);
   digitalWrite(IN4, HIGH);
 
-  analogWrite(ENA, motorSpeed);
-  analogWrite(ENB, motorSpeed);
+  analogWrite(ENA, forwardSpeed);
+  analogWrite(ENB, forwardSpeed);
 }
 
 //========================
@@ -101,8 +102,8 @@ void backward()
   digitalWrite(IN3, HIGH);
   digitalWrite(IN4, LOW);
 
-  analogWrite(ENA, motorSpeed);
-  analogWrite(ENB, motorSpeed);
+  analogWrite(ENA, forwardSpeed);
+  analogWrite(ENB, forwardSpeed);
 }
 
 //========================
@@ -116,8 +117,8 @@ void left()
   digitalWrite(IN3, LOW);
   digitalWrite(IN4, HIGH);
 
-  analogWrite(ENA, motorSpeed);
-  analogWrite(ENB, motorSpeed);
+  analogWrite(ENA, turnSpeed);
+  analogWrite(ENB, turnSpeed);
 }
 
 //========================
@@ -131,8 +132,8 @@ void right()
   digitalWrite(IN3, HIGH);
   digitalWrite(IN4, LOW);
 
-  analogWrite(ENA, motorSpeed);
-  analogWrite(ENB, motorSpeed);
+  analogWrite(ENA, turnSpeed);
+  analogWrite(ENB, turnSpeed);
 }
 
 //========================
