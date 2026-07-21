@@ -17,23 +17,26 @@ pkill -f motor_bridge_node 2>/dev/null
 pkill -f ball_tracker_node 2>/dev/null
 pkill -f soccer_brain_node 2>/dev/null
 
-# 2. Launch persistent Pi Camera and Motor Edge Server
-echo "Launching Raspberry Pi Camera Stream & Motor Server..."
-sshpass -p "grammarpro" ssh -o StrictHostKeyChecking=no hasan@192.168.0.135 'pkill -f rpicam-vid || true; pkill -f start_camera || true; pkill -f motor_edge_server || true; nohup ~/start_camera.sh >/dev/null 2>&1 & nohup python3 -u ~/soccer_bot/src/arduino/motor_driver/motor_edge_server.py >/tmp/motor_server.log 2>&1 & sleep 2'
+# 2. Start Laptop Camera Receiver FIRST (Opens Port 8000 socket listener)
+echo "Launching Camera Receiver Node on Laptop (Port 8000)..."
+ros2 run soccer_vision camera_hub &
 sleep 2
 
-# 3. Launch Laptop ROS 2 Communication & Robot State Nodes
-echo "Launching Camera Receiver Node (/image_raw)..."
-ros2 run soccer_vision camera_hub &
-
+# 3. Launch 3D URDF Robot Model
 echo "Launching 3D URDF Robot Model..."
 ros2 run robot_state_publisher robot_state_publisher /home/sharmin/Desktop/iot/soccer_bot/scripts/robot.urdf &
 
-echo "Launching Motor Bridge Node (/cmd_vel -> Pi)..."
-python3 /home/sharmin/Desktop/iot/soccer_bot/src/arduino/motor_driver/motor_bridge_node.py &
+# 4. Trigger Pi Camera Stream and Motor Server over SSH
+echo "Connecting to Raspberry Pi (192.168.0.135) to start Camera & Motor Server..."
+sshpass -p "grammarpro" ssh -o StrictHostKeyChecking=no hasan@192.168.0.135 'pkill -f rpicam-vid || true; pkill -f start_camera || true; pkill -f motor_edge_server || true; nohup ~/start_camera.sh >/dev/null 2>&1 & nohup python3 -u ~/soccer_bot/src/arduino/motor_driver/motor_edge_server.py >/tmp/motor_server.log 2>&1 & sleep 2'
 sleep 3
 
-# 4. Launch Vision Ball Tracker & Autonomous Core Brain
+# 5. Launch ROS 2 Motor Bridge Node
+echo "Launching Motor Bridge Node (/cmd_vel -> Pi)..."
+python3 /home/sharmin/Desktop/iot/soccer_bot/src/arduino/motor_driver/motor_bridge_node.py &
+sleep 2
+
+# 6. Launch Vision Ball Tracker & Autonomous Core Brain
 echo "Launching Universal Vision Ball Tracker..."
 python3 /home/sharmin/Desktop/iot/soccer_bot/src/soccer_vision/soccer_vision/ball_tracker_node.py &
 
