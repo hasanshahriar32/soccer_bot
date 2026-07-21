@@ -23,6 +23,8 @@ from rclpy.node import Node
 from geometry_msgs.msg import Point, Twist
 from sensor_msgs.msg import LaserScan
 
+from rclpy.qos import QoSProfile, QoSReliabilityPolicy
+
 IMAGE_WIDTH = 320
 IMAGE_CENTER_X = IMAGE_WIDTH / 2.0  # 160.0
 CENTER_TOLERANCE = 40.0             # pixels deadband around center
@@ -42,11 +44,15 @@ class SoccerBrainNode(Node):
             self.ball_callback,
             10
         )
+        
+        sensor_qos = QoSProfile(depth=10)
+        sensor_qos.reliability = QoSReliabilityPolicy.BEST_EFFORT
+
         self.scan_sub = self.create_subscription(
             LaserScan,
             '/scan',
             self.scan_callback,
-            10
+            sensor_qos
         )
 
         # --- Publisher ---
