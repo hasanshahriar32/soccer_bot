@@ -115,7 +115,7 @@ class SoccerBrainNode(Node):
         if self.front_obstacle:
             self.get_logger().warn(f'Obstacle detected ahead ({self.front_obstacle_dist:.2f}m)! Avoiding...')
             cmd.linear.x = 0.0
-            cmd.angular.z = 0.5  # Spin left to clear obstacle
+            cmd.angular.z = 0.3  # Spin left to clear obstacle
             self.cmd_pub.publish(cmd)
             return
 
@@ -129,22 +129,22 @@ class SoccerBrainNode(Node):
             # Sub-state: Close enough to kick!
             if self.ball_radius >= BALL_KICK_RADIUS_MIN:
                 self.get_logger().info('KICKING BALL! Moving forward at full speed.')
-                cmd.linear.x = 0.6
+                cmd.linear.x = 0.4
                 cmd.angular.z = 0.0
 
             # Ball is off to the right
             elif offset_x > CENTER_TOLERANCE:
                 cmd.linear.x = 0.0
-                cmd.angular.z = -0.5  # Turn right
+                cmd.angular.z = -0.3  # Turn right
 
             # Ball is off to the left
             elif offset_x < -CENTER_TOLERANCE:
                 cmd.linear.x = 0.0
-                cmd.angular.z = 0.5   # Turn left
+                cmd.angular.z = 0.3   # Turn left
 
             # Ball is centered in front -> Drive straight forward!
             else:
-                cmd.linear.x = 0.5
+                cmd.linear.x = 0.3
                 cmd.angular.z = 0.0
 
         # ----------------------------------------------------
@@ -153,7 +153,7 @@ class SoccerBrainNode(Node):
         else:
             self.get_logger().info('Searching for ball... Spinning in place.')
             cmd.linear.x = 0.0
-            cmd.angular.z = 0.5  # Spin searching
+            cmd.angular.z = 0.3  # Spin searching
 
         self.cmd_pub.publish(cmd)
 

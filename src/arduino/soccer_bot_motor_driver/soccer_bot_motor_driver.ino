@@ -24,7 +24,7 @@ const int IN3 = 11;  // Right Motor Dir A
 const int IN4 = 12;  // Right Motor Dir B
 
 // --- Default Speed (0 - 255) ---
-int motorSpeed = 230;
+int motorSpeed = 135;
 
 void setup()
 {
