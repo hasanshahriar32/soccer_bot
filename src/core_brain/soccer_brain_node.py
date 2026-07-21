@@ -25,12 +25,12 @@ from sensor_msgs.msg import LaserScan
 
 from rclpy.qos import QoSProfile, QoSReliabilityPolicy
 
-IMAGE_WIDTH = 320
-IMAGE_CENTER_X = IMAGE_WIDTH / 2.0  # 160.0
-CENTER_TOLERANCE = 40.0             # pixels deadband around center
+IMAGE_WIDTH = 640
+IMAGE_CENTER_X = IMAGE_WIDTH / 2.0  # 320.0
+CENTER_TOLERANCE = 60.0             # pixels deadband around center
 
 OBSTACLE_DISTANCE_MIN = 0.25         # meters (25 cm emergency stop)
-BALL_KICK_RADIUS_MIN = 60.0          # pixel radius proxy for ball touching front
+BALL_KICK_RADIUS_MIN = 180.0         # pixel radius proxy for ball touching front bumper
 
 
 class SoccerBrainNode(Node):
