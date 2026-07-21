@@ -23,9 +23,9 @@ const int ENB = 6;   // Right Motor PWM Speed
 const int IN3 = 11;  // Right Motor Dir A
 const int IN4 = 12;  // Right Motor Dir B
 
-// --- Smooth Speed Settings (0 - 255) ---
-int forwardSpeed = 150;  // Smooth forward drive speed
-int turnSpeed    = 140;  // Controlled turning speed
+// --- Balanced Speed Settings (0 - 255) ---
+int forwardSpeed = 175;  // Forward drive speed above stall threshold
+int turnSpeed    = 165;  // Turning speed above stall threshold
 
 void setup()
 {
