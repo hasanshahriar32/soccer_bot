@@ -16,11 +16,18 @@ echo "Starting native Pi Camera TCP stream..."
 sshpass -p "grammarpro" ssh -o StrictHostKeyChecking=no hasan@192.168.0.135 'pkill -f start_camera.sh || true; pkill -f rpicam-vid || true; nohup ~/start_camera.sh </dev/null >/dev/null 2>&1 &'
 sleep 2
 
+echo "Starting Pi Motor Server..."
+sshpass -p "grammarpro" ssh -o StrictHostKeyChecking=no hasan@192.168.0.135 'pkill -f motor_edge_server || true; nohup python3 ~/soccer_bot/src/arduino/motor_driver/motor_edge_server.py > ~/motor_server.log 2>&1 &'
+sleep 1
+
 echo "Launching Camera Receiver Node..."
 ros2 run soccer_vision camera_hub &
 
 echo "Launching 3D URDF Robot Model (Robot State Publisher)..."
 ros2 run robot_state_publisher robot_state_publisher /home/sharmin/Desktop/iot/soccer_bot/scripts/robot.urdf &
+
+echo "Launching ROS 2 /cmd_vel Motor Bridge Node..."
+python3 /home/sharmin/Desktop/iot/soccer_bot/src/arduino/motor_driver/motor_bridge_node.py &
 
 echo ""
 echo "Hub is fully running! To visualize the data, open a NEW terminal and run:"
