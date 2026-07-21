@@ -18,9 +18,15 @@ SERVER_PORT = 6000
 
 
 def get_arduino_serial():
-    ports = [p.device for p in serial.tools.list_ports.comports() if 'ttyACM' in p.device or 'ttyUSB' in p.device]
-    port = ports[0] if ports else PORT_NAME
-    print(f"Connecting to Arduino on {port}...")
+    # Prioritize Arduino Uno on /dev/ttyACM0 (avoiding /dev/ttyUSB0 which is YDLidar)
+    all_ports = [p.device for p in serial.tools.list_ports.comports()]
+    if '/dev/ttyACM0' in all_ports:
+        port = '/dev/ttyACM0'
+    else:
+        acm_ports = [p for p in all_ports if 'ttyACM' in p]
+        port = acm_ports[0] if acm_ports else PORT_NAME
+
+    print(f"Connecting to Arduino UNO on {port}...")
     try:
         ser = serial.Serial(port, BAUD_RATE, timeout=1)
         time.sleep(2)  # Allow Arduino boot
@@ -52,8 +58,11 @@ def main():
                     break
                 cmd = data.decode('utf-8').strip()
                 if cmd and ser and ser.is_open:
-                    ser.write(cmd[0].encode('utf-8'))
-                    print(f"Relayed to Arduino: {cmd[0]}")
+                    for c in cmd:
+                        if c in ['F', 'B', 'L', 'R', 'S']:
+                            ser.write(c.encode('utf-8'))
+                            ser.flush()
+                            print(f"Relayed to Arduino: {c}")
             client.close()
             print("Laptop client disconnected.")
         except Exception as e:

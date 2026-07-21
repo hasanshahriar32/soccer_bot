@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 """
 ball_tracker_node.py
-Universal Multi-Color & Shape-Adaptive Soccer Ball Tracker.
+Clean & Accurate Multi-Color Soccer Ball Tracker.
 
-Tracks colored balls (Orange, Red, Yellow, Green, Blue, Pink) as well as
-traditional black-and-white soccer balls using circularity shape detection.
+Tracks colored soccer balls (Orange, Red, Yellow, Green, Blue, Pink) using
+HSV color filtering with strict contour area verification to eliminate noise.
 
 Subscribes to: /image_raw (sensor_msgs/Image)
 Publishes to:  /ball_position (geometry_msgs/Point): x, y, z=radius
@@ -31,14 +31,14 @@ class BallTrackerNode(Node):
             10
         )
         self.publisher_ = self.create_publisher(Point, '/ball_position', 10)
-        self.get_logger().info('Universal Ball Tracker active. Subscribed to /image_raw')
+        self.get_logger().info('Accurate Multi-Color Ball Tracker active. Listening to /image_raw')
 
-        # Robust HSV ranges (low saturation thresholds for indoor lighting)
+        # Tuned HSV ranges for vibrant ball colors under indoor lighting
         self.hsv_ranges = [
-            (np.array([ 0, 30, 30]), np.array([25, 255, 255])),   # Orange / Yellow
-            (np.array([160, 30, 30]), np.array([180, 255, 255])), # Red / Pink
-            (np.array([ 30, 30, 30]), np.array([85, 255, 255])),  # Green
-            (np.array([ 85, 30, 30]), np.array([140, 255, 255])), # Blue / Cyan
+            (np.array([ 5, 80, 80]), np.array([30, 255, 255])),   # Orange / Yellow
+            (np.array([160, 80, 80]), np.array([180, 255, 255])), # Red / Pink
+            (np.array([ 35, 80, 80]), np.array([85, 255, 255])),  # Green
+            (np.array([ 85, 80, 80]), np.array([135, 255, 255])), # Blue / Cyan
         ]
 
     def image_callback(self, msg):
@@ -56,17 +56,18 @@ class BallTrackerNode(Node):
             ball_msg.y = float(center[1])
             ball_msg.z = float(radius)
             self.publisher_.publish(ball_msg)
-            self.get_logger().info(f"⚽ BALL DETECTED -> Center X: {center[0]}, Y: {center[1]}, Radius: {radius:.1f}px")
+            self.get_logger().info(f"⚽ SOCCER BALL DETECTED -> Center X: {center[0]}, Y: {center[1]}, Radius: {radius:.1f}px")
 
     def process_frame(self, frame):
         hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
 
-        # 1. Color Masking (Combined HSV)
+        # Combine HSV color masks
         combined_mask = np.zeros(hsv.shape[:2], dtype=np.uint8)
         for lower, upper in self.hsv_ranges:
             m = cv2.inRange(hsv, lower, upper)
             combined_mask = cv2.bitwise_or(combined_mask, m)
 
+        # Morphological opening/closing to remove background noise
         combined_mask = cv2.erode(combined_mask, None, iterations=2)
         combined_mask = cv2.dilate(combined_mask, None, iterations=2)
 
@@ -74,30 +75,12 @@ class BallTrackerNode(Node):
 
         if len(contours) > 0:
             c = max(contours, key=cv2.contourArea)
-            if cv2.contourArea(c) > 100:
+            area = cv2.contourArea(c)
+            # Require minimum area of 300 sq pixels to ignore small background spots
+            if area > 300:
                 ((x, y), radius) = cv2.minEnclosingCircle(c)
-                if radius > 6:
+                if radius > 10:
                     return (int(x), int(y)), radius
-
-        # 2. Shape Fallback: Grayscale Circularity Detection (for black/white balls)
-        gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-        blurred = cv2.GaussianBlur(gray, (9, 9), 2)
-        circles = cv2.HoughCircles(
-            blurred,
-            cv2.HOUGH_GRADIENT,
-            dp=1.2,
-            minDist=50,
-            param1=50,
-            param2=30,
-            minRadius=8,
-            maxRadius=120
-        )
-
-        if circles is not None:
-            circles = np.round(circles[0, :]).astype("int")
-            # Pick largest circular contour
-            best_circle = max(circles, key=lambda item: item[2])
-            return (int(best_circle[0]), int(best_circle[1])), float(best_circle[2])
 
         return None, None
 
