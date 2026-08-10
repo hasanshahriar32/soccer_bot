@@ -120,6 +120,9 @@ def launch_wsl_nodes():
     # 4. Launch 3D Robot Model Publisher (/robot_description)
     run_cmd("source /opt/ros/jazzy/setup.bash && python3 /mnt/c/Users/taufi/Desktop/soccer_bot/scripts/robot_model_publisher.py &")
     
+    # 5. Launch Dynamic Odometry Publisher (map -> base_link)
+    run_cmd("source /opt/ros/jazzy/setup.bash && python3 /mnt/c/Users/taufi/Desktop/soccer_bot/scripts/robot_odometry.py &")
+    
     time.sleep(2.0)
 
 def launch_rviz_gui():
