@@ -123,6 +123,12 @@ def launch_wsl_nodes():
     # 5. Launch 2D Lidar Scan Matcher (Real-Time Room Tracking & Map -> Base_link TF)
     run_cmd("source /opt/ros/jazzy/setup.bash && python3 /mnt/c/Users/taufi/Desktop/soccer_bot/scripts/laser_scan_matcher.py &")
     
+    # 6. Launch Ball Tracker (Vision → /ball_position + /ball_marker)
+    run_cmd("source /opt/ros/jazzy/setup.bash && python3 /mnt/c/Users/taufi/Desktop/soccer_bot/src/soccer_vision/soccer_vision/ball_tracker_node.py &")
+    
+    # 7. Launch Soccer Brain Chase Controller (/cmd_vel)
+    run_cmd("source /opt/ros/jazzy/setup.bash && python3 /mnt/c/Users/taufi/Desktop/soccer_bot/src/core_brain/soccer_brain_node.py &")
+    
     time.sleep(2.0)
 
 def launch_rviz_gui():

@@ -6,12 +6,12 @@
 //   Left Motor:  ENA = 5 (PWM), IN1 = 9, IN2 = 10
 //   Right Motor: ENB = 6 (PWM), IN3 = 11, IN4 = 12
 //
-// SERIAL COMMANDS (9600 Baud):
-//   'F' -> Forward
-//   'B' -> Backward
-//   'L' -> Turn Left
-//   'R' -> Turn Right
-//   'S' -> Stop
+// SERIAL PROTOCOL (115200 Baud):
+//   PWM Mode:    "L:{-255..255} R:{-255..255}\n"
+//   Legacy Mode: 'F','B','L','R','S' single-char commands
+//
+// SAFETY:
+//   Watchdog auto-stop if no command received for 500ms
 // ============================================================
 
 // --- Pin Definitions ---
@@ -23,9 +23,16 @@ const int ENB = 6;   // Right Motor PWM Speed
 const int IN3 = 11;  // Right Motor Dir A
 const int IN4 = 12;  // Right Motor Dir B
 
-// --- Balanced Speed Settings (0 - 255) ---
-int forwardSpeed = 175;  // Forward drive speed above stall threshold
-int turnSpeed    = 165;  // Turning speed above stall threshold
+// --- Default Speeds for Legacy Single-Char Commands ---
+const int LEGACY_FORWARD_SPEED = 175;
+const int LEGACY_TURN_SPEED = 165;
+
+// --- Watchdog Timer ---
+unsigned long lastCommandTime = 0;
+const unsigned long WATCHDOG_TIMEOUT_MS = 500;
+
+// --- Serial Buffer ---
+String inputBuffer = "";
 
 void setup()
 {
@@ -37,115 +44,131 @@ void setup()
   pinMode(IN3, OUTPUT);
   pinMode(IN4, OUTPUT);
 
-  stopMotor(); // Start safe in stopped state
+  stopMotors();
 
-  Serial.begin(9600);
-  Serial.println("Soccer Bot Motor Driver Ready.");
+  Serial.begin(115200);
+  Serial.println("Soccer Bot Motor Driver Ready. (PWM + Legacy, 115200 baud)");
+  lastCommandTime = millis();
 }
 
 void loop()
 {
-  if (Serial.available() > 0) {
-    char cmd = Serial.read();
-    switch (cmd) {
-      case 'F':
-        forward();
-        Serial.println("CMD: Forward");
-        break;
-      case 'B':
-        backward();
-        Serial.println("CMD: Backward");
-        break;
-      case 'L':
-        left();
-        Serial.println("CMD: Left");
-        break;
-      case 'R':
-        right();
-        Serial.println("CMD: Right");
-        break;
-      case 'S':
-        stopMotor();
-        Serial.println("CMD: Stop");
-        break;
-      default:
-        break;
+  // --- Watchdog: Auto-stop if no command for 500ms ---
+  if (millis() - lastCommandTime > WATCHDOG_TIMEOUT_MS) {
+    stopMotors();
+  }
+
+  // --- Read Serial Input ---
+  while (Serial.available() > 0) {
+    char c = Serial.read();
+
+    if (c == '\n' || c == '\r') {
+      inputBuffer.trim();
+      if (inputBuffer.length() > 0) {
+        processCommand(inputBuffer);
+        lastCommandTime = millis();
+      }
+      inputBuffer = "";
+    } else {
+      inputBuffer += c;
+
+      // Safety: prevent buffer overflow
+      if (inputBuffer.length() > 32) {
+        inputBuffer = "";
+      }
     }
   }
 }
 
-//========================
-// Forward
-//========================
+// ============================================================
+// Process Incoming Command
+// ============================================================
+void processCommand(String cmd)
+{
+  // --- PWM Mode: "L:{pwm} R:{pwm}" ---
+  if (cmd.startsWith("L:")) {
+    int spaceIdx = cmd.indexOf(' ');
+    if (spaceIdx > 0 && cmd.indexOf("R:") > 0) {
+      int leftPWM = cmd.substring(2, spaceIdx).toInt();
+      int rightPWM = cmd.substring(cmd.indexOf("R:") + 2).toInt();
+
+      setMotorPWM(leftPWM, rightPWM);
+      return;
+    }
+  }
+
+  // --- Legacy Single-Char Mode ---
+  if (cmd.length() == 1) {
+    char c = cmd.charAt(0);
+    switch (c) {
+      case 'F': forward();    break;
+      case 'B': backward();   break;
+      case 'L': turnLeft();   break;
+      case 'R': turnRight();  break;
+      case 'S': stopMotors(); break;
+    }
+  }
+}
+
+// ============================================================
+// PWM Motor Control (-255 to +255 per wheel)
+// ============================================================
+void setMotorPWM(int leftPWM, int rightPWM)
+{
+  // Clamp values
+  leftPWM  = constrain(leftPWM, -255, 255);
+  rightPWM = constrain(rightPWM, -255, 255);
+
+  // Left Motor
+  if (leftPWM >= 0) {
+    digitalWrite(IN1, HIGH);
+    digitalWrite(IN2, LOW);
+  } else {
+    digitalWrite(IN1, LOW);
+    digitalWrite(IN2, HIGH);
+  }
+  analogWrite(ENA, abs(leftPWM));
+
+  // Right Motor (physically reversed wiring)
+  if (rightPWM >= 0) {
+    digitalWrite(IN3, LOW);
+    digitalWrite(IN4, HIGH);
+  } else {
+    digitalWrite(IN3, HIGH);
+    digitalWrite(IN4, LOW);
+  }
+  analogWrite(ENB, abs(rightPWM));
+}
+
+// ============================================================
+// Legacy Movement Functions
+// ============================================================
 void forward()
 {
-  digitalWrite(IN1, HIGH);
-  digitalWrite(IN2, LOW);
-
-  // Right motor physically reversed
-  digitalWrite(IN3, LOW);
-  digitalWrite(IN4, HIGH);
-
-  analogWrite(ENA, forwardSpeed);
-  analogWrite(ENB, forwardSpeed);
+  setMotorPWM(LEGACY_FORWARD_SPEED, LEGACY_FORWARD_SPEED);
 }
 
-//========================
-// Backward
-//========================
 void backward()
 {
-  digitalWrite(IN1, LOW);
-  digitalWrite(IN2, HIGH);
-
-  // Right motor physically reversed
-  digitalWrite(IN3, HIGH);
-  digitalWrite(IN4, LOW);
-
-  analogWrite(ENA, forwardSpeed);
-  analogWrite(ENB, forwardSpeed);
+  setMotorPWM(-LEGACY_FORWARD_SPEED, -LEGACY_FORWARD_SPEED);
 }
 
-//========================
-// Turn Left
-//========================
-void left()
+void turnLeft()
 {
-  digitalWrite(IN1, LOW);
-  digitalWrite(IN2, HIGH);
-
-  digitalWrite(IN3, LOW);
-  digitalWrite(IN4, HIGH);
-
-  analogWrite(ENA, turnSpeed);
-  analogWrite(ENB, turnSpeed);
+  setMotorPWM(-LEGACY_TURN_SPEED, LEGACY_TURN_SPEED);
 }
 
-//========================
-// Turn Right
-//========================
-void right()
+void turnRight()
 {
-  digitalWrite(IN1, HIGH);
-  digitalWrite(IN2, LOW);
-
-  digitalWrite(IN3, HIGH);
-  digitalWrite(IN4, LOW);
-
-  analogWrite(ENA, turnSpeed);
-  analogWrite(ENB, turnSpeed);
+  setMotorPWM(LEGACY_TURN_SPEED, -LEGACY_TURN_SPEED);
 }
 
-//========================
-// Stop
-//========================
-void stopMotor()
+void stopMotors()
 {
   digitalWrite(IN1, LOW);
   digitalWrite(IN2, LOW);
   digitalWrite(IN3, LOW);
   digitalWrite(IN4, LOW);
-
   analogWrite(ENA, 0);
   analogWrite(ENB, 0);
 }
