@@ -1,0 +1,19 @@
+### Here is the 10-second fix:
+
+  1. Look near your Windows clock (bottom right system tray). If you see the XLaunch icon, right-click it and select Exit.
+  2. Open XLaunch from your Start Menu again.
+  3. Click Next -> Next.
+  4. ⚠️ On the "Extra settings" screen, CHECK the box: Disable access control!
+  (Also check "Native opengl" if it's there).
+  5. Click Next -> Finish.
+  6. Windows Firewall Popup: If a Windows Firewall prompt pops up, check BOTH "Private" and "Public" networks, then click Allow
+  access.
+  ──────
+  Now go back to your Ubuntu terminal and run:
+
+    export DISPLAY=$(ip route show default | awk '{print $3}'):0
+    export LIBGL_ALWAYS_INDIRECT=0
+    source /opt/ros/jazzy/setup.bash
+    rviz2
+
+  The native rviz2 window will immediately open on your screen!
