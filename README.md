@@ -1,60 +1,82 @@
-# Autonomous ROS 2 Soccer Robot
+# ⚽ Autonomous ROS 2 Soccer Robot
 
-This project implements a fully autonomous soccer-playing robot using ROS 2 Jazzy. The system is built on a distributed architecture utilizing a Raspberry Pi 3B as an Edge Node for hardware interfaces, and a Laptop as a central processing hub for Computer Vision and navigation logic.
+An autonomous soccer-playing robotics system built on **ROS 2 Jazzy Jalisco**. 
+The system features a distributed architecture across a **Raspberry Pi 3B (Edge Node)** for sensor streaming & motor driving, and a **Laptop (Compute Hub)** running on **Windows 11 / WSL2** or **Linux** for Computer Vision, Navigation, and RViz 3D Visualization.
 
-## 🏗️ Architecture Overview
+---
 
-To maximize performance on the Raspberry Pi 3B (which is resource-constrained) and avoid complex driver permission issues, the architecture is split into two halves:
+## 📁 Repository Directory Structure
 
-1. **Raspberry Pi (Edge Node):** 
-   - Handles the physical hardware. 
-   - Runs a highly optimized `soccer_bot_edge` Docker container in `--net=host` mode to natively interface with the YDLidar over USB and broadcast `/scan` data across the network via ROS 2 DDS.
-   - Runs a lightweight background script (`start_camera.sh`) using the native `rpicam-vid` application to host a highly resilient, low-latency raw MJPEG stream of the CSI camera.
-2. **Laptop (Compute Hub):**
-   - Runs heavy Computer Vision tasks (OpenCV ball detection), path planning, and RViz visualization.
-   - Runs a custom python TCP server (`camera_hub_node.py`) that constantly listens for the Pi's camera stream. If the connection drops, it automatically handles reconnects.
-   - Processes the raw Lidar `/scan` and camera `/image_raw` topics to make driving decisions.
+```text
+soccer_bot/
+├── docs/                             # Documentation Guides
+│   ├── WINDOWS_SETUP_GUIDE.md        # Detailed Windows 11 + WSL2 + VcXsrv Setup Guide
+│   ├── PHYSICAL_DEPLOYMENT_GUIDE.md  # Raspberry Pi OS Flashing & Hardware Wiring Guide
+│   └── NOTES.md                      # System Architecture & Development Notes
+├── windows/                          # Windows Specific Launchers & Configuration
+│   ├── START_SOCCER_BOT.bat          # 1-Click Desktop Batch Launcher for Windows
+│   └── launch_windows_hub.py         # Master Python Orchestrator for Windows + WSL + Pi
+├── scripts/                          # ROS 2 Python Nodes & URDF Models
+│   ├── robot.urdf                    # Official 3D URDF Description (Chassis, Wheels, Sensors)
+│   ├── raw_lidar_publisher.py        # Raw TCP Lidar Packet Parser Node (/scan)
+│   ├── robot_model_publisher.py      # ROS 2 robot_description & Static TF Publisher Node
+│   └── start_laptop_hub.sh           # Linux Bash Startup Orchestrator
+├── src/                              # ROS 2 Packages Workspace
+│   ├── soccer_vision/                # Camera Receiver Node & HSV Color Tracking
+│   ├── soccer_navigation/            # Reactive Obstacle Avoidance & Path Planning
+│   └── rosboard/                     # Optional Web-based ROS Dashboard
+└── soccer_bot.rviz                   # Pre-configured RViz2 3D Viewport Profile
+```
 
-## 🚀 How to Run the System
+---
 
-The entire startup process is fully automated via SSH from the laptop. You do not need to manually run commands on the Pi.
+## 🪟 Windows Setup & 1-Click Execution (Recommended for Windows)
 
-1. Turn on the Raspberry Pi and ensure both the Pi and Laptop are on the same Wi-Fi network.
-2. On the laptop, open a terminal in the `soccer_bot` workspace.
-3. Run the orchestration script:
-   ```bash
-   bash scripts/start_laptop_hub.sh
-   ```
-   
-**What this script does automatically:**
-- SSHes into the Pi and kills any old rogue camera processes.
-- Starts the `start_camera.sh` daemon on the Pi to stream the camera feed.
-- Starts the `camera_hub_node` on the laptop to decode the TCP camera stream into ROS 2 `Image` messages.
-- (The Lidar stream is handled entirely automatically in the background via the Pi's Docker container, which starts automatically on boot).
+### 1-Click Startup:
+Double-click **`windows/START_SOCCER_BOT.bat`** (or the **`START_SOCCER_BOT.bat`** shortcut on your Windows Desktop).
 
-### Visualizing the Data
+### What the 1-Click Launcher Does:
+1. **Raspberry Pi SSH Connection:** Automatically starts the Lidar (`port 5000`) and Camera (`port 8080`) daemons on the Pi.
+2. **VcXsrv X-Server Check:** Starts VcXsrv with OpenGL hardware acceleration.
+3. **WSL2 ROS 2 Hubs:** Starts background nodes (`raw_lidar_publisher.py`, `camera_hub_node.py`, `robot_model_publisher.py`).
+4. **RViz2 GUI:** Automatically opens the RViz 3D Viewport displaying the 3D Robot Model, 360° Lidar Radar, and Live Camera Feed.
 
-Once the hub script is running, open a **NEW terminal** on the laptop and launch RViz2:
+> 📖 *For detailed step-by-step installation instructions for WSL2, VcXsrv, and ROS 2 Jazzy on Windows, see [`docs/WINDOWS_SETUP_GUIDE.md`](docs/WINDOWS_SETUP_GUIDE.md).*
+
+---
+
+## 🐧 Linux Setup & Execution
+
+### 1. Build the Workspace:
+```bash
+cd soccer_bot
+colcon build
+source install/setup.bash
+```
+
+### 2. Launch the System Hub:
+```bash
+bash scripts/start_laptop_hub.sh
+```
+
+### 3. Launch RViz2 Visualization:
 ```bash
 source /opt/ros/jazzy/setup.bash
-rviz2
+rviz2 -d soccer_bot.rviz
 ```
-- **To view Lidar:** Add a `LaserScan` display and subscribe to the `/scan` topic. Set the Fixed Frame to `laser_frame`.
-- **To view Camera:** Add an `Image` display and subscribe to the `/image_raw` topic.
 
-## 🛠️ Sensor Details & Troubleshooting
+---
 
-### YDLidar X4
-- **Interface:** Natively published from the Pi via ROS 2 DDS.
-- **Driver:** The `ydlidar_ros2_driver` runs inside the Pi's `soccer_bot_edge` container. The container runs with `--net=host` to ensure seamless discovery by the laptop. 
-- **Troubleshooting:** If the Lidar isn't showing up, ensure the Pi and Laptop are on the same Wi-Fi, and that the Pi's docker container is running (`docker ps`).
+## 📐 Robot Model & Physical Dimensions
 
-### Raspberry Pi Camera Module V2 (CSI)
-- **Interface:** Raw MJPEG over TCP port 8000.
-- **Why TCP and not ROS 2 DDS?** Pushing 15 FPS video through ROS 2 serialization natively on a Pi 3B consumes 100% CPU. Bypassing ROS on the Pi and using a raw TCP stream directly into the laptop (where it's then converted to a ROS 2 topic) results in 0 latency and extremely low Pi CPU usage.
-- **Resiliency:** The Pi actively tries to connect to the laptop. If you restart the laptop hub, the Pi will automatically reconnect within 2 seconds.
+- **Chassis Body:** `0.33 m` (L) x `0.17 m` (W) x `0.11 m` (H) Rectangular Blue Box
+- **Drive Wheels:** 2 Rear Drive Wheels (`radius: 3.3 cm`, `length: 4.0 cm`) positioned at `xyz="-0.115 ±0.105 0.033"`
+- **YDLidar X4:** Top-mounted Red Laser Sensor (`radius: 3.5 cm`, `length: 4.0 cm`) positioned at `laser_frame`
+- **Pi Camera V2:** Front Green CSI Camera Module (`1.0cm x 3.0cm x 3.0cm`) positioned at `camera_link`
 
-## 🔮 Next Steps: Sensor Fusion
+---
 
-In the future, we will combine the spatial data (Lidar) with the visual data (Camera) to accurately detect the distance of objects seen in the frame.
-This will be achieved by defining a **Static TF2 Transform** that maps the physical real-world distance between the camera lens and the lidar laser plane. Once published, ROS 2's `message_filters` will sync the timestamps, allowing RViz to dynamically overlay the laser dots directly onto the live camera image.
+## 🌐 Live Camera Web Stream
+
+When the system is active, you can also view the live camera feed in any browser:
+👉 **`http://192.168.0.135:8080/video`**

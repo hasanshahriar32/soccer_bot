@@ -3,7 +3,7 @@
 # Master launcher for Laptop ROS 2 Hub (Camera, URDF Model, Pi Motor Server & Motor Bridge)
 
 source /opt/ros/jazzy/setup.bash
-source /home/sharmin/Desktop/iot/soccer_bot/install/setup.bash
+source /mnt/c/Users/taufi/Desktop/soccer_bot/install/setup.bash
 
 echo "=========================================="
 echo " Launching Laptop ROS 2 Communication Hub..."
@@ -25,11 +25,11 @@ ros2 run soccer_vision camera_hub &
 
 # 4. Launch 3D Robot State Publisher
 echo "Launching 3D URDF Robot Model..."
-ros2 run robot_state_publisher robot_state_publisher /home/sharmin/Desktop/iot/soccer_bot/scripts/robot.urdf &
+ros2 run robot_state_publisher robot_state_publisher /mnt/c/Users/taufi/Desktop/soccer_bot/scripts/robot.urdf &
 
 # 5. Launch ROS 2 Motor Bridge Node
 echo "Launching Motor Bridge Node (/cmd_vel -> Pi)..."
-python3 /home/sharmin/Desktop/iot/soccer_bot/src/arduino/motor_driver/motor_bridge_node.py &
+python3 /mnt/c/Users/taufi/Desktop/soccer_bot/src/arduino/motor_driver/motor_bridge_node.py &
 
 echo ""
 echo "Laptop ROS 2 Hub is LIVE and connected to Pi!"

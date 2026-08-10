@@ -1,103 +1,122 @@
 <?xml version="1.0"?>
 <robot name="soccer_bot">
+  <!-- ==================================================================== -->
+  <!--                      SOCCER BOT ROBOT DESCRIPTION                    -->
+  <!-- ==================================================================== -->
+  <!-- Physical Dimensions & Layout:                                        -->
+  <!--   - Chassis Body: 33 cm (L) x 17 cm (W) x 11 cm (H)                  -->
+  <!--   - Drive Wheels: Radius 3.3 cm, Width 4.0 cm (Rear Position: -11.5cm)-->
+  <!--   - YDLidar X4:   Radius 3.5 cm, Height 4.0 cm (Top Center: -1.9cm Y) -->
+  <!--   - Pi Camera V2: 1.0cm x 3.0cm x 3.0cm (Front Edge: +16.5cm X)        -->
+  <!-- ==================================================================== -->
 
-  <!-- Base Link (Center of the robot on the ground) -->
-  <link name="base_link">
-  </link>
+  <!-- 1. Color Palette Definitions -->
+  <material name="chassis_blue">
+    <color rgba="0.10 0.30 0.80 0.85"/>
+  </material>
 
-  <!-- Chassis (The main body of the robot) -->
+  <material name="wheel_black">
+    <color rgba="0.15 0.15 0.15 1.00"/>
+  </material>
+
+  <material name="lidar_red">
+    <color rgba="0.85 0.10 0.10 1.00"/>
+  </material>
+
+  <material name="camera_green">
+    <color rgba="0.10 0.80 0.10 1.00"/>
+  </material>
+
+  <!-- 2. Base Link (Reference frame on ground) -->
+  <link name="base_link"/>
+
+  <!-- 3. Chassis Link (Main Robot Body Box) -->
   <link name="chassis">
     <visual>
-      <origin xyz="0 0 0.055" rpy="0 0 0"/>
+      <origin xyz="0.0 0.0 0.055" rpy="0 0 0"/>
       <geometry>
-        <!-- 33cm long, 17cm wide, 11cm tall -->
-        <box size="0.33 0.17 0.11"/> 
+        <!-- 33 cm long, 17 cm wide, 11 cm tall -->
+        <box size="0.33 0.17 0.11"/>
       </geometry>
-      <material name="blue">
-        <color rgba="0.1 0.3 0.8 0.8"/>
-      </material>
+      <material name="chassis_blue"/>
     </visual>
   </link>
 
   <joint name="base_to_chassis" type="fixed">
     <parent link="base_link"/>
     <child link="chassis"/>
-    <origin xyz="0 0 0"/>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
   </joint>
 
-  <!-- Left Wheel (4cm wide, r=3.3cm) -->
+  <!-- 4. Rear Left Wheel -->
   <link name="left_wheel">
     <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
         <cylinder radius="0.033" length="0.04"/>
       </geometry>
-      <material name="black">
-        <color rgba="0.2 0.2 0.2 1.0"/>
-      </material>
+      <material name="wheel_black"/>
     </visual>
   </link>
 
   <joint name="chassis_to_left_wheel" type="fixed">
     <parent link="chassis"/>
     <child link="left_wheel"/>
-    <!-- 5cm from back → flip: now 5cm from front (+0.115 from center) -->
-    <origin xyz="0.115 0.105 0.033" rpy="-1.5708 0 0"/>
+    <!-- Positioned 5 cm from rear (-0.115m X offset from center) -->
+    <origin xyz="-0.115 0.105 0.033" rpy="-1.5708 0 0"/>
   </joint>
 
-  <!-- Right Wheel -->
+  <!-- 5. Rear Right Wheel -->
   <link name="right_wheel">
     <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
         <cylinder radius="0.033" length="0.04"/>
       </geometry>
-      <material name="black">
-        <color rgba="0.2 0.2 0.2 1.0"/>
-      </material>
+      <material name="wheel_black"/>
     </visual>
   </link>
 
   <joint name="chassis_to_right_wheel" type="fixed">
     <parent link="chassis"/>
     <child link="right_wheel"/>
-    <origin xyz="0.115 -0.105 0.033" rpy="-1.5708 0 0"/>
+    <!-- Positioned 5 cm from rear (-0.115m X offset from center) -->
+    <origin xyz="-0.115 -0.105 0.033" rpy="-1.5708 0 0"/>
   </joint>
 
-  <!-- Lidar Sensor (YDLidar X4) -->
+  <!-- 6. YDLidar X4 Laser Sensor -->
   <link name="laser_frame">
     <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
         <cylinder radius="0.035" length="0.04"/>
       </geometry>
-      <material name="red">
-        <color rgba="0.8 0.1 0.1 1.0"/>
-      </material>
+      <material name="lidar_red"/>
     </visual>
   </link>
 
   <joint name="base_to_laser" type="fixed">
     <parent link="base_link"/>
     <child link="laser_frame"/>
-    <!-- Centered X (0.0), 6.6cm from right (-0.019 Y), 9cm from bottom -->
+    <!-- Centered X (0.0m), -1.9cm Y offset, 9cm height -->
     <origin xyz="0.0 -0.019 0.09" rpy="0 0 0"/>
   </joint>
 
-  <!-- Pi Camera -->
+  <!-- 7. Raspberry Pi CSI Camera Module -->
   <link name="camera_link">
     <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
         <box size="0.01 0.03 0.03"/>
       </geometry>
-      <material name="green">
-        <color rgba="0.1 0.8 0.1 1.0"/>
-      </material>
+      <material name="camera_green"/>
     </visual>
   </link>
 
   <joint name="base_to_camera" type="fixed">
     <parent link="base_link"/>
     <child link="camera_link"/>
-    <!-- 0cm from front (0.165 X), 6.5cm from left (0.02 Y), 4.5cm from bottom -->
-    <!-- Pointing forward: pitch 0, roll -1.5708 to fix orientation for camera frame -->
+    <!-- Front edge (+0.165m X offset), +2.0cm Y offset, 4.5cm height -->
     <origin xyz="0.165 0.02 0.045" rpy="-1.5708 0 -1.5708"/>
   </joint>
 
