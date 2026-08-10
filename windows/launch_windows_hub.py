@@ -120,8 +120,8 @@ def launch_wsl_nodes():
     # 4. Launch 3D Robot Model Publisher (/robot_description)
     run_cmd("source /opt/ros/jazzy/setup.bash && python3 /mnt/c/Users/taufi/Desktop/soccer_bot/scripts/robot_model_publisher.py &")
     
-    # 5. Launch Dynamic Odometry Publisher (map -> base_link)
-    run_cmd("source /opt/ros/jazzy/setup.bash && python3 /mnt/c/Users/taufi/Desktop/soccer_bot/scripts/robot_odometry.py &")
+    # 5. Launch 2D Lidar Scan Matcher (Real-Time Room Tracking & Map -> Base_link TF)
+    run_cmd("source /opt/ros/jazzy/setup.bash && python3 /mnt/c/Users/taufi/Desktop/soccer_bot/scripts/laser_scan_matcher.py &")
     
     time.sleep(2.0)
 

@@ -66,14 +66,6 @@ class RobotModelPublisher(Node):
         now = self.get_clock().now().to_msg()
         tfs = []
 
-        # map -> base_link
-        t_map = TransformStamped()
-        t_map.header.stamp = now
-        t_map.header.frame_id = 'map'
-        t_map.child_frame_id = 'base_link'
-        t_map.transform.rotation.w = 1.0
-        tfs.append(t_map)
-
         # base_link -> chassis
         t_chassis = TransformStamped()
         t_chassis.header.stamp = now

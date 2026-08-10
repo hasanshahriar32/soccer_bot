@@ -4,9 +4,10 @@ Panels:
     Name: Displays
     Property Tree Widget:
       Expanded:
+        - /Global Options1
         - /LaserScan1
       Splitter Ratio: 0.5
-    Tree Height: 310
+    Tree Height: 393
 Visualization Manager:
   Class: ""
   Displays:
@@ -84,13 +85,12 @@ Visualization Manager:
           Alpha: 1
           Show Axes: false
           Show Trail: false
-          Value: true
         camera_link:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
-        front_caster:
+        chassis:
           Alpha: 1
           Show Axes: false
           Show Trail: false
@@ -101,11 +101,6 @@ Visualization Manager:
           Show Trail: false
           Value: true
         left_wheel:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        lidar_base:
           Alpha: 1
           Show Axes: false
           Show Trail: false
@@ -153,25 +148,25 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz_default_plugins/Orbit
-      Distance: 3.8355588912963867
+      Distance: 6.073944091796875
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
         Swap Stereo Eyes: false
         Value: false
       Focal Point:
-        X: 0
-        Y: 0
-        Z: 0
+        X: 0.08907878398895264
+        Y: 1.61989164352417
+        Z: 0.031582530587911606
       Focal Shape Fixed Size: true
       Focal Shape Size: 0.05000000074505806
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 1.4947963953018188
+      Pitch: 1.5697963237762451
       Target Frame: <Fixed Frame>
       Value: Orbit (rviz_default_plugins)
-      Yaw: 5.629953384399414
+      Yaw: 3.524951457977295
     Saved: ~
 Window Geometry:
   Displays:
@@ -181,7 +176,7 @@ Window Geometry:
   Hide Right Dock: false
   PiCamera:
     collapsed: false
-  QMainWindow State: 000000ff00000000fd000000010000000000000156000002c3fc0200000002fb000000100050006900430061006d006500720061010000003b000001060000001600fffffffb000000100044006900730070006c0061007900730100000147000001b7000000c700ffffff000004a4000002c300000004000000040000000800000008fc0000000100000002000000010000000a0054006f006f006c00730100000000ffffffff0000000000000000
+  QMainWindow State: 000000ff00000000fd000000010000000000000156000002c3fc0200000002fb000000100050006900430061006d006500720061010000003b000000b30000001600fffffffb000000100044006900730070006c00610079007301000000f40000020a000000c700ffffff000004a4000002c300000004000000040000000800000008fc0000000100000002000000010000000a0054006f006f006c00730100000000ffffffff0000000000000000
   Width: 1536
-  X: 0
-  Y: 23
+  X: 8
+  Y: 31
