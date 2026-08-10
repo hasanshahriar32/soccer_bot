@@ -1,18 +1,20 @@
 #!/usr/bin/env python3
 """
 ====================================================================
-     STABILIZED 2D LIDAR SCAN MATCHING & ODOMETRY NODE FOR ROS 2
+     STABLE 2D LIDAR SCAN-TO-REFERENCE ICP ODOMETRY NODE
 ====================================================================
 Description:
-    Estimates real-time 2D pose displacement (x, y, theta) from Lidar scans
-    with exponential smoothing (EMA) and rigid map orientation lock.
+    Estimates robot pose by matching each new Lidar scan against a
+    FIXED reference scan (captured at startup). This eliminates
+    cumulative drift and frame vibration.
 
-    Key Features:
-    - Locks room map angle (0° map orientation) so background doesn't tilt.
-    - Low-pass filters rotation jitter (alpha=0.15) for smooth movement.
-    - Broadcasts dynamic transform: map -> base_link
-    - Result: Room walls stay 100% FIXED in RViz; 3D Robot Model translates
-              and rotates smoothly across the fixed room grid!
+    Key Design:
+    - Reference scan captured once at startup (the "room anchor").
+    - Each new scan is matched against this fixed reference using
+      Iterative Closest Point (ICP) with nearest-neighbor search.
+    - Heavy deadzone filtering: ignores displacements < 1cm / 1°.
+    - Result: Room walls stay rock-solid in RViz. Robot model moves
+              only when real physical movement is detected.
 ====================================================================
 """
 
@@ -24,132 +26,188 @@ from nav_msgs.msg import Odometry
 import math
 import numpy as np
 import tf2_ros
+from scipy.spatial import KDTree
 
-class LaserScanMatcher(Node):
+
+class StableScanMatcher(Node):
     def __init__(self):
-        super().__init__('laser_scan_matcher')
-        
+        super().__init__('stable_scan_matcher')
+
         self.tf_broadcaster = tf2_ros.TransformBroadcaster(self)
         self.odom_pub = self.create_publisher(Odometry, '/odom', 10)
-        
-        # Subscribe to Lidar scan topic
-        self.sub_scan = self.create_subscription(LaserScan, '/scan', self.scan_callback, 10)
-        
-        # Cumulative robot pose in fixed room 'map'
+
+        self.sub_scan = self.create_subscription(
+            LaserScan, '/scan', self.scan_callback, 10)
+
+        # Robot pose in fixed map frame
         self.pose_x = 0.0
         self.pose_y = 0.0
         self.pose_yaw = 0.0
-        
-        # Smooth velocity state
-        self.smooth_dyaw = 0.0
-        
-        self.prev_points = None
-        self.get_logger().info("Stabilized 2D Lidar Scan Matcher active. Room map locked to 0° angle.")
+
+        # Smoothed pose (what we actually publish)
+        self.pub_x = 0.0
+        self.pub_y = 0.0
+        self.pub_yaw = 0.0
+
+        # Reference scan (room anchor) - set from first good scan
+        self.ref_points = None
+        self.ref_tree = None  # KDTree for fast nearest-neighbor
+        self.warmup_count = 0
+        self.WARMUP_SCANS = 5  # Skip first N scans to let lidar stabilize
+
+        self.get_logger().info(
+            "Stable Scan-to-Reference ICP Matcher initialized. "
+            "Waiting for reference scan...")
 
     def scan_to_points(self, scan_msg):
-        """Converts LaserScan ranges to 2D Cartesian points (N, 2)."""
-        angles = np.linspace(scan_msg.angle_min, scan_msg.angle_max, len(scan_msg.ranges))
+        """Convert LaserScan to 2D cartesian points, filtering noise."""
         ranges = np.array(scan_msg.ranges)
-        
-        # Filter valid lidar readings (15 cm to 6.0 meters)
-        valid = (ranges >= 0.15) & (ranges <= 6.0) & np.isfinite(ranges)
-        if not np.any(valid):
+        n = len(ranges)
+        angles = np.linspace(
+            scan_msg.angle_min, scan_msg.angle_max, n)
+
+        valid = np.isfinite(ranges) & (ranges >= 0.15) & (ranges <= 6.0)
+        if np.sum(valid) < 40:
             return None
-            
-        valid_ranges = ranges[valid]
-        valid_angles = angles[valid]
-        
-        xs = valid_ranges * np.cos(valid_angles)
-        ys = valid_ranges * np.sin(valid_angles)
+
+        r = ranges[valid]
+        a = angles[valid]
+        xs = r * np.cos(a)
+        ys = r * np.sin(a)
         return np.column_stack((xs, ys))
+
+    def icp_match(self, ref_tree, ref_pts, src_pts, max_iter=15):
+        """
+        Iterative Closest Point matching of src_pts against ref_pts.
+        Returns (dx, dy, dtheta) transform from src frame to ref frame.
+        """
+        pts = src_pts.copy()
+        total_R = np.eye(2)
+        total_t = np.zeros(2)
+
+        for _ in range(max_iter):
+            # Find nearest neighbors in reference
+            dists, idxs = ref_tree.query(pts)
+
+            # Reject outliers (distance > 0.5m)
+            inlier_mask = dists < 0.5
+            if np.sum(inlier_mask) < 20:
+                break
+
+            matched_ref = ref_pts[idxs[inlier_mask]]
+            matched_src = pts[inlier_mask]
+
+            # Compute centroids
+            c_ref = np.mean(matched_ref, axis=0)
+            c_src = np.mean(matched_src, axis=0)
+
+            # Center the point sets
+            ref_c = matched_ref - c_ref
+            src_c = matched_src - c_src
+
+            # SVD for optimal rotation
+            H = src_c.T @ ref_c
+            U, _, Vt = np.linalg.svd(H)
+            R = Vt.T @ U.T
+
+            if np.linalg.det(R) < 0:
+                Vt[1, :] *= -1
+                R = Vt.T @ U.T
+
+            t = c_ref - R @ c_src
+
+            # Apply transform
+            pts = (R @ pts.T).T + t
+
+            total_R = R @ total_R
+            total_t = R @ total_t + t
+
+            # Check convergence
+            if np.linalg.norm(t) < 0.001:
+                break
+
+        dtheta = math.atan2(total_R[1, 0], total_R[0, 0])
+        dx = total_t[0]
+        dy = total_t[1]
+        return dx, dy, dtheta
 
     def scan_callback(self, scan_msg):
         curr_points = self.scan_to_points(scan_msg)
-        if curr_points is None or len(curr_points) < 30:
+        if curr_points is None:
             return
 
-        if self.prev_points is not None:
-            # Perform ICP / Point Matching between prev_points and curr_points
-            dx, dy, dyaw = self.match_scans(self.prev_points, curr_points)
-            
-            # Apply low-pass filter (EMA) to rotation to prevent map angle tilt/jitter
-            self.smooth_dyaw = 0.85 * self.smooth_dyaw + 0.15 * dyaw
-            
-            # Update robot orientation in map frame
-            self.pose_yaw -= self.smooth_dyaw
-            self.pose_yaw = math.atan2(math.sin(self.pose_yaw), math.cos(self.pose_yaw))
-            
-            # Apply displacement relative to robot's heading
-            cos_yaw = math.cos(self.pose_yaw)
-            sin_yaw = math.sin(self.pose_yaw)
-            
-            self.pose_x += (dx * cos_yaw - dy * sin_yaw)
-            self.pose_y += (dx * sin_yaw + dy * cos_yaw)
+        # Warmup: skip first few noisy scans
+        self.warmup_count += 1
+        if self.warmup_count <= self.WARMUP_SCANS:
+            return
 
-        self.prev_points = curr_points
+        # Capture reference scan (room anchor) from first stable scan
+        if self.ref_points is None:
+            self.ref_points = curr_points.copy()
+            self.ref_tree = KDTree(self.ref_points)
+            self.get_logger().info(
+                f"Reference scan captured ({len(self.ref_points)} points). "
+                f"Room anchor locked.")
+            self.publish_tf_and_odom(scan_msg.header.stamp)
+            return
+
+        # Run ICP: match current scan against fixed reference
+        dx, dy, dyaw = self.icp_match(
+            self.ref_tree, self.ref_points, curr_points)
+
+        # Deadzone: ignore tiny displacements (sensor noise)
+        if abs(dx) < 0.01:
+            dx = 0.0
+        if abs(dy) < 0.01:
+            dy = 0.0
+        if abs(dyaw) < math.radians(1.0):
+            dyaw = 0.0
+
+        # Set raw pose from ICP result (absolute, not cumulative)
+        raw_x = dx
+        raw_y = dy
+        raw_yaw = dyaw
+
+        # Heavy exponential smoothing (alpha=0.1 for stability)
+        alpha = 0.1
+        self.pub_x = (1.0 - alpha) * self.pub_x + alpha * raw_x
+        self.pub_y = (1.0 - alpha) * self.pub_y + alpha * raw_y
+        self.pub_yaw = (1.0 - alpha) * self.pub_yaw + alpha * raw_yaw
+
         self.publish_tf_and_odom(scan_msg.header.stamp)
 
-    def match_scans(self, p_ref, p_curr):
-        """Finds 2D rigid transform (dx, dy, dth) matching p_curr to p_ref."""
-        c_ref = np.mean(p_ref, axis=0)
-        c_curr = np.mean(p_curr, axis=0)
-        
-        p_ref_centered = p_ref - c_ref
-        min_len = min(len(p_ref_centered), len(p_curr))
-        p_curr_centered = p_curr[:min_len] - c_curr
-        p_ref_centered = p_ref_centered[:min_len]
-        
-        # Cross-covariance matrix
-        H = p_curr_centered.T @ p_ref_centered
-        
-        # SVD for rotation estimation
-        U, _, Vt = np.linalg.svd(H)
-        R = Vt.T @ U.T
-        
-        if np.linalg.det(R) < 0:
-            Vt[1, :] *= -1
-            R = Vt.T @ U.T
-            
-        dth = math.atan2(R[1, 0], R[0, 0])
-        dth = np.clip(dth, -0.15, 0.15)  # Cap max turn rate per frame
-        
-        t_vec = c_ref - (R @ c_curr)
-        dx = np.clip(t_vec[0], -0.20, 0.20)
-        dy = np.clip(t_vec[1], -0.20, 0.20)
-        
-        return dx, dy, dth
-
     def publish_tf_and_odom(self, stamp):
-        qz = math.sin(self.pose_yaw / 2.0)
-        qw = math.cos(self.pose_yaw / 2.0)
+        qz = math.sin(self.pub_yaw / 2.0)
+        qw = math.cos(self.pub_yaw / 2.0)
 
-        # 1. Broadcast dynamic TF: map -> base_link
+        # Broadcast dynamic TF: map -> base_link
         t = TransformStamped()
         t.header.stamp = stamp
         t.header.frame_id = 'map'
         t.child_frame_id = 'base_link'
-        t.transform.translation.x = float(self.pose_x)
-        t.transform.translation.y = float(self.pose_y)
+        t.transform.translation.x = float(self.pub_x)
+        t.transform.translation.y = float(self.pub_y)
         t.transform.translation.z = 0.0
         t.transform.rotation.z = float(qz)
         t.transform.rotation.w = float(qw)
         self.tf_broadcaster.sendTransform(t)
 
-        # 2. Publish Odometry Topic
+        # Publish Odometry message
         odom = Odometry()
         odom.header.stamp = stamp
         odom.header.frame_id = 'map'
         odom.child_frame_id = 'base_link'
-        odom.pose.pose.position.x = float(self.pose_x)
-        odom.pose.pose.position.y = float(self.pose_y)
+        odom.pose.pose.position.x = float(self.pub_x)
+        odom.pose.pose.position.y = float(self.pub_y)
         odom.pose.pose.position.z = 0.0
         odom.pose.pose.orientation.z = float(qz)
         odom.pose.pose.orientation.w = float(qw)
         self.odom_pub.publish(odom)
 
+
 def main(args=None):
     rclpy.init(args=args)
-    node = LaserScanMatcher()
+    node = StableScanMatcher()
     try:
         rclpy.spin(node)
     except KeyboardInterrupt:
@@ -157,6 +215,7 @@ def main(args=None):
     finally:
         node.destroy_node()
         rclpy.shutdown()
+
 
 if __name__ == '__main__':
     main()
