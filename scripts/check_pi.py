@@ -1,24 +1,39 @@
-import sys
-from pexpect import pxssh
+import paramiko
+import time
 
 def main():
+    ip = '192.168.0.135'
+    user = 'hasan'
+    password = 'grammarpro'
+    
+    print(f"Connecting to Raspberry Pi ({ip})...")
     try:
-        s = pxssh.pxssh(options={"StrictHostKeyChecking": "no", "UserKnownHostsFile": "/dev/null"})
-        print("Connecting to Pi...")
-        s.login('192.168.0.135', 'hasan', 'grammarpro')
-        print("Successfully connected!")
+        ssh = paramiko.SSHClient()
+        ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+        ssh.connect(ip, username=user, password=password, timeout=8)
+        print("[SUCCESS] Connected to Raspberry Pi!")
+        print("=" * 50)
         
-        s.sendline('cat /etc/os-release')
-        s.prompt()
-        print(s.before.decode('utf-8'))
+        # 1. System Info
+        stdin, stdout, stderr = ssh.exec_command('hostname; uname -a; uptime')
+        print(stdout.read().decode().strip())
+        print("-" * 50)
         
-        s.sendline('uname -m')
-        s.prompt()
-        print("Architecture:", s.before.decode('utf-8'))
+        # 2. Docker Containers
+        stdin, stdout, stderr = ssh.exec_command('docker ps --format "table {{.Names}}\t{{.Status}}\t{{.Image}}"')
+        print("DOCKER CONTAINERS:")
+        print(stdout.read().decode().strip())
+        print("-" * 50)
         
-        s.logout()
+        # 3. Active Processes
+        stdin, stdout, stderr = ssh.exec_command('pgrep -a python3; pgrep -a rpicam-vid')
+        print("ACTIVE ROBOT PROCESSES:")
+        print(stdout.read().decode().strip())
+        print("=" * 50)
+        
+        ssh.close()
     except Exception as e:
-        print("Failed to connect:", str(e))
+        print("[ERROR] Failed to connect to Pi:", str(e))
 
 if __name__ == '__main__':
     main()

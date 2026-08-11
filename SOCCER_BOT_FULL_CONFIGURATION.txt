@@ -1,0 +1,108 @@
+================================================================================
+                    SOCCER BOT - COMPLETE SYSTEM CONFIGURATION
+================================================================================
+Generated & Saved on: 2026-08-11
+Project Directory:    C:\Users\jatin\soccer_bot
+Desktop Launchers:    C:\Users\jatin\Desktop\START_SOCCER_BOT.bat
+                      C:\Users\jatin\Desktop\CONTROL_ROBOT_WHEELS.bat
+                      C:\Users\jatin\Desktop\OPEN_SOCCER_BOT_DASHBOARD.bat
+
+================================================================================
+1. ARDUINO UNO & L298N PINOUT & WIRING MATRIX
+================================================================================
+
+[A] LEFT WHEEL MOTOR (6-Pin Connector):
+--------------------------------------------------------------------------------
+  Motor Pin 1 (M+)   --> Connect to L298N OUT1 (Left Screw Terminal)
+  Motor Pin 2 (GND)  --> Connect to Arduino GND Pin (Bottom Row, Power Header)
+  Motor Pin 3 (A)    --> Connect to Arduino Digital Pin 2 (Top Row)
+  Motor Pin 4 (B)    --> Connect to Arduino Digital Pin 4 (Top Row)
+  Motor Pin 5 (VCC)  --> Connect to Arduino 5V Pin (Bottom Row, Power Header)
+  Motor Pin 6 (M-)   --> Connect to L298N OUT2 (Left Screw Terminal)
+
+[B] RIGHT WHEEL MOTOR (6-Pin Connector):
+--------------------------------------------------------------------------------
+  Motor Pin 1 (M+)   --> Connect to L298N OUT3 (Right Screw Terminal)
+  Motor Pin 2 (GND)  --> Connect to Arduino GND Pin (Bottom Row, Power Header)
+  Motor Pin 3 (A)    --> Connect to Arduino Digital Pin 7 (Top Row)
+  Motor Pin 4 (B)    --> Connect to Arduino Digital Pin 8 (Top Row)
+  Motor Pin 5 (VCC)  --> Connect to Arduino 5V Pin (Share with Left Motor 5V)
+  Motor Pin 6 (M-)   --> Connect to L298N OUT4 (Right Screw Terminal)
+
+[C] L298N MOTOR DRIVER TO ARDUINO UNO (Logic Pins):
+--------------------------------------------------------------------------------
+  L298N IN1          --> Connect to Arduino Digital Pin 9  (Left Motor Forward)
+  L298N IN2          --> Connect to Arduino Digital Pin 10 (Left Motor Backward)
+  L298N IN3          --> Connect to Arduino Digital Pin 11 (Right Motor Forward)
+  L298N IN4          --> Connect to Arduino Digital Pin 12 (Right Motor Backward)
+  L298N ENA & ENB    --> Keep black Jumper Caps ON (or connect to Pins 5 & 6)
+  L298N GND Terminal --> Connect to Arduino GND Pin (Top Row, next to Pin 13)
+
+[D] POWER & BATTERY CONNECTIONS (L298N Bottom 3-Pin Screw Terminal):
+--------------------------------------------------------------------------------
+  Battery (+) [Red Wire, 7.4V - 12V]  --> Connect to L298N +12V Terminal
+  Battery (-) [Black Wire]            --> Connect to L298N GND Terminal
+  Arduino GND Jumper Wire             --> Connect to L298N GND Terminal
+  5V Regulator Jumper (Black Cap)     --> Keep ON (behind screw terminals)
+  Arduino Power                       --> USB Cable connected to Raspberry Pi
+
+================================================================================
+2. NETWORK & HARDWARE COMMUNICATION MAP
+================================================================================
+  Raspberry Pi IP Address:  192.168.0.135
+  SSH Credentials:          User: hasan / Password: grammarpro
+  Laptop Wi-Fi IP Address:  192.168.0.108
+
+  [1] 360° YDLIDAR Stream:
+      - Protocol:           TCP Socket on Port 5000
+      - ROS 2 Topic:        /scan (sensor_msgs/msg/LaserScan)
+      - Frame ID:           laser_frame
+      - Service:            soccer_lidar.service (Auto-starts on Pi boot)
+
+  [2] CSI Camera (OV5647) Stream:
+      - Protocol:           TCP MJPEG Socket on Port 8000
+      - ROS 2 Topic:        /image_raw (sensor_msgs/msg/Image)
+      - Frame ID:           camera_link
+      - Frame Rate:         640x480 @ 25 FPS
+      - Service:            soccer_camera.service (Auto-starts on Pi boot)
+
+  [3] Motor Control Stream:
+      - Protocol:           TCP Socket on Port 9000
+      - Serial Port on Pi:  /dev/ttyACM0 @ 9600 Baud
+      - Service:            soccer_motor.service (Auto-starts on Pi boot)
+      - Commands:           'F' (Forward), 'B' (Back), 'L' (Left), 'R' (Right), 'S' (Stop)
+
+================================================================================
+3. HOW TO RUN THE ROBOT (1-CLICK DESKTOP SHORTCUTS)
+================================================================================
+
+[Option 1] FULL AUTONOMOUS & RVIZ2 3D SYSTEM:
+  Double-click: C:\Users\jatin\Desktop\START_SOCCER_BOT.bat
+  --> Starts VcXsrv X-Server silently on Windows (:0)
+  --> Connects to Raspberry Pi and verifies Lidar, Camera, and Motor daemons
+  --> Launches ROS 2 Humble sensor hubs in WSL2
+  --> Opens RViz2 3D visualizer with 3D robot model, laser scans, and camera feed
+  --> Opens Live Sensor Dashboard
+
+[Option 2] DRIVE MOTORS MANUALLY (WHEEL CONTROLLER GUI):
+  Double-click: C:\Users\jatin\Desktop\CONTROL_ROBOT_WHEELS.bat
+  --> Opens interactive GUI controller window
+  --> Controls: [W / Up] Forward, [S / Down] Backward, [A / Left] Spin Left,
+                [D / Right] Spin Right, [Space / X] STOP
+
+[Option 3] SENSOR DASHBOARD ONLY (RADAR + CAMERA):
+  Double-click: C:\Users\jatin\Desktop\OPEN_SOCCER_BOT_DASHBOARD.bat
+  --> Instant 360° Radar point cloud + live camera video side-by-side
+
+================================================================================
+4. EMERGENCY TROUBLESHOOTING & CHECKLIST
+================================================================================
+  1. If wheels don't spin: Check if battery power switch is ON and RED LED on
+     the L298N board is illuminated.
+  2. Verify that Arduino GND is connected to the L298N GND screw terminal.
+  3. If a wheel spins backward on Forward (W): Swap the two wires in OUT1/OUT2
+     (for Left Motor) or OUT3/OUT4 (for Right Motor).
+
+================================================================================
+                     CONFIGURATION SAVED & VERIFIED
+================================================================================

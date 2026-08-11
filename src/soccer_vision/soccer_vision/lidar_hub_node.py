@@ -4,67 +4,94 @@ from sensor_msgs.msg import LaserScan
 import socket
 import json
 import math
-import select
+import threading
+import time
 
 class LidarHub(Node):
     def __init__(self):
         super().__init__('lidar_hub')
-        self.pub = self.create_publisher(LaserScan, 'scan', 10)
-        self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.pub = self.create_publisher(LaserScan, '/scan', 10)
+        self.running = True
         
-        self.get_logger().info("Connecting to Edge Lidar at 192.168.0.135:5000...")
-        try:
-            self.sock.connect(('192.168.0.135', 5000))
-            self.get_logger().info("Connected to Edge Lidar successfully!")
-        except Exception as e:
-            self.get_logger().error(f"Failed to connect: {e}")
-            return
-            
-        self.sock.setblocking(0)
-        self.timer = self.create_timer(0.02, self.read_data)
-        self.buffer = ""
+        self.thread = threading.Thread(target=self.receive_loop, daemon=True)
+        self.thread.start()
+        self.get_logger().info("Lidar Hub Node started, connecting to Edge Lidar on Port 5000...")
 
-    def read_data(self):
-        try:
-            ready = select.select([self.sock], [], [], 0.01)
-            if ready[0]:
-                data = self.sock.recv(8192).decode('utf-8')
-                if not data: return
-                self.buffer += data
-                while "\\n" in self.buffer:
-                    line, self.buffer = self.buffer.split("\\n", 1)
-                    if line.strip():
-                        scan_dict = json.loads(line)
-                        self.publish_scan(scan_dict)
-        except Exception as e:
-            pass
+    def receive_loop(self):
+        while self.running:
+            try:
+                sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+                sock.settimeout(4.0)
+                sock.connect(('192.168.0.135', 5000))
+                self.get_logger().info("Connected to Edge Lidar at 192.168.0.135:5000!")
+                buffer = ""
+                
+                while self.running:
+                    data = sock.recv(65536).decode('utf-8', errors='ignore')
+                    if not data:
+                        break
+                    buffer += data
+                    while "\n" in buffer:
+                        line, buffer = buffer.split("\n", 1)
+                        line = line.strip()
+                        if line and line.startswith("{"):
+                            try:
+                                scan_dict = json.loads(line)
+                                self.publish_scan(scan_dict)
+                            except:
+                                pass
+                sock.close()
+            except Exception as e:
+                time.sleep(1.0)
 
     def publish_scan(self, scan_dict):
         msg = LaserScan()
         msg.header.stamp = self.get_clock().now().to_msg()
         msg.header.frame_id = 'laser_frame'
-        msg.angle_min = 0.0
-        msg.angle_max = 2 * math.pi
-        msg.angle_increment = math.pi / 180.0
-        msg.time_increment = 0.0
-        msg.range_min = 0.12
-        msg.range_max = 10.0
         
-        ranges = [0.0] * 360
-        for angle_str, dist in scan_dict.items():
-            angle = int(angle_str)
-            if 0 <= angle < 360:
-                ranges[angle] = float(dist) / 1000.0 # mm to meters
-                
-        msg.ranges = ranges
+        msg.angle_min = float(scan_dict.get('angle_min', 0.0))
+        msg.angle_max = float(scan_dict.get('angle_max', 2.0 * math.pi))
+        msg.angle_increment = float(scan_dict.get('angle_increment', math.pi / 180.0))
+        msg.time_increment = float(scan_dict.get('time_increment', 0.0))
+        msg.scan_time = float(scan_dict.get('scan_time', 0.1))
+        msg.range_min = float(scan_dict.get('range_min', 0.08))
+        msg.range_max = float(scan_dict.get('range_max', 10.0))
+        
+        if 'ranges' in scan_dict:
+            msg.ranges = [float(r) for r in scan_dict['ranges']]
+        else:
+            ranges = [0.0] * 360
+            for k, v in scan_dict.items():
+                try:
+                    angle = int(float(k))
+                    if 0 <= angle < 360:
+                        ranges[angle] = float(v)
+                except:
+                    pass
+            msg.ranges = ranges
+            
+        if 'intensities' in scan_dict:
+            msg.intensities = [float(i) for i in scan_dict['intensities']]
+            
         self.pub.publish(msg)
+        
+        if not hasattr(self, '_pub_cnt'): self._pub_cnt = 0
+        self._pub_cnt += 1
+        if self._pub_cnt % 50 == 0:
+            valid = len([r for r in msg.ranges if 0.12 < r < 8.0])
+            self.get_logger().info(f"Published {self._pub_cnt} scans to /scan (Active valid points: {valid})")
 
 def main(args=None):
     rclpy.init(args=args)
     node = LidarHub()
-    rclpy.spin(node)
-    node.destroy_node()
-    rclpy.shutdown()
+    try:
+        rclpy.spin(node)
+    except KeyboardInterrupt:
+        pass
+    finally:
+        node.running = False
+        node.destroy_node()
+        rclpy.shutdown()
 
 if __name__ == '__main__':
     main()

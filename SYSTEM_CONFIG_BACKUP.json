@@ -1,0 +1,36 @@
+{
+  "project_name": "Soccer Bot Robotics Platform",
+  "version": "3.0-permanent-autostart",
+  "saved_timestamp": "2026-08-11T10:38:30+06:00",
+  "raspberry_pi": {
+    "ip": "192.168.0.135",
+    "services": {
+      "soccer_lidar.service": {
+        "description": "LIDAR TCP Bridge on Port 5000",
+        "autostart": true,
+        "status": "active"
+      },
+      "soccer_camera.service": {
+        "description": "Picamera2 TCP Streaming Server on Port 8000",
+        "autostart": true,
+        "status": "active"
+      }
+    }
+  },
+  "laptop_wsl": {
+    "ros2_distro": "Humble",
+    "display": "127.0.0.1:0",
+    "active_topics": [
+      "/scan",
+      "/image_raw",
+      "/robot_description",
+      "/tf",
+      "/tf_static"
+    ]
+  },
+  "desktop_shortcuts": [
+    "C:\\Users\\jatin\\Desktop\\START_SOCCER_BOT.bat",
+    "C:\\Users\\jatin\\Desktop\\OPEN_SOCCER_BOT_DASHBOARD.bat"
+  ],
+  "configuration_status": "PERMANENTLY_SAVED_AND_VERIFIED"
+}

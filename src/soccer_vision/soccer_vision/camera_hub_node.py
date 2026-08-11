@@ -3,52 +3,61 @@ from rclpy.node import Node
 from sensor_msgs.msg import Image
 from cv_bridge import CvBridge
 import cv2
+import socket
+import numpy as np
 import threading
 import time
 
 class CameraHubNode(Node):
     def __init__(self):
         super().__init__('camera_hub_node')
-        self.publisher_ = self.create_publisher(Image, '/image_raw', 5)
+        self.publisher_ = self.create_publisher(Image, '/image_raw', 10)
         self.bridge = CvBridge()
-        self.url = 'http://192.168.0.135:8080/video'
-        
-        self.get_logger().info(f"Connecting to Camera stream at {self.url}...")
+        self.pi_ip = '192.168.0.135'
+        self.port = 8000
         self.running = True
-        self.thread = threading.Thread(target=self.receive_stream)
-        self.thread.daemon = True
+        
+        self.get_logger().info(f"Camera Hub Node started, connecting to Pi Camera TCP stream at {self.pi_ip}:{self.port}...")
+        self.thread = threading.Thread(target=self.receive_stream, daemon=True)
         self.thread.start()
 
     def receive_stream(self):
+        frame_cnt = 0
         while self.running:
             try:
-                cap = cv2.VideoCapture(self.url)
-                if not cap.isOpened():
-                    time.sleep(1.0)
-                    continue
-                    
-                self.get_logger().info("Connected to Camera stream successfully!")
+                sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+                sock.settimeout(4.0)
+                sock.connect((self.pi_ip, self.port))
+                self.get_logger().info(f"Connected to Pi Camera at {self.pi_ip}:{self.port}!")
                 
-                last_pub = time.time()
-                while self.running and cap.isOpened():
-                    ret, frame = cap.read()
-                    if not ret or frame is None:
+                stream_bytes = b''
+                while self.running:
+                    data = sock.recv(65536)
+                    if not data:
+                        self.get_logger().warn("Pi Camera stream closed, reconnecting...")
                         break
-                        
-                    now = time.time()
-                    # Throttle to 10 FPS max so RViz never freezes
-                    if now - last_pub >= 0.10:
-                        last_pub = now
-                        # Resize frame to 320x240 for super fast rendering
-                        small_frame = cv2.resize(frame, (320, 240), interpolation=cv2.INTER_NEAREST)
-                        msg = self.bridge.cv2_to_imgmsg(small_frame, "bgr8")
-                        msg.header.stamp = self.get_clock().now().to_msg()
-                        msg.header.frame_id = "camera_link"
-                        self.publisher_.publish(msg)
+                    stream_bytes += data
                     
-                cap.release()
+                    a = stream_bytes.find(b'\xff\xd8')
+                    b = stream_bytes.find(b'\xff\xd9')
+                    if a != -1 and b != -1 and b > a:
+                        jpg = stream_bytes[a:b+2]
+                        stream_bytes = stream_bytes[b+2:]
+                        
+                        frame = cv2.imdecode(np.frombuffer(jpg, dtype=np.uint8), cv2.IMREAD_COLOR)
+                        if frame is not None:
+                            msg = self.bridge.cv2_to_imgmsg(frame, "bgr8")
+                            msg.header.stamp = self.get_clock().now().to_msg()
+                            msg.header.frame_id = "camera_link"
+                            self.publisher_.publish(msg)
+                            
+                            frame_cnt += 1
+                            if frame_cnt % 60 == 0:
+                                self.get_logger().info(f"Published {frame_cnt} camera frames to /image_raw")
+                                
+                sock.close()
             except Exception as e:
-                time.sleep(1.0)
+                time.sleep(1.5)
 
 def main(args=None):
     rclpy.init(args=args)
@@ -56,9 +65,9 @@ def main(args=None):
     try:
         rclpy.spin(node)
     except KeyboardInterrupt:
-        node.running = False
-        node.thread.join()
+        pass
     finally:
+        node.running = False
         node.destroy_node()
         rclpy.shutdown()
 
