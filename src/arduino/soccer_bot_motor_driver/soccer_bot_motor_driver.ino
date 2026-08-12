@@ -1,6 +1,6 @@
 // ============================================================
 // soccer_bot_motor_driver.ino
-// ROS 2 Serial Motor Driver for Arduino UNO + L298N
+// Complete Dual Motor Driver for Arduino UNO + L298N
 // ============================================================
 
 const int ENA = 5;   // Left PWM / Enable
@@ -11,8 +11,8 @@ const int ENB = 6;   // Right PWM / Enable
 const int IN3 = 11;  // Right Dir A
 const int IN4 = 12;  // Right Dir B
 
-const int LEGACY_FORWARD_SPEED = 255;
-const int LEGACY_TURN_SPEED = 220;
+const int FULL_SPEED = 255;
+const int TURN_SPEED = 230;
 
 unsigned long lastCommandTime = 0;
 const unsigned long WATCHDOG_TIMEOUT_MS = 3000;
@@ -32,7 +32,7 @@ void setup()
   stopMotors();
 
   Serial.begin(115200);
-  Serial.println("Soccer Bot Motor Driver Active (115200 Baud)");
+  Serial.println("Soccer Bot Dual Motor Driver Active (115200 Baud)");
   lastCommandTime = millis();
 }
 
@@ -63,24 +63,25 @@ void parseCommand(String cmd)
 
   lastCommandTime = millis();
 
+  // Single Character Protocol
   if (cmd.length() == 1) {
     char c = cmd.charAt(0);
     switch (c) {
       case 'F':
       case 'f':
-        setMotors(LEGACY_FORWARD_SPEED, LEGACY_FORWARD_SPEED);
+        setMotors(FULL_SPEED, FULL_SPEED);
         break;
       case 'B':
       case 'b':
-        setMotors(-LEGACY_FORWARD_SPEED, -LEGACY_FORWARD_SPEED);
+        setMotors(-FULL_SPEED, -FULL_SPEED);
         break;
       case 'L':
       case 'l':
-        setMotors(-LEGACY_TURN_SPEED, LEGACY_TURN_SPEED);
+        setMotors(-TURN_SPEED, TURN_SPEED);
         break;
       case 'R':
       case 'r':
-        setMotors(LEGACY_TURN_SPEED, -LEGACY_TURN_SPEED);
+        setMotors(TURN_SPEED, -TURN_SPEED);
         break;
       case 'S':
       case 's':
@@ -90,6 +91,7 @@ void parseCommand(String cmd)
     return;
   }
 
+  // PWM Format: "L:255 R:255"
   if (cmd.startsWith("L:") || cmd.startsWith("l:")) {
     int rIndex = cmd.indexOf('R');
     if (rIndex == -1) rIndex = cmd.indexOf('r');
@@ -114,7 +116,7 @@ void parseCommand(String cmd)
 
 void setMotors(int leftSpeed, int rightSpeed)
 {
-  // Left Motor
+  // Left Motor (OUT1 / OUT2)
   if (leftSpeed > 0) {
     digitalWrite(IN1, HIGH);
     digitalWrite(IN2, LOW);
@@ -132,7 +134,7 @@ void setMotors(int leftSpeed, int rightSpeed)
     analogWrite(ENA, 0);
   }
 
-  // Right Motor
+  // Right Motor (OUT3 / OUT4)
   if (rightSpeed > 0) {
     digitalWrite(IN3, LOW);
     digitalWrite(IN4, HIGH);

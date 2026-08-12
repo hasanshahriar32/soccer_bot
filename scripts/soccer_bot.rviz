@@ -11,17 +11,17 @@ Panels:
         - /LaserScan1
         - /Image1
       Splitter Ratio: 0.5
-    Tree Height: 123
+    Tree Height: 274
 Visualization Manager:
   Class: ""
   Displays:
-    - Alpha: 0.1
+    - Alpha: 0.10000000149011612
       Cell Size: 1
       Class: rviz_default_plugins/Grid
       Color: 160; 160; 164
       Enabled: true
       Line Style:
-        Line Width: 0.03
+        Line Width: 0.029999999329447746
         Value: Lines
       Name: Grid
       Normal Cell Count: 0
@@ -105,7 +105,7 @@ Visualization Manager:
           Value: true
         right_wheel:
           Value: true
-      Marker Scale: 0.15
+      Marker Scale: 0.15000000596046448
       Name: TF
       Show Arrows: true
       Show Axes: true
@@ -145,7 +145,7 @@ Visualization Manager:
       Position Transformer: XYZ
       Selectable: true
       Size (Pixels): 5
-      Size (m): 0.08
+      Size (m): 0.07999999821186066
       Style: Points
       Topic:
         Depth: 10
@@ -190,39 +190,35 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz_default_plugins/Orbit
-      Distance: 2.2
+      Distance: 2.200000047683716
       Enable Stereo Rendering:
-        Stereo Eye Separation: 0.06
+        Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
         Swap Stereo Eyes: false
         Value: false
       Focal Point:
         X: 0
         Y: 0
-        Z: 0.1
+        Z: 0.10000000149011612
       Focal Shape Fixed Size: true
-      Focal Shape Size: 0.05
+      Focal Shape Size: 0.05000000074505806
       Invert Z Axis: false
       Name: Current View
-      Near Clip Distance: 0.01
-      Pitch: 0.55
+      Near Clip Distance: 0.009999999776482582
+      Pitch: 0.550000011920929
       Target Frame: base_link
       Value: Orbit (rviz)
-      Yaw: 0.78
+      Yaw: 0.7799999713897705
     Saved: ~
 Window Geometry:
   Displays:
     collapsed: false
-  Height: 840
+  Height: 749
   Hide Left Dock: false
   Hide Right Dock: true
   Image:
     collapsed: false
-  QMainWindow State: 
-  Selection:
-    collapsed: false
-  Views:
-    collapsed: true
+  QMainWindow State: 000000ff00000000fd00000001000000000000015600000297fc0200000002fb0000000a0049006d006100670065010000003b000000f60000002800fffffffb000000100044006900730070006c00610079007301000001370000019b000000c700ffffff000003540000029700000004000000040000000800000008fc0000000100000002000000010000000a0054006f006f006c00730100000000ffffffff0000000000000000
   Width: 1200
-  X: 100
-  Y: 100
+  X: 114
+  Y: 217
