@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 ====================================================================
-      SOCCER BOT - UNIVERSAL AUTO-ADAPTIVE MOTOR SERVER (PORT 9000)
+      SOCCER BOT - DYNAMIC VARIABLE SPEED MOTOR SERVER (PORT 9000)
 ====================================================================
 """
 
@@ -11,13 +11,8 @@ import threading
 import time
 import sys
 
-SPEED_FORWARD  = (220, 220)
-SPEED_BACKWARD = (-220, -220)
-SPEED_LEFT     = (-195, 195)
-SPEED_RIGHT    = (195, -195)
-SPEED_STOP     = (0, 0)
-
-current_target = SPEED_STOP
+current_left = 0
+current_right = 0
 lock = threading.Lock()
 ser = None
 
@@ -43,13 +38,13 @@ if not init_serial():
     sys.exit(1)
 
 def streaming_worker():
-    global current_target
+    global current_left, current_right
     while True:
         try:
             with lock:
-                left, right = current_target
+                l, r = current_left, current_right
                 if ser and ser.is_open:
-                    packet = f"L:{left} R:{right}\n".encode()
+                    packet = f"L:{l} R:{r}\n".encode()
                     ser.write(packet)
                     ser.flush()
         except Exception as e:
@@ -59,39 +54,54 @@ def streaming_worker():
 threading.Thread(target=streaming_worker, daemon=True).start()
 
 def handle_client(conn, addr):
-    global current_target
+    global current_left, current_right
     conn.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1)
     print(f"[CLIENT CONNECTED] {addr}", flush=True)
     try:
         while True:
-            data = conn.recv(64)
+            data = conn.recv(128)
             if not data:
                 break
             text = data.decode('utf-8', errors='ignore').strip()
             
-            if text.startswith('L:') or text.startswith('l:'):
-                try:
-                    parts = text.split()
-                    l_val = int(parts[0].split(':')[1])
-                    r_val = int(parts[1].split(':')[1])
+            # Format: "SET:left_pwm,right_pwm" e.g. "SET:120,120"
+            for line in text.split('\n'):
+                line = line.strip()
+                if line.startswith('SET:'):
+                    try:
+                        vals = line[4:].split(',')
+                        l = int(vals[0])
+                        r = int(vals[1])
+                        with lock:
+                            current_left = l
+                            current_right = r
+                        print(f"[ACTION] Dynamic PWM -> Left={l}, Right={r}", flush=True)
+                    except Exception as err:
+                        print(f"[PARSE ERR] {err}", flush=True)
+                elif line.startswith('L:') or line.startswith('l:'):
+                    try:
+                        parts = line.split()
+                        l = int(parts[0].split(':')[1])
+                        r = int(parts[1].split(':')[1])
+                        with lock:
+                            current_left = l
+                            current_right = r
+                        print(f"[ACTION] L/R PWM -> Left={l}, Right={r}", flush=True)
+                    except Exception as err:
+                        print(f"[PARSE ERR] {err}", flush=True)
+                elif line in ['F', 'B', 'L', 'R', 'S']:
                     with lock:
-                        current_target = (l_val, r_val)
-                except:
-                    pass
-            else:
-                for ch in text.upper():
-                    with lock:
-                        if ch == 'F':
-                            current_target = SPEED_FORWARD
-                        elif ch == 'B':
-                            current_target = SPEED_BACKWARD
-                        elif ch == 'L':
-                            current_target = SPEED_LEFT
-                        elif ch == 'R':
-                            current_target = SPEED_RIGHT
-                        elif ch == 'S':
-                            current_target = SPEED_STOP
-                    print(f"[ACTION] Executed '{ch}' -> Left={current_target[0]}, Right={current_target[1]}", flush=True)
+                        if line == 'F':
+                            current_left, current_right = 200, 200
+                        elif line == 'B':
+                            current_left, current_right = -200, -200
+                        elif line == 'L':
+                            current_left, current_right = -170, 170
+                        elif line == 'R':
+                            current_left, current_right = 170, -170
+                        elif line == 'S':
+                            current_left, current_right = 0, 0
+                    print(f"[ACTION] Char '{line}' -> Left={current_left}, Right={current_right}", flush=True)
     except Exception as e:
         print(f"[CLIENT ERR] {e}", flush=True)
     finally:
@@ -103,7 +113,7 @@ server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 server.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1)
 server.bind(('0.0.0.0', 9000))
 server.listen(10)
-print("[3] Universal Motor Server listening on 0.0.0.0:9000 (Port Ready!)...", flush=True)
+print("[3] Universal Variable Speed Server listening on 0.0.0.0:9000...", flush=True)
 
 while True:
     try:
