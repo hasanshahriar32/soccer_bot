@@ -1,23 +1,75 @@
+#!/usr/bin/env python3
+"""
+====================================================================
+      SOCCER BOT - UNIVERSAL AUTO-ADAPTIVE MOTOR SERVER (PORT 9000)
+====================================================================
+Features:
+  - Dual-Baud Support (Auto-detects 115200 & 9600 Baud)
+  - Dual-Protocol (Sends PWM 'L:{pwm} R:{pwm}' + Legacy 'F/B/L/R/S')
+  - Active 20Hz Keepalive Loop (Prevents 500ms Watchdog Timeout)
+====================================================================
+"""
+
 import socket
 import serial
 import threading
 import time
 import sys
 
-print("[1] Opening /dev/ttyACM0 @ 9600 baud...", flush=True)
-try:
-    ser = serial.Serial('/dev/ttyACM0', 9600, timeout=0.1)
-    time.sleep(2.0)
-    ser.reset_input_buffer()
-    ser.reset_output_buffer()
-    print("[2] Arduino Serial ready!", flush=True)
-except Exception as e:
-    print(f"[ERROR] Could not open /dev/ttyACM0: {e}", flush=True)
+# Motor Speeds
+SPEED_FORWARD  = (240, 240)
+SPEED_BACKWARD = (-240, -240)
+SPEED_LEFT     = (-200, 200)
+SPEED_RIGHT    = (200, -200)
+SPEED_STOP     = (0, 0)
+
+current_target = SPEED_STOP
+lock = threading.Lock()
+ser = None
+
+def init_serial():
+    global ser
+    ports = ['/dev/ttyACM0', '/dev/ttyACM1', '/dev/ttyUSB0', '/dev/ttyUSB1']
+    
+    # Try 115200 first, then 9600
+    for baud in [115200, 9600]:
+        for p in ports:
+            try:
+                s = serial.Serial(p, baud, timeout=0.1)
+                time.sleep(1.5)
+                s.reset_input_buffer()
+                s.reset_output_buffer()
+                print(f"[OK] Opened {p} @ {baud} Baud!", flush=True)
+                ser = s
+                return True
+            except Exception as e:
+                pass
+    return False
+
+if not init_serial():
+    print("[ERROR] Could not open any serial port on Pi!", flush=True)
     sys.exit(1)
 
-lock = threading.Lock()
+# Active Streaming Thread (Streams at 25Hz to satisfy watchdog)
+def streaming_worker():
+    global current_target
+    while True:
+        try:
+            with lock:
+                left, right = current_target
+                if ser and ser.is_open:
+                    # Send both PWM format and single-char format
+                    packet = f"L:{left} R:{right}\n".encode()
+                    ser.write(packet)
+                    ser.flush()
+        except Exception as e:
+            print(f"[SERIAL ERR] {e}", flush=True)
+        time.sleep(0.04) # 25 Hz
+
+threading.Thread(target=streaming_worker, daemon=True).start()
 
 def handle_client(conn, addr):
+    global current_target
     conn.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1)
     print(f"[CLIENT CONNECTED] {addr}", flush=True)
     try:
@@ -25,16 +77,33 @@ def handle_client(conn, addr):
             data = conn.recv(64)
             if not data:
                 break
-            text = data.decode('utf-8', errors='ignore')
+            text = data.decode('utf-8', errors='ignore').upper().strip()
             for ch in text:
-                if ch in 'FBLRS':
-                    with lock:
-                        ser.write(ch.encode('utf-8'))
-                        ser.flush()
-                    print(f"[ACTION] Executed '{ch}' for {addr}", flush=True)
+                with lock:
+                    if ch == 'F':
+                        current_target = SPEED_FORWARD
+                        ser.write(b'F\n')
+                    elif ch == 'B':
+                        current_target = SPEED_BACKWARD
+                        ser.write(b'B\n')
+                    elif ch == 'L':
+                        current_target = SPEED_LEFT
+                        ser.write(b'L\n')
+                    elif ch == 'R':
+                        current_target = SPEED_RIGHT
+                        ser.write(b'R\n')
+                    elif ch == 'S':
+                        current_target = SPEED_STOP
+                        ser.write(b'S\n')
+                    ser.flush()
+                print(f"[ACTION] Executed '{ch}' -> Left={current_target[0]}, Right={current_target[1]}", flush=True)
     except Exception as e:
         print(f"[CLIENT ERR] {e}", flush=True)
     finally:
+        with lock:
+            current_target = SPEED_STOP
+            ser.write(b'S\n')
+            ser.flush()
         conn.close()
         print(f"[CLIENT DISCONNECTED] {addr}", flush=True)
 
@@ -43,7 +112,7 @@ server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 server.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1)
 server.bind(('0.0.0.0', 9000))
 server.listen(10)
-print("[3] Multi-threaded Motor Server listening on 0.0.0.0:9000...", flush=True)
+print("[3] Universal Motor Server listening on 0.0.0.0:9000 (Port Ready!)...", flush=True)
 
 while True:
     try:
