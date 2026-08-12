@@ -28,8 +28,20 @@ IS_WINDOWS = sys.platform == 'win32'
 def log(msg, symbol="*"):
     print(f"[{symbol}] {msg}", flush=True)
 
+def is_vcxsrv_running():
+    """Checks if VcXsrv is already active on Windows."""
+    try:
+        out = subprocess.check_output('tasklist /FI "IMAGENAME eq vcxsrv.exe"', shell=True).decode('utf-8', errors='ignore')
+        return 'vcxsrv.exe' in out.lower()
+    except:
+        return False
+
 def check_and_start_vcxsrv():
-    """Auto-detects and silently starts VcXsrv X-Server if installed."""
+    """Auto-detects and starts VcXsrv X-Server if not already running."""
+    if is_vcxsrv_running():
+        log("VcXsrv X-Server is already active and running!", symbol="X11")
+        return True
+
     vcxsrv_paths = [
         r"C:\Program Files\VcXsrv\vcxsrv.exe",
         r"C:\Program Files (x86)\VcXsrv\vcxsrv.exe"
@@ -39,7 +51,7 @@ def check_and_start_vcxsrv():
             log("Found VcXsrv X-Server! Starting silently in background...", symbol="X11")
             cmd = f'"{path}" :0 -multiwindow -clipboard -wgl -ac'
             subprocess.Popen(cmd, shell=True)
-            time.sleep(1.0)
+            time.sleep(1.5)
             return True
     return False
 

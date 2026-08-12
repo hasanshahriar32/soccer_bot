@@ -3,14 +3,31 @@
 # Soccer Bot RViz2 Master Launcher for WSL2 + VcXsrv
 # ============================================================
 
-export DISPLAY=127.0.0.1:0
+# 1. Clean up any zombie processes from previous sessions
+pkill -9 -f lidar_hub_node 2>/dev/null || true
+pkill -9 -f camera_hub_node 2>/dev/null || true
+pkill -9 -f robot_state_publisher 2>/dev/null || true
+pkill -9 -f static_transform_publisher 2>/dev/null || true
+pkill -9 -f rviz2 2>/dev/null || true
+
+# 2. Auto-detect Windows host IP for X11 forwarding
+HOST_IP=$(grep -m 1 nameserver /etc/resolv.conf | awk '{print $2}')
+if [ -n "$HOST_IP" ]; then
+    export DISPLAY="${HOST_IP}:0.0"
+else
+    export DISPLAY="127.0.0.1:0.0"
+fi
+
 export QT_X11_NO_MITSHM=1
 export LIBGL_ALWAYS_SOFTWARE=1
 export MESA_GL_VERSION_OVERRIDE=3.3
 
 source /opt/ros/humble/setup.bash
 
-echo "Starting Soccer Bot Sensor Hubs & 3D Kinematics..."
+echo "==========================================================="
+echo "   Launching RViz2 GUI on DISPLAY: $DISPLAY"
+echo "==========================================================="
+
 python3 /mnt/c/Users/jatin/soccer_bot/src/soccer_vision/soccer_vision/lidar_hub_node.py &
 python3 /mnt/c/Users/jatin/soccer_bot/src/soccer_vision/soccer_vision/camera_hub_node.py &
 ros2 run robot_state_publisher robot_state_publisher /mnt/c/Users/jatin/soccer_bot/scripts/robot.urdf &
@@ -19,5 +36,4 @@ ros2 run tf2_ros static_transform_publisher --x 0.08 --y 0 --z 0.05 --roll 0 --p
 
 sleep 2
 
-echo "Launching RViz2 GUI..."
 rviz2 -d /mnt/c/Users/jatin/soccer_bot/scripts/soccer_bot.rviz
