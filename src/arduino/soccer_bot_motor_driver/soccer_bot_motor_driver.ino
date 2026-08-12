@@ -1,6 +1,7 @@
 // ============================================================
 // soccer_bot_motor_driver.ino
 // Complete Dual Motor Driver for Arduino UNO + L298N
+// Speed tuned for smooth, controlled turning
 // ============================================================
 
 const int ENA = 5;   // Left PWM / Enable
@@ -11,8 +12,9 @@ const int ENB = 6;   // Right PWM / Enable
 const int IN3 = 11;  // Right Dir A
 const int IN4 = 12;  // Right Dir B
 
-const int FULL_SPEED = 255;
-const int TURN_SPEED = 230;
+// Tuned default speeds for smooth, gentle control
+const int DEFAULT_FORWARD_SPEED = 180;
+const int DEFAULT_TURN_SPEED = 135; // Gentle, smooth turning
 
 unsigned long lastCommandTime = 0;
 const unsigned long WATCHDOG_TIMEOUT_MS = 3000;
@@ -32,7 +34,7 @@ void setup()
   stopMotors();
 
   Serial.begin(115200);
-  Serial.println("Soccer Bot Dual Motor Driver Active (115200 Baud)");
+  Serial.println("Soccer Bot Motor Driver Active (Smooth Speed Mode)");
   lastCommandTime = millis();
 }
 
@@ -69,19 +71,19 @@ void parseCommand(String cmd)
     switch (c) {
       case 'F':
       case 'f':
-        setMotors(FULL_SPEED, FULL_SPEED);
+        setMotors(DEFAULT_FORWARD_SPEED, DEFAULT_FORWARD_SPEED);
         break;
       case 'B':
       case 'b':
-        setMotors(-FULL_SPEED, -FULL_SPEED);
+        setMotors(-DEFAULT_FORWARD_SPEED, -DEFAULT_FORWARD_SPEED);
         break;
       case 'L':
       case 'l':
-        setMotors(-TURN_SPEED, TURN_SPEED);
+        setMotors(-DEFAULT_TURN_SPEED, DEFAULT_TURN_SPEED);
         break;
       case 'R':
       case 'r':
-        setMotors(TURN_SPEED, -TURN_SPEED);
+        setMotors(DEFAULT_TURN_SPEED, -DEFAULT_TURN_SPEED);
         break;
       case 'S':
       case 's':
@@ -91,7 +93,7 @@ void parseCommand(String cmd)
     return;
   }
 
-  // PWM Format: "L:255 R:255"
+  // PWM Format: "L:180 R:180"
   if (cmd.startsWith("L:") || cmd.startsWith("l:")) {
     int rIndex = cmd.indexOf('R');
     if (rIndex == -1) rIndex = cmd.indexOf('r');
@@ -120,17 +122,14 @@ void setMotors(int leftSpeed, int rightSpeed)
   if (leftSpeed > 0) {
     digitalWrite(IN1, HIGH);
     digitalWrite(IN2, LOW);
-    digitalWrite(ENA, HIGH);
     analogWrite(ENA, leftSpeed);
   } else if (leftSpeed < 0) {
     digitalWrite(IN1, LOW);
     digitalWrite(IN2, HIGH);
-    digitalWrite(ENA, HIGH);
     analogWrite(ENA, abs(leftSpeed));
   } else {
     digitalWrite(IN1, LOW);
     digitalWrite(IN2, LOW);
-    digitalWrite(ENA, LOW);
     analogWrite(ENA, 0);
   }
 
@@ -138,17 +137,14 @@ void setMotors(int leftSpeed, int rightSpeed)
   if (rightSpeed > 0) {
     digitalWrite(IN3, LOW);
     digitalWrite(IN4, HIGH);
-    digitalWrite(ENB, HIGH);
     analogWrite(ENB, rightSpeed);
   } else if (rightSpeed < 0) {
     digitalWrite(IN3, HIGH);
     digitalWrite(IN4, LOW);
-    digitalWrite(ENB, HIGH);
     analogWrite(ENB, abs(rightSpeed));
   } else {
     digitalWrite(IN3, LOW);
     digitalWrite(IN4, LOW);
-    digitalWrite(ENB, LOW);
     analogWrite(ENB, 0);
   }
 }
@@ -159,8 +155,6 @@ void stopMotors()
   digitalWrite(IN2, LOW);
   digitalWrite(IN3, LOW);
   digitalWrite(IN4, LOW);
-  digitalWrite(ENA, LOW);
-  digitalWrite(ENB, LOW);
   analogWrite(ENA, 0);
   analogWrite(ENB, 0);
 }

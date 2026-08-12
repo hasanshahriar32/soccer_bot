@@ -11,10 +11,11 @@ import threading
 import time
 import sys
 
-SPEED_FORWARD  = (240, 240)
-SPEED_BACKWARD = (-240, -240)
-SPEED_LEFT     = (-200, 200)
-SPEED_RIGHT    = (200, -200)
+# Tuned Speeds: Smooth forward/reverse and gentle, controlled spin
+SPEED_FORWARD  = (180, 180)
+SPEED_BACKWARD = (-180, -180)
+SPEED_LEFT     = (-135, 135) # Gentle, controlled spin
+SPEED_RIGHT    = (135, -135) # Gentle, controlled spin
 SPEED_STOP     = (0, 0)
 
 current_target = SPEED_STOP
@@ -42,7 +43,6 @@ if not init_serial():
     print("[ERROR] Could not open any serial port on Pi!", flush=True)
     sys.exit(1)
 
-# Active 25Hz streaming worker to Arduino Uno
 def streaming_worker():
     global current_target
     while True:
@@ -68,20 +68,32 @@ def handle_client(conn, addr):
             data = conn.recv(64)
             if not data:
                 break
-            text = data.decode('utf-8', errors='ignore').upper().strip()
-            for ch in text:
-                with lock:
-                    if ch == 'F':
-                        current_target = SPEED_FORWARD
-                    elif ch == 'B':
-                        current_target = SPEED_BACKWARD
-                    elif ch == 'L':
-                        current_target = SPEED_LEFT
-                    elif ch == 'R':
-                        current_target = SPEED_RIGHT
-                    elif ch == 'S':
-                        current_target = SPEED_STOP
-                print(f"[ACTION] Executed '{ch}' -> Left={current_target[0]}, Right={current_target[1]}", flush=True)
+            text = data.decode('utf-8', errors='ignore').strip()
+            
+            # Support custom speed packets like "L:120 R:120" or single chars
+            if text.startswith('L:') or text.startswith('l:'):
+                try:
+                    parts = text.split()
+                    l_val = int(parts[0].split(':')[1])
+                    r_val = int(parts[1].split(':')[1])
+                    with lock:
+                        current_target = (l_val, r_val)
+                except:
+                    pass
+            else:
+                for ch in text.upper():
+                    with lock:
+                        if ch == 'F':
+                            current_target = SPEED_FORWARD
+                        elif ch == 'B':
+                            current_target = SPEED_BACKWARD
+                        elif ch == 'L':
+                            current_target = SPEED_LEFT
+                        elif ch == 'R':
+                            current_target = SPEED_RIGHT
+                        elif ch == 'S':
+                            current_target = SPEED_STOP
+                    print(f"[ACTION] Executed '{ch}' -> Left={current_target[0]}, Right={current_target[1]}", flush=True)
     except Exception as e:
         print(f"[CLIENT ERR] {e}", flush=True)
     finally:
