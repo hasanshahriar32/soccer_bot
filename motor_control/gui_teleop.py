@@ -13,13 +13,16 @@ class RobotTeleopGUI:
         self.root.geometry("460x520")
         self.root.configure(bg="#121216")
         self.root.resizable(False, False)
+        
+        self.sock = None
+        self.connect_socket()
 
         # Title Banner
         title_lbl = tk.Label(root, text="SOCCER BOT WHEEL CONTROLLER", font=("Segoe UI", 16, "bold"), fg="#00e5ff", bg="#121216")
         title_lbl.pack(pady=10)
 
         # Status Label
-        self.status_lbl = tk.Label(root, text="● SERVER: 192.168.0.135:9000 (READY)", font=("Segoe UI", 10, "bold"), fg="#00e676", bg="#121216")
+        self.status_lbl = tk.Label(root, text="● SERVER: 192.168.0.135:9000 (CONNECTED)", font=("Segoe UI", 10, "bold"), fg="#00e676", bg="#121216")
         self.status_lbl.pack(pady=3)
 
         # Mode Indicator
@@ -83,27 +86,42 @@ class RobotTeleopGUI:
         self.root.bind('<KeyPress-x>', lambda e: self.send_cmd('S'))
         self.root.bind('<KeyPress-X>', lambda e: self.send_cmd('S'))
 
+    def connect_socket(self):
+        try:
+            self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            self.sock.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1)
+            self.sock.settimeout(2.0)
+            self.sock.connect((PI_IP, MOTOR_PORT))
+        except Exception as e:
+            self.sock = None
+
     def send_cmd(self, cmd):
         def _worker():
             try:
-                s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-                s.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1)
-                s.settimeout(1.5)
-                s.connect((PI_IP, MOTOR_PORT))
-                s.sendall(cmd.encode('utf-8'))
-                s.close()
+                if self.sock is None:
+                    self.connect_socket()
+                if self.sock:
+                    self.sock.sendall(cmd.encode('utf-8'))
                 action_names = {'F': 'FORWARD (Moving)', 'B': 'BACKWARD (Moving)', 'L': 'SPINNING LEFT', 'R': 'SPINNING RIGHT', 'S': 'STOPPED'}
                 color = "#00e5ff" if cmd != 'S' else "#ff5252"
                 self.mode_lbl.config(text=f"Action: {action_names.get(cmd, cmd)}", fg=color)
             except Exception as e:
-                self.mode_lbl.config(text=f"Error sending: {e}", fg="#ff1744")
+                self.mode_lbl.config(text=f"Reconnecting...", fg="#ff9100")
+                self.connect_socket()
+                if self.sock:
+                    try:
+                        self.sock.sendall(cmd.encode('utf-8'))
+                    except:
+                        pass
 
         threading.Thread(target=_worker, daemon=True).start()
 
     def on_closing(self):
         try:
-            self.send_cmd('S')
-            time.sleep(0.1)
+            if self.sock:
+                self.sock.sendall(b'S')
+                time.sleep(0.1)
+                self.sock.close()
         except:
             pass
         self.root.destroy()

@@ -3,11 +3,6 @@
 ====================================================================
       SOCCER BOT - UNIVERSAL AUTO-ADAPTIVE MOTOR SERVER (PORT 9000)
 ====================================================================
-Features:
-  - Dual-Baud Support (Auto-detects 115200 & 9600 Baud)
-  - Dual-Protocol (Sends PWM 'L:{pwm} R:{pwm}' + Legacy 'F/B/L/R/S')
-  - Active 20Hz Keepalive Loop (Prevents 500ms Watchdog Timeout)
-====================================================================
 """
 
 import socket
@@ -16,7 +11,6 @@ import threading
 import time
 import sys
 
-# Motor Speeds
 SPEED_FORWARD  = (240, 240)
 SPEED_BACKWARD = (-240, -240)
 SPEED_LEFT     = (-200, 200)
@@ -30,8 +24,6 @@ ser = None
 def init_serial():
     global ser
     ports = ['/dev/ttyACM0', '/dev/ttyACM1', '/dev/ttyUSB0', '/dev/ttyUSB1']
-    
-    # Try 115200 first, then 9600
     for baud in [115200, 9600]:
         for p in ports:
             try:
@@ -50,7 +42,7 @@ if not init_serial():
     print("[ERROR] Could not open any serial port on Pi!", flush=True)
     sys.exit(1)
 
-# Active Streaming Thread (Streams at 25Hz to satisfy watchdog)
+# Active 25Hz streaming worker to Arduino Uno
 def streaming_worker():
     global current_target
     while True:
@@ -58,7 +50,6 @@ def streaming_worker():
             with lock:
                 left, right = current_target
                 if ser and ser.is_open:
-                    # Send both PWM format and single-char format
                     packet = f"L:{left} R:{right}\n".encode()
                     ser.write(packet)
                     ser.flush()
@@ -82,28 +73,18 @@ def handle_client(conn, addr):
                 with lock:
                     if ch == 'F':
                         current_target = SPEED_FORWARD
-                        ser.write(b'F\n')
                     elif ch == 'B':
                         current_target = SPEED_BACKWARD
-                        ser.write(b'B\n')
                     elif ch == 'L':
                         current_target = SPEED_LEFT
-                        ser.write(b'L\n')
                     elif ch == 'R':
                         current_target = SPEED_RIGHT
-                        ser.write(b'R\n')
                     elif ch == 'S':
                         current_target = SPEED_STOP
-                        ser.write(b'S\n')
-                    ser.flush()
                 print(f"[ACTION] Executed '{ch}' -> Left={current_target[0]}, Right={current_target[1]}", flush=True)
     except Exception as e:
         print(f"[CLIENT ERR] {e}", flush=True)
     finally:
-        with lock:
-            current_target = SPEED_STOP
-            ser.write(b'S\n')
-            ser.flush()
         conn.close()
         print(f"[CLIENT DISCONNECTED] {addr}", flush=True)
 
