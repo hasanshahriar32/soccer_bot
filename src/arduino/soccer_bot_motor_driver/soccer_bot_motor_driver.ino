@@ -1,37 +1,22 @@
 // ============================================================
 // soccer_bot_motor_driver.ino
 // ROS 2 Serial Motor Driver for Arduino UNO + L298N
-//
-// VERIFIED HARDWARE PINOUT:
-//   Left Motor:  ENA = 5 (PWM), IN1 = 9, IN2 = 10
-//   Right Motor: ENB = 6 (PWM), IN3 = 11, IN4 = 12
-//
-// SERIAL PROTOCOL (115200 Baud):
-//   PWM Mode:    "L:{-255..255} R:{-255..255}\n"
-//   Legacy Mode: 'F','B','L','R','S' single-char commands
-//
-// SAFETY:
-//   Robust 2.5-second watchdog auto-stop (prevents random jitter stops)
 // ============================================================
 
-// --- Pin Definitions ---
-const int ENA = 5;   // Left Motor PWM Speed
-const int IN1 = 9;   // Left Motor Dir A
-const int IN2 = 10;  // Left Motor Dir B
+const int ENA = 5;   // Left PWM / Enable
+const int IN1 = 9;   // Left Dir A
+const int IN2 = 10;  // Left Dir B
 
-const int ENB = 6;   // Right Motor PWM Speed
-const int IN3 = 11;  // Right Motor Dir A
-const int IN4 = 12;  // Right Motor Dir B
+const int ENB = 6;   // Right PWM / Enable
+const int IN3 = 11;  // Right Dir A
+const int IN4 = 12;  // Right Dir B
 
-// --- Default Speeds for Legacy Single-Char Commands ---
-const int LEGACY_FORWARD_SPEED = 240;
-const int LEGACY_TURN_SPEED = 200;
+const int LEGACY_FORWARD_SPEED = 255;
+const int LEGACY_TURN_SPEED = 220;
 
-// --- Watchdog Timer (2500ms prevents jitter stops) ---
 unsigned long lastCommandTime = 0;
-const unsigned long WATCHDOG_TIMEOUT_MS = 2500;
+const unsigned long WATCHDOG_TIMEOUT_MS = 3000;
 
-// --- Serial Buffer ---
 String inputBuffer = "";
 
 void setup()
@@ -47,18 +32,16 @@ void setup()
   stopMotors();
 
   Serial.begin(115200);
-  Serial.println("Soccer Bot Motor Driver Ready. (PWM + Legacy, 115200 baud)");
+  Serial.println("Soccer Bot Motor Driver Active (115200 Baud)");
   lastCommandTime = millis();
 }
 
 void loop()
 {
-  // --- Watchdog: Auto-stop if no command for 2.5s ---
   if (millis() - lastCommandTime > WATCHDOG_TIMEOUT_MS) {
     stopMotors();
   }
 
-  // --- Read Serial Input ---
   while (Serial.available() > 0) {
     char c = Serial.read();
 
@@ -80,44 +63,33 @@ void parseCommand(String cmd)
 
   lastCommandTime = millis();
 
-  // Single-character legacy commands
   if (cmd.length() == 1) {
     char c = cmd.charAt(0);
     switch (c) {
       case 'F':
       case 'f':
         setMotors(LEGACY_FORWARD_SPEED, LEGACY_FORWARD_SPEED);
-        Serial.println("CMD: Forward");
         break;
       case 'B':
       case 'b':
         setMotors(-LEGACY_FORWARD_SPEED, -LEGACY_FORWARD_SPEED);
-        Serial.println("CMD: Backward");
         break;
       case 'L':
       case 'l':
         setMotors(-LEGACY_TURN_SPEED, LEGACY_TURN_SPEED);
-        Serial.println("CMD: Spin Left");
         break;
       case 'R':
       case 'r':
         setMotors(LEGACY_TURN_SPEED, -LEGACY_TURN_SPEED);
-        Serial.println("CMD: Spin Right");
         break;
       case 'S':
       case 's':
         stopMotors();
-        Serial.println("CMD: Stop");
-        break;
-      default:
-        Serial.print("ERR: Unknown char: ");
-        Serial.println(c);
         break;
     }
     return;
   }
 
-  // PWM Format: "L:255 R:255"
   if (cmd.startsWith("L:") || cmd.startsWith("l:")) {
     int rIndex = cmd.indexOf('R');
     if (rIndex == -1) rIndex = cmd.indexOf('r');
@@ -142,33 +114,39 @@ void parseCommand(String cmd)
 
 void setMotors(int leftSpeed, int rightSpeed)
 {
-  // Left Motor Direction & Speed
+  // Left Motor
   if (leftSpeed > 0) {
     digitalWrite(IN1, HIGH);
     digitalWrite(IN2, LOW);
+    digitalWrite(ENA, HIGH);
     analogWrite(ENA, leftSpeed);
   } else if (leftSpeed < 0) {
     digitalWrite(IN1, LOW);
     digitalWrite(IN2, HIGH);
+    digitalWrite(ENA, HIGH);
     analogWrite(ENA, abs(leftSpeed));
   } else {
     digitalWrite(IN1, LOW);
     digitalWrite(IN2, LOW);
+    digitalWrite(ENA, LOW);
     analogWrite(ENA, 0);
   }
 
-  // Right Motor Direction & Speed
+  // Right Motor
   if (rightSpeed > 0) {
     digitalWrite(IN3, LOW);
     digitalWrite(IN4, HIGH);
+    digitalWrite(ENB, HIGH);
     analogWrite(ENB, rightSpeed);
   } else if (rightSpeed < 0) {
     digitalWrite(IN3, HIGH);
     digitalWrite(IN4, LOW);
+    digitalWrite(ENB, HIGH);
     analogWrite(ENB, abs(rightSpeed));
   } else {
     digitalWrite(IN3, LOW);
     digitalWrite(IN4, LOW);
+    digitalWrite(ENB, LOW);
     analogWrite(ENB, 0);
   }
 }
@@ -179,6 +157,8 @@ void stopMotors()
   digitalWrite(IN2, LOW);
   digitalWrite(IN3, LOW);
   digitalWrite(IN4, LOW);
+  digitalWrite(ENA, LOW);
+  digitalWrite(ENB, LOW);
   analogWrite(ENA, 0);
   analogWrite(ENB, 0);
 }
