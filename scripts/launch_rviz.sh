@@ -3,21 +3,15 @@
 # Soccer Bot RViz2 Master Launcher for WSL2 + VcXsrv
 # ============================================================
 
-# 1. Clean up any zombie processes from previous sessions
+# 1. Clean up old background processes
 pkill -9 -f lidar_hub_node 2>/dev/null || true
 pkill -9 -f camera_hub_node 2>/dev/null || true
 pkill -9 -f robot_state_publisher 2>/dev/null || true
 pkill -9 -f static_transform_publisher 2>/dev/null || true
 pkill -9 -f rviz2 2>/dev/null || true
 
-# 2. Auto-detect Windows host IP for X11 forwarding
-HOST_IP=$(grep -m 1 nameserver /etc/resolv.conf | awk '{print $2}')
-if [ -n "$HOST_IP" ]; then
-    export DISPLAY="${HOST_IP}:0.0"
-else
-    export DISPLAY="127.0.0.1:0.0"
-fi
-
+# 2. X11 Display Settings (VcXsrv listens on localhost :0)
+export DISPLAY=127.0.0.1:0
 export QT_X11_NO_MITSHM=1
 export LIBGL_ALWAYS_SOFTWARE=1
 export MESA_GL_VERSION_OVERRIDE=3.3
