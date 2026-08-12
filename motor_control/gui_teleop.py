@@ -34,13 +34,13 @@ class RobotTeleopGUI:
         speed_frame = tk.Frame(root, bg="#1a1a24", bd=1, relief="solid")
         speed_frame.pack(fill="x", padx=30, pady=8)
 
-        tk.Label(speed_frame, text="⚡ SPEED LEVEL", font=("Segoe UI", 10, "bold"), fg="#ffd600", bg="#1a1a24").pack(anchor="w", padx=10, pady=2)
+        tk.Label(speed_frame, text="⚡ MOTOR SPEED / TORQUE LEVEL", font=("Segoe UI", 10, "bold"), fg="#ffd600", bg="#1a1a24").pack(anchor="w", padx=10, pady=2)
         
         slider_box = tk.Frame(speed_frame, bg="#1a1a24")
         slider_box.pack(fill="x", padx=10, pady=4)
 
-        self.speed_val = tk.IntVar(value=175)
-        self.speed_slider = tk.Scale(slider_box, from_=80, to=255, orient="horizontal", variable=self.speed_val,
+        self.speed_val = tk.IntVar(value=220)
+        self.speed_slider = tk.Scale(slider_box, from_=160, to=255, orient="horizontal", variable=self.speed_val,
                                      bg="#1a1a24", fg="#00e5ff", highlightthickness=0, font=("Segoe UI", 9, "bold"),
                                      troughcolor="#2a2a38", activebackground="#00e5ff")
         self.speed_slider.pack(fill="x", expand=True)
@@ -113,7 +113,7 @@ class RobotTeleopGUI:
 
     def drive_action(self, action):
         spd = self.speed_val.get()
-        turn_spd = int(spd * 0.72) # Gentle 72% turn speed
+        turn_spd = max(180, int(spd * 0.88)) # Strong starting torque for turns
         
         if action == 'F':
             pkt = f"L:{spd} R:{spd}\n"
@@ -125,11 +125,11 @@ class RobotTeleopGUI:
             color = "#00e5ff"
         elif action == 'L':
             pkt = f"L:{-turn_spd} R:{turn_spd}\n"
-            desc = f"SPIN LEFT (Gentle Speed: {turn_spd})"
+            desc = f"SPIN LEFT (Turn Speed: {turn_spd})"
             color = "#00e5ff"
         elif action == 'R':
             pkt = f"L:{turn_spd} R:{-turn_spd}\n"
-            desc = f"SPIN RIGHT (Gentle Speed: {turn_spd})"
+            desc = f"SPIN RIGHT (Turn Speed: {turn_spd})"
             color = "#00e5ff"
         else:
             pkt = "L:0 R:0\n"

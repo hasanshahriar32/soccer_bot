@@ -1,7 +1,7 @@
 // ============================================================
 // soccer_bot_motor_driver.ino
 // Complete Dual Motor Driver for Arduino UNO + L298N
-// Speed tuned for smooth, controlled turning
+// Reliable Starting Torque (Forward=215, Turn=195)
 // ============================================================
 
 const int ENA = 5;   // Left PWM / Enable
@@ -12,9 +12,9 @@ const int ENB = 6;   // Right PWM / Enable
 const int IN3 = 11;  // Right Dir A
 const int IN4 = 12;  // Right Dir B
 
-// Tuned default speeds for smooth, gentle control
-const int DEFAULT_FORWARD_SPEED = 180;
-const int DEFAULT_TURN_SPEED = 135; // Gentle, smooth turning
+// Sufficient PWM to reliably overcome gearbox stiction
+const int DEFAULT_FORWARD_SPEED = 215;
+const int DEFAULT_TURN_SPEED = 195;
 
 unsigned long lastCommandTime = 0;
 const unsigned long WATCHDOG_TIMEOUT_MS = 3000;
@@ -34,7 +34,7 @@ void setup()
   stopMotors();
 
   Serial.begin(115200);
-  Serial.println("Soccer Bot Motor Driver Active (Smooth Speed Mode)");
+  Serial.println("Soccer Bot Dual Motor Driver Active");
   lastCommandTime = millis();
 }
 
@@ -93,7 +93,7 @@ void parseCommand(String cmd)
     return;
   }
 
-  // PWM Format: "L:180 R:180"
+  // PWM Format: "L:215 R:215"
   if (cmd.startsWith("L:") || cmd.startsWith("l:")) {
     int rIndex = cmd.indexOf('R');
     if (rIndex == -1) rIndex = cmd.indexOf('r');

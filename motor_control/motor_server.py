@@ -11,11 +11,10 @@ import threading
 import time
 import sys
 
-# Tuned Speeds: Smooth forward/reverse and gentle, controlled spin
-SPEED_FORWARD  = (180, 180)
-SPEED_BACKWARD = (-180, -180)
-SPEED_LEFT     = (-135, 135) # Gentle, controlled spin
-SPEED_RIGHT    = (135, -135) # Gentle, controlled spin
+SPEED_FORWARD  = (220, 220)
+SPEED_BACKWARD = (-220, -220)
+SPEED_LEFT     = (-195, 195)
+SPEED_RIGHT    = (195, -195)
 SPEED_STOP     = (0, 0)
 
 current_target = SPEED_STOP
@@ -70,7 +69,6 @@ def handle_client(conn, addr):
                 break
             text = data.decode('utf-8', errors='ignore').strip()
             
-            # Support custom speed packets like "L:120 R:120" or single chars
             if text.startswith('L:') or text.startswith('l:'):
                 try:
                     parts = text.split()
