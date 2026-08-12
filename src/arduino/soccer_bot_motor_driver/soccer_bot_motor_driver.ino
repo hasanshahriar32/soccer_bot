@@ -11,7 +11,7 @@
 //   Legacy Mode: 'F','B','L','R','S' single-char commands
 //
 // SAFETY:
-//   Watchdog auto-stop if no command received for 500ms
+//   Robust 2.5-second watchdog auto-stop (prevents random jitter stops)
 // ============================================================
 
 // --- Pin Definitions ---
@@ -24,12 +24,12 @@ const int IN3 = 11;  // Right Motor Dir A
 const int IN4 = 12;  // Right Motor Dir B
 
 // --- Default Speeds for Legacy Single-Char Commands ---
-const int LEGACY_FORWARD_SPEED = 175;
-const int LEGACY_TURN_SPEED = 165;
+const int LEGACY_FORWARD_SPEED = 240;
+const int LEGACY_TURN_SPEED = 200;
 
-// --- Watchdog Timer ---
+// --- Watchdog Timer (2500ms prevents jitter stops) ---
 unsigned long lastCommandTime = 0;
-const unsigned long WATCHDOG_TIMEOUT_MS = 500;
+const unsigned long WATCHDOG_TIMEOUT_MS = 2500;
 
 // --- Serial Buffer ---
 String inputBuffer = "";
@@ -53,7 +53,7 @@ void setup()
 
 void loop()
 {
-  // --- Watchdog: Auto-stop if no command for 500ms ---
+  // --- Watchdog: Auto-stop if no command for 2.5s ---
   if (millis() - lastCommandTime > WATCHDOG_TIMEOUT_MS) {
     stopMotors();
   }
@@ -63,104 +63,114 @@ void loop()
     char c = Serial.read();
 
     if (c == '\n' || c == '\r') {
-      inputBuffer.trim();
       if (inputBuffer.length() > 0) {
-        processCommand(inputBuffer);
-        lastCommandTime = millis();
-      }
-      inputBuffer = "";
-    } else {
-      inputBuffer += c;
-
-      // Safety: prevent buffer overflow
-      if (inputBuffer.length() > 32) {
+        parseCommand(inputBuffer);
         inputBuffer = "";
       }
+    } else {
+      inputBuffer += c;
     }
   }
 }
 
-// ============================================================
-// Process Incoming Command
-// ============================================================
-void processCommand(String cmd)
+void parseCommand(String cmd)
 {
-  // --- PWM Mode: "L:{pwm} R:{pwm}" ---
-  if (cmd.startsWith("L:")) {
-    int spaceIdx = cmd.indexOf(' ');
-    if (spaceIdx > 0 && cmd.indexOf("R:") > 0) {
-      int leftPWM = cmd.substring(2, spaceIdx).toInt();
-      int rightPWM = cmd.substring(cmd.indexOf("R:") + 2).toInt();
+  cmd.trim();
+  if (cmd.length() == 0) return;
 
-      setMotorPWM(leftPWM, rightPWM);
-      return;
-    }
-  }
+  lastCommandTime = millis();
 
-  // --- Legacy Single-Char Mode ---
+  // Single-character legacy commands
   if (cmd.length() == 1) {
     char c = cmd.charAt(0);
     switch (c) {
-      case 'F': forward();    break;
-      case 'B': backward();   break;
-      case 'L': turnLeft();   break;
-      case 'R': turnRight();  break;
-      case 'S': stopMotors(); break;
+      case 'F':
+      case 'f':
+        setMotors(LEGACY_FORWARD_SPEED, LEGACY_FORWARD_SPEED);
+        Serial.println("CMD: Forward");
+        break;
+      case 'B':
+      case 'b':
+        setMotors(-LEGACY_FORWARD_SPEED, -LEGACY_FORWARD_SPEED);
+        Serial.println("CMD: Backward");
+        break;
+      case 'L':
+      case 'l':
+        setMotors(-LEGACY_TURN_SPEED, LEGACY_TURN_SPEED);
+        Serial.println("CMD: Spin Left");
+        break;
+      case 'R':
+      case 'r':
+        setMotors(LEGACY_TURN_SPEED, -LEGACY_TURN_SPEED);
+        Serial.println("CMD: Spin Right");
+        break;
+      case 'S':
+      case 's':
+        stopMotors();
+        Serial.println("CMD: Stop");
+        break;
+      default:
+        Serial.print("ERR: Unknown char: ");
+        Serial.println(c);
+        break;
+    }
+    return;
+  }
+
+  // PWM Format: "L:255 R:255"
+  if (cmd.startsWith("L:") || cmd.startsWith("l:")) {
+    int rIndex = cmd.indexOf('R');
+    if (rIndex == -1) rIndex = cmd.indexOf('r');
+
+    if (rIndex != -1) {
+      String leftStr = cmd.substring(2, rIndex);
+      leftStr.trim();
+      String rightStr = cmd.substring(rIndex + 2);
+      rightStr.trim();
+
+      int leftPWM = leftStr.toInt();
+      int rightPWM = rightStr.toInt();
+
+      leftPWM = constrain(leftPWM, -255, 255);
+      rightPWM = constrain(rightPWM, -255, 255);
+
+      setMotors(leftPWM, rightPWM);
+      return;
     }
   }
 }
 
-// ============================================================
-// PWM Motor Control (-255 to +255 per wheel)
-// ============================================================
-void setMotorPWM(int leftPWM, int rightPWM)
+void setMotors(int leftSpeed, int rightSpeed)
 {
-  // Clamp values
-  leftPWM  = constrain(leftPWM, -255, 255);
-  rightPWM = constrain(rightPWM, -255, 255);
-
-  // Left Motor
-  if (leftPWM >= 0) {
+  // Left Motor Direction & Speed
+  if (leftSpeed > 0) {
     digitalWrite(IN1, HIGH);
     digitalWrite(IN2, LOW);
-  } else {
+    analogWrite(ENA, leftSpeed);
+  } else if (leftSpeed < 0) {
     digitalWrite(IN1, LOW);
     digitalWrite(IN2, HIGH);
+    analogWrite(ENA, abs(leftSpeed));
+  } else {
+    digitalWrite(IN1, LOW);
+    digitalWrite(IN2, LOW);
+    analogWrite(ENA, 0);
   }
-  analogWrite(ENA, abs(leftPWM));
 
-  // Right Motor (physically reversed wiring)
-  if (rightPWM >= 0) {
+  // Right Motor Direction & Speed
+  if (rightSpeed > 0) {
     digitalWrite(IN3, LOW);
     digitalWrite(IN4, HIGH);
-  } else {
+    analogWrite(ENB, rightSpeed);
+  } else if (rightSpeed < 0) {
     digitalWrite(IN3, HIGH);
     digitalWrite(IN4, LOW);
+    analogWrite(ENB, abs(rightSpeed));
+  } else {
+    digitalWrite(IN3, LOW);
+    digitalWrite(IN4, LOW);
+    analogWrite(ENB, 0);
   }
-  analogWrite(ENB, abs(rightPWM));
-}
-
-// ============================================================
-// Legacy Movement Functions
-// ============================================================
-void forward()
-{
-  setMotorPWM(LEGACY_FORWARD_SPEED, LEGACY_FORWARD_SPEED);
-}
-
-void backward()
-{
-  setMotorPWM(-LEGACY_FORWARD_SPEED, -LEGACY_FORWARD_SPEED);
-}
-
-void turnLeft()
-{
-  setMotorPWM(-LEGACY_TURN_SPEED, LEGACY_TURN_SPEED);
-}
-
-void turnRight()
-{
-  setMotorPWM(LEGACY_TURN_SPEED, -LEGACY_TURN_SPEED);
 }
 
 void stopMotors()
