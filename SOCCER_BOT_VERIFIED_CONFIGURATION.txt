@@ -1,0 +1,65 @@
+================================================================================
+          SOCCER BOT - OFFICIAL VERIFIED WORKING HARDWARE CONFIGURATION
+================================================================================
+Status: 100% VERIFIED & FULLY FUNCTIONAL
+Date: August 12, 2026
+Repository: https://github.com/hasanshahriar32/soccer_bot.git
+
+================================================================================
+1. NETWORK & ROBOTICS HOSTS
+================================================================================
+* Raspberry Pi 4 Hostname/IP:  192.168.0.135
+* SSH User:                    hasan
+* SSH Password:                grammarpro
+* Motor Control TCP Port:      9000 (Universal Controller)
+* 360° LIDAR TCP Port:         5000 (/scan)
+* CSI Camera TCP Port:         8000 (/image_raw)
+
+================================================================================
+2. ARDUINO UNO + L298N DRIVER PINOUT MATRIX
+================================================================================
+[LEFT MOTOR (OUT1 / OUT2)]
+* L298N ENA  --> Arduino Digital Pin D5 (or Jumper Cap ON for 100% Full Speed)
+* L298N IN1  --> Arduino Digital Pin D9  (Left Motor Forward)
+* L298N IN2  --> Arduino Digital Pin D10 (Left Motor Backward)
+* L298N OUT1 --> Left Motor Pin 1 (Power M1)
+* L298N OUT2 --> Left Motor Pin 6 (Power M2)
+* Left Encoder A (C1) --> Arduino Digital Pin D2 (Interrupt)
+* Left Encoder B (C2) --> Arduino Digital Pin D3 (Interrupt)
+
+[RIGHT MOTOR (OUT3 / OUT4)]
+* L298N ENB  --> Arduino Digital Pin D6 (or Jumper Cap ON for 100% Full Speed)
+* L298N IN3  --> Arduino Digital Pin D11 (Right Motor Forward)
+* L298N IN4  --> Arduino Digital Pin D12 (Right Motor Backward)
+* L298N OUT3 --> Right Motor Pin 1 (Power M1)
+* L298N OUT4 --> Right Motor Pin 6 (Power M2)
+* Right Encoder A (C1) --> Arduino Digital Pin D4
+* Right Encoder B (C2) --> Arduino Digital Pin D7
+
+================================================================================
+3. POWER & COMMON GROUND
+================================================================================
+* 12V Battery (+)  --> L298N +12V / VS (Left Blue Screw Terminal)
+* 12V Battery (-)  --> L298N GND       (Middle Blue Screw Terminal)
+* Arduino GND Pin  --> L298N GND       (Middle Blue Screw Terminal)
+  *** CRITICAL: Arduino GND and Battery (-) MUST be connected together! ***
+* L298N 5V Regulator Jumper Cap --> PLUGGED ON (Behind blue screw terminals)
+
+================================================================================
+4. DIRECTION LOGIC & TRUTH TABLE
+================================================================================
+| Movement   | Left IN1 (D9) | Left IN2 (D10) | Right IN3 (D11) | Right IN4 (D12) | Left ENA | Right ENB |
+| :--------- | :-----------: | :------------: | :-------------: | :-------------: | :------: | :-------: |
+| FORWARD    | HIGH          | LOW            | LOW             | HIGH            | 255      | 255       |
+| BACKWARD   | LOW           | HIGH           | HIGH            | LOW             | 255      | 255       |
+| SPIN LEFT  | LOW           | HIGH           | LOW             | HIGH            | 230      | 230       |
+| SPIN RIGHT | HIGH          | LOW            | HIGH            | LOW             | 230      | 230       |
+| STOP       | LOW           | LOW            | LOW             | LOW             | 0        | 0         |
+
+================================================================================
+5. 1-CLICK DESKTOP LAUNCHERS
+================================================================================
+1. CONTROL_ROBOT_WHEELS.bat  --> Interactive Real-Time Keyboard Driving GUI
+2. START_SOCCER_BOT.bat      --> Complete System: ROS 2 + 3D RViz2 + LIDAR + Camera
+3. RUN_MOTOR_DEMO.bat        --> 13-Second Automated Movement Routine
+================================================================================
