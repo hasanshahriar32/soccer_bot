@@ -2,6 +2,7 @@ import socket
 import threading
 import cv2
 import time
+import struct
 from picamera2 import Picamera2
 
 def main():
@@ -39,11 +40,13 @@ def main():
             ret, buffer = cv2.imencode('.jpg', cv2.cvtColor(frame, cv2.COLOR_RGB2BGR), [cv2.IMWRITE_JPEG_QUALITY, 75])
             if ret:
                 data = buffer.tobytes()
+                # Prepend the size of the frame as a 4-byte big-endian integer
+                packet = struct.pack(">L", len(data)) + data
                 with lock:
                     dead = []
                     for c in tcp_clients:
                         try:
-                            c.sendall(data)
+                            c.sendall(packet)
                         except:
                             dead.append(c)
                     for d in dead:

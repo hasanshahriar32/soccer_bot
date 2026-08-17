@@ -3,6 +3,7 @@ import json
 import math
 import time
 import threading
+import struct
 import numpy as np
 import cv2
 
@@ -52,21 +53,41 @@ def camera_receiver():
             s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             s.settimeout(3.0)
             s.connect((PI_IP, CAMERA_PORT))
-            stream_bytes = b''
+            
+            payload_size = struct.calcsize(">L")
+            data = b""
+            
             while running:
-                data = s.recv(65536)
-                if not data:
+                # 1. Retrieve the size of the frame
+                while len(data) < payload_size:
+                    packet = s.recv(4096)
+                    if not packet:
+                        break
+                    data += packet
+                if len(data) < payload_size:
                     break
-                stream_bytes += data
-                a = stream_bytes.find(b'\xff\xd8')
-                b = stream_bytes.find(b'\xff\xd9')
-                if a != -1 and b != -1 and b > a:
-                    jpg = stream_bytes[a:b+2]
-                    stream_bytes = stream_bytes[b+2:]
-                    img = cv2.imdecode(np.frombuffer(jpg, dtype=np.uint8), cv2.IMREAD_COLOR)
-                    if img is not None:
-                        with lock:
-                            camera_frame = img
+                
+                packed_msg_size = data[:payload_size]
+                data = data[payload_size:]
+                msg_size = struct.unpack(">L", packed_msg_size)[0]
+                
+                # 2. Retrieve the actual frame content based on size
+                while len(data) < msg_size:
+                    packet = s.recv(65536)
+                    if not packet:
+                        break
+                    data += packet
+                if len(data) < msg_size:
+                    break
+                
+                frame_data = data[:msg_size]
+                data = data[msg_size:]
+                
+                # 3. Decode JPEG frame
+                img = cv2.imdecode(np.frombuffer(frame_data, dtype=np.uint8), cv2.IMREAD_COLOR)
+                if img is not None:
+                    with lock:
+                        camera_frame = img
             s.close()
         except Exception:
             time.sleep(1.5)
