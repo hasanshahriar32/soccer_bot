@@ -19,8 +19,8 @@ const int LEFT_ENC_B  = 3;
 const int RIGHT_ENC_A = 4;
 const int RIGHT_ENC_B = 7;
 
-// Default Full Speed (0 - 255)
-int motorSpeed = 255; // Full 100% power for maximum torque
+// Default Controlled Speed (0 - 255)
+int motorSpeed = 190; // Reduced for safer, controlled speed
 
 void setup() {
   // Motor Output Pins
