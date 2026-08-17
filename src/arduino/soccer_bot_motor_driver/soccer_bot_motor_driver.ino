@@ -12,9 +12,9 @@ const int ENB = 6;   // Right PWM / Enable
 const int IN3 = 11;  // Right Dir A
 const int IN4 = 12;  // Right Dir B
 
-// Tuned default speeds for smooth, controlled control
-const int DEFAULT_FORWARD_SPEED = 235;
-const int DEFAULT_TURN_SPEED = 210;
+// Tuned default speeds for smooth, gentle control
+const int DEFAULT_FORWARD_SPEED = 215;
+const int DEFAULT_TURN_SPEED = 195;
 
 unsigned long lastCommandTime = 0;
 const unsigned long WATCHDOG_TIMEOUT_MS = 3000;
@@ -33,8 +33,8 @@ void setup()
 
   stopMotors();
 
-  Serial.begin(9600);
-  Serial.println("Soccer Bot Motor Driver Active");
+  Serial.begin(115200);
+  Serial.println("Soccer Bot Motor Driver Active (Corrected Directions)");
   lastCommandTime = millis();
 }
 
