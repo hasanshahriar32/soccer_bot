@@ -78,32 +78,21 @@ void loop() {
   }
 }
 
-// 1. FORWARD: Left (IN1=HIGH, IN2=LOW), Right (IN3=LOW, IN4=HIGH)
+// 1. FORWARD
 void forward() {
-  digitalWrite(IN1, HIGH);
-  digitalWrite(IN2, LOW);
-  digitalWrite(IN3, LOW);
-  digitalWrite(IN4, HIGH);
+  digitalWrite(IN1, LOW);
+  digitalWrite(IN2, HIGH);
+  digitalWrite(IN3, HIGH);
+  digitalWrite(IN4, LOW);
 
   analogWrite(ENA, motorSpeed);
   analogWrite(ENB, motorSpeed);
 }
 
-// 2. BACKWARD: Left (IN1=LOW, IN2=HIGH), Right (IN3=HIGH, IN4=LOW)
+// 2. BACKWARD
 void backward() {
-  digitalWrite(IN1, LOW);
-  digitalWrite(IN2, HIGH);
-  digitalWrite(IN3, HIGH);
-  digitalWrite(IN4, LOW);
-
-  analogWrite(ENA, motorSpeed);
-  analogWrite(ENB, motorSpeed);
-}
-
-// 3. LEFT TURN: Left (IN1=LOW, IN2=HIGH), Right (IN3=LOW, IN4=HIGH)
-void left() {
-  digitalWrite(IN1, LOW);
-  digitalWrite(IN2, HIGH);
+  digitalWrite(IN1, HIGH);
+  digitalWrite(IN2, LOW);
   digitalWrite(IN3, LOW);
   digitalWrite(IN4, HIGH);
 
@@ -111,8 +100,8 @@ void left() {
   analogWrite(ENB, motorSpeed);
 }
 
-// 4. RIGHT TURN: Left (IN1=HIGH, IN2=LOW), Right (IN3=HIGH, IN4=LOW)
-void right() {
+// 3. LEFT TURN
+void left() {
   digitalWrite(IN1, HIGH);
   digitalWrite(IN2, LOW);
   digitalWrite(IN3, HIGH);
@@ -122,7 +111,18 @@ void right() {
   analogWrite(ENB, motorSpeed);
 }
 
-// 5. STOP: All Low, PWM = 0
+// 4. RIGHT TURN
+void right() {
+  digitalWrite(IN1, LOW);
+  digitalWrite(IN2, HIGH);
+  digitalWrite(IN3, LOW);
+  digitalWrite(IN4, HIGH);
+
+  analogWrite(ENA, motorSpeed);
+  analogWrite(ENB, motorSpeed);
+}
+
+// 5. STOP
 void stopMotor() {
   digitalWrite(IN1, LOW);
   digitalWrite(IN2, LOW);

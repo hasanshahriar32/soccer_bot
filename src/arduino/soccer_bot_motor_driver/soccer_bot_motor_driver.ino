@@ -1,7 +1,7 @@
 // ============================================================
 // soccer_bot_motor_driver.ino
 // Complete Dual Motor Driver for Arduino UNO + L298N
-// Reliable Starting Torque (Forward=215, Turn=195)
+// Tuned directions: corrected Forward/Backward/Left/Right directions
 // ============================================================
 
 const int ENA = 5;   // Left PWM / Enable
@@ -12,7 +12,7 @@ const int ENB = 6;   // Right PWM / Enable
 const int IN3 = 11;  // Right Dir A
 const int IN4 = 12;  // Right Dir B
 
-// Sufficient PWM to reliably overcome gearbox stiction
+// Tuned default speeds for smooth, gentle control
 const int DEFAULT_FORWARD_SPEED = 215;
 const int DEFAULT_TURN_SPEED = 195;
 
@@ -34,7 +34,7 @@ void setup()
   stopMotors();
 
   Serial.begin(115200);
-  Serial.println("Soccer Bot Dual Motor Driver Active");
+  Serial.println("Soccer Bot Motor Driver Active (Corrected Directions)");
   lastCommandTime = millis();
 }
 
@@ -118,14 +118,14 @@ void parseCommand(String cmd)
 
 void setMotors(int leftSpeed, int rightSpeed)
 {
-  // Left Motor (OUT1 / OUT2)
+  // Left Motor (OUT1 / OUT2) - INVERTED to correct physical direction
   if (leftSpeed > 0) {
-    digitalWrite(IN1, HIGH);
-    digitalWrite(IN2, LOW);
-    analogWrite(ENA, leftSpeed);
-  } else if (leftSpeed < 0) {
     digitalWrite(IN1, LOW);
     digitalWrite(IN2, HIGH);
+    analogWrite(ENA, leftSpeed);
+  } else if (leftSpeed < 0) {
+    digitalWrite(IN1, HIGH);
+    digitalWrite(IN2, LOW);
     analogWrite(ENA, abs(leftSpeed));
   } else {
     digitalWrite(IN1, LOW);
@@ -133,14 +133,14 @@ void setMotors(int leftSpeed, int rightSpeed)
     analogWrite(ENA, 0);
   }
 
-  // Right Motor (OUT3 / OUT4)
+  // Right Motor (OUT3 / OUT4) - INVERTED to correct physical direction
   if (rightSpeed > 0) {
-    digitalWrite(IN3, LOW);
-    digitalWrite(IN4, HIGH);
-    analogWrite(ENB, rightSpeed);
-  } else if (rightSpeed < 0) {
     digitalWrite(IN3, HIGH);
     digitalWrite(IN4, LOW);
+    analogWrite(ENB, rightSpeed);
+  } else if (rightSpeed < 0) {
+    digitalWrite(IN3, LOW);
+    digitalWrite(IN4, HIGH);
     analogWrite(ENB, abs(rightSpeed));
   } else {
     digitalWrite(IN3, LOW);
