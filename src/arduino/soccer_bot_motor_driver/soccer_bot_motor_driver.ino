@@ -33,8 +33,8 @@ void setup()
 
   stopMotors();
 
-  Serial.begin(115200);
-  Serial.println("Soccer Bot Motor Driver Active (Corrected Directions)");
+  Serial.begin(9600);
+  Serial.println("Soccer Bot Dual Motor Driver Active (9600 Baud)");
   lastCommandTime = millis();
 }
 
