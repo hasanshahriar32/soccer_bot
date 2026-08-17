@@ -72,6 +72,21 @@ void loop() {
         stopMotor();
         Serial.println("CMD: Stop");
         break;
+      case '1':
+        motorSpeed = 100; // Super Slow
+        break;
+      case '2':
+        motorSpeed = 135; // Slow
+        break;
+      case '3':
+        motorSpeed = 175; // Medium
+        break;
+      case '4':
+        motorSpeed = 215; // Fast
+        break;
+      case '5':
+        motorSpeed = 255; // Full Speed
+        break;
       default:
         break;
     }

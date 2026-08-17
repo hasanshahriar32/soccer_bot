@@ -75,6 +75,19 @@ def handle_client(conn, addr):
                         l = int(vals[0])
                         r = int(vals[1])
                         
+                        speed = max(abs(l), abs(r))
+                        if speed > 0:
+                            if speed < 115:
+                                send_to_arduino('1')
+                            elif speed < 155:
+                                send_to_arduino('2')
+                            elif speed < 195:
+                                send_to_arduino('3')
+                            elif speed < 235:
+                                send_to_arduino('4')
+                            else:
+                                send_to_arduino('5')
+                        
                         if l > 0 and r > 0:
                             send_to_arduino('F')
                         elif l < 0 and r < 0:
@@ -92,6 +105,19 @@ def handle_client(conn, addr):
                         parts = line.split()
                         l = int(parts[0].split(':')[1])
                         r = int(parts[1].split(':')[1])
+                        
+                        speed = max(abs(l), abs(r))
+                        if speed > 0:
+                            if speed < 115:
+                                send_to_arduino('1')
+                            elif speed < 155:
+                                send_to_arduino('2')
+                            elif speed < 195:
+                                send_to_arduino('3')
+                            elif speed < 235:
+                                send_to_arduino('4')
+                            else:
+                                send_to_arduino('5')
                         
                         if l > 0 and r > 0:
                             send_to_arduino('F')

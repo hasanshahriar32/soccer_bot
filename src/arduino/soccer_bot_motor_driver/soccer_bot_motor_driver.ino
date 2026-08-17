@@ -1,160 +1,149 @@
 // ============================================================
 // soccer_bot_motor_driver.ino
-// Complete Dual Motor Driver for Arduino UNO + L298N
-// Tuned directions: corrected Forward/Backward/Left/Right directions
+// Arduino UNO + L298N Dual H-Bridge Motor Driver
+// Configured exactly per Desktop/Motor_wheel_configuration.txt
 // ============================================================
 
-const int ENA = 5;   // Left PWM / Enable
-const int IN1 = 9;   // Left Dir A
-const int IN2 = 10;  // Left Dir B
+// --- Pin Definitions ---
+const int ENA = 5;   // Left Motor PWM (L298N ENA)
+const int ENB = 6;   // Right Motor PWM (L298N ENB)
 
-const int ENB = 6;   // Right PWM / Enable
-const int IN3 = 11;  // Right Dir A
-const int IN4 = 12;  // Right Dir B
+const int IN1 = 9;   // Left Motor Dir A (L298N IN1)
+const int IN2 = 10;  // Left Motor Dir B (L298N IN2)
+const int IN3 = 11;  // Right Motor Dir A (L298N IN3)
+const int IN4 = 12;  // Right Motor Dir B (L298N IN4)
 
-// Tuned default speeds for smooth, gentle control
-const int DEFAULT_FORWARD_SPEED = 215;
-const int DEFAULT_TURN_SPEED = 195;
+// Encoder Pins
+const int LEFT_ENC_A  = 2;
+const int LEFT_ENC_B  = 3;
+const int RIGHT_ENC_A = 4;
+const int RIGHT_ENC_B = 7;
 
-unsigned long lastCommandTime = 0;
-const unsigned long WATCHDOG_TIMEOUT_MS = 3000;
+// Default Full Speed (0 - 255)
+int motorSpeed = 255; // Full 100% power for maximum torque
 
-String inputBuffer = "";
-
-void setup()
-{
+void setup() {
+  // Motor Output Pins
   pinMode(ENA, OUTPUT);
+  pinMode(ENB, OUTPUT);
   pinMode(IN1, OUTPUT);
   pinMode(IN2, OUTPUT);
-
-  pinMode(ENB, OUTPUT);
   pinMode(IN3, OUTPUT);
   pinMode(IN4, OUTPUT);
 
-  stopMotors();
+  // Encoder Input Pins with Pullup
+  pinMode(LEFT_ENC_A, INPUT_PULLUP);
+  pinMode(LEFT_ENC_B, INPUT_PULLUP);
+  pinMode(RIGHT_ENC_A, INPUT_PULLUP);
+  pinMode(RIGHT_ENC_B, INPUT_PULLUP);
+
+  stopMotor(); // Safe initial state
 
   Serial.begin(9600);
-  Serial.println("Soccer Bot Dual Motor Driver Active (9600 Baud)");
-  lastCommandTime = millis();
+  Serial.println("Soccer Bot Motor Driver Configured & Ready.");
 }
 
-void loop()
-{
-  if (millis() - lastCommandTime > WATCHDOG_TIMEOUT_MS) {
-    stopMotors();
-  }
-
-  while (Serial.available() > 0) {
-    char c = Serial.read();
-
-    if (c == '\n' || c == '\r') {
-      if (inputBuffer.length() > 0) {
-        parseCommand(inputBuffer);
-        inputBuffer = "";
-      }
-    } else {
-      inputBuffer += c;
-    }
-  }
-}
-
-void parseCommand(String cmd)
-{
-  cmd.trim();
-  if (cmd.length() == 0) return;
-
-  lastCommandTime = millis();
-
-  // Single Character Protocol
-  if (cmd.length() == 1) {
-    char c = cmd.charAt(0);
-    switch (c) {
+void loop() {
+  if (Serial.available() > 0) {
+    char cmd = Serial.read();
+    switch (cmd) {
       case 'F':
       case 'f':
-        setMotors(DEFAULT_FORWARD_SPEED, DEFAULT_FORWARD_SPEED);
+        forward();
+        Serial.println("CMD: Forward");
         break;
       case 'B':
       case 'b':
-        setMotors(-DEFAULT_FORWARD_SPEED, -DEFAULT_FORWARD_SPEED);
+        backward();
+        Serial.println("CMD: Backward");
         break;
       case 'L':
       case 'l':
-        setMotors(-DEFAULT_TURN_SPEED, DEFAULT_TURN_SPEED);
+        left();
+        Serial.println("CMD: Left");
         break;
       case 'R':
       case 'r':
-        setMotors(DEFAULT_TURN_SPEED, -DEFAULT_TURN_SPEED);
+        right();
+        Serial.println("CMD: Right");
         break;
       case 'S':
       case 's':
-        stopMotors();
+        stopMotor();
+        Serial.println("CMD: Stop");
+        break;
+      case '1':
+        motorSpeed = 100; // Super Slow
+        break;
+      case '2':
+        motorSpeed = 135; // Slow
+        break;
+      case '3':
+        motorSpeed = 175; // Medium
+        break;
+      case '4':
+        motorSpeed = 215; // Fast
+        break;
+      case '5':
+        motorSpeed = 255; // Full Speed
+        break;
+      default:
         break;
     }
-    return;
-  }
-
-  // PWM Format: "L:215 R:215"
-  if (cmd.startsWith("L:") || cmd.startsWith("l:")) {
-    int rIndex = cmd.indexOf('R');
-    if (rIndex == -1) rIndex = cmd.indexOf('r');
-
-    if (rIndex != -1) {
-      String leftStr = cmd.substring(2, rIndex);
-      leftStr.trim();
-      String rightStr = cmd.substring(rIndex + 2);
-      rightStr.trim();
-
-      int leftPWM = leftStr.toInt();
-      int rightPWM = rightStr.toInt();
-
-      leftPWM = constrain(leftPWM, -255, 255);
-      rightPWM = constrain(rightPWM, -255, 255);
-
-      setMotors(leftPWM, rightPWM);
-      return;
-    }
   }
 }
 
-void setMotors(int leftSpeed, int rightSpeed)
-{
-  // Left Motor (OUT1 / OUT2) - INVERTED to correct physical direction
-  if (leftSpeed > 0) {
-    digitalWrite(IN1, LOW);
-    digitalWrite(IN2, HIGH);
-    analogWrite(ENA, leftSpeed);
-  } else if (leftSpeed < 0) {
-    digitalWrite(IN1, HIGH);
-    digitalWrite(IN2, LOW);
-    analogWrite(ENA, abs(leftSpeed));
-  } else {
-    digitalWrite(IN1, LOW);
-    digitalWrite(IN2, LOW);
-    analogWrite(ENA, 0);
-  }
+// 1. FORWARD
+void forward() {
+  digitalWrite(IN1, LOW);
+  digitalWrite(IN2, HIGH);
+  digitalWrite(IN3, HIGH);
+  digitalWrite(IN4, LOW);
 
-  // Right Motor (OUT3 / OUT4) - INVERTED to correct physical direction
-  if (rightSpeed > 0) {
-    digitalWrite(IN3, HIGH);
-    digitalWrite(IN4, LOW);
-    analogWrite(ENB, rightSpeed);
-  } else if (rightSpeed < 0) {
-    digitalWrite(IN3, LOW);
-    digitalWrite(IN4, HIGH);
-    analogWrite(ENB, abs(rightSpeed));
-  } else {
-    digitalWrite(IN3, LOW);
-    digitalWrite(IN4, LOW);
-    analogWrite(ENB, 0);
-  }
+  analogWrite(ENA, motorSpeed);
+  analogWrite(ENB, motorSpeed);
 }
 
-void stopMotors()
-{
+// 2. BACKWARD
+void backward() {
+  digitalWrite(IN1, HIGH);
+  digitalWrite(IN2, LOW);
+  digitalWrite(IN3, LOW);
+  digitalWrite(IN4, HIGH);
+
+  analogWrite(ENA, motorSpeed);
+  analogWrite(ENB, motorSpeed);
+}
+
+// 3. LEFT TURN
+void left() {
+  digitalWrite(IN1, HIGH);
+  digitalWrite(IN2, LOW);
+  digitalWrite(IN3, HIGH);
+  digitalWrite(IN4, LOW);
+
+  analogWrite(ENA, motorSpeed);
+  analogWrite(ENB, motorSpeed);
+}
+
+// 4. RIGHT TURN
+void right() {
+  digitalWrite(IN1, LOW);
+  digitalWrite(IN2, HIGH);
+  digitalWrite(IN3, LOW);
+  digitalWrite(IN4, HIGH);
+
+  analogWrite(ENA, motorSpeed);
+  analogWrite(ENB, motorSpeed);
+}
+
+// 5. STOP
+void stopMotor() {
   digitalWrite(IN1, LOW);
   digitalWrite(IN2, LOW);
   digitalWrite(IN3, LOW);
   digitalWrite(IN4, LOW);
+
   analogWrite(ENA, 0);
   analogWrite(ENB, 0);
 }
