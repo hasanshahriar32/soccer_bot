@@ -19,8 +19,8 @@ const int LEFT_ENC_B  = 3;
 const int RIGHT_ENC_A = 4;
 const int RIGHT_ENC_B = 7;
 
-// Default Controlled Speed (0 - 255)
-int motorSpeed = 190; // Reduced for safer, controlled speed
+// Default Balanced Speed (0 - 255)
+int motorSpeed = 235; // Calibrated for enough starting torque under load
 
 void setup() {
   // Motor Output Pins

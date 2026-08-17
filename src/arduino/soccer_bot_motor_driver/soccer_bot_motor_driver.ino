@@ -13,8 +13,8 @@ const int IN3 = 11;  // Right Dir A
 const int IN4 = 12;  // Right Dir B
 
 // Tuned default speeds for smooth, controlled control
-const int DEFAULT_FORWARD_SPEED = 190;
-const int DEFAULT_TURN_SPEED = 180;
+const int DEFAULT_FORWARD_SPEED = 235;
+const int DEFAULT_TURN_SPEED = 210;
 
 unsigned long lastCommandTime = 0;
 const unsigned long WATCHDOG_TIMEOUT_MS = 3000;
