@@ -16,13 +16,15 @@ import os
 from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
 from launch_ros.actions import Node
-from launch.actions import DeclareLaunchArgument
+from launch.actions import IncludeLaunchDescription, DeclareLaunchArgument
+from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import LaunchConfiguration
 
 
 def generate_launch_description():
     slam_share = get_package_share_directory('soccer_slam')
     ydlidar_share = get_package_share_directory('ydlidar_ros2_driver')
+    slam_toolbox_share = get_package_share_directory('slam_toolbox')
 
     slam_params_file = os.path.join(slam_share, 'config', 'mapper_params_online_async.yaml')
     ydlidar_params_file = os.path.join(ydlidar_share, 'params', 'ydlidar.yaml')
@@ -55,13 +57,15 @@ def generate_launch_description():
         arguments=['--x', '0', '--y', '0', '--z', '0', '--roll', '0', '--pitch', '0', '--yaw', '0', '--frame-id', 'odom', '--child-frame-id', 'base_link'],
     )
 
-    # 4. SLAM Toolbox (Online Asynchronous Mapping & Loop Closure)
-    slam_node = Node(
-        package='slam_toolbox',
-        executable='async_slam_toolbox_node',
-        name='slam_toolbox',
-        output='screen',
-        parameters=[slam_params_file],
+    # 4. SLAM Toolbox (Online Asynchronous Mapping with Lifecycle Management)
+    slam_launch = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(
+            os.path.join(slam_toolbox_share, 'launch', 'online_async_launch.py')
+        ),
+        launch_arguments={
+            'slam_params_file': slam_params_file,
+            'use_sim_time': 'false',
+        }.items(),
     )
 
     # 5. Real-Time Spatial Coordinate Tracker Node
@@ -84,7 +88,7 @@ def generate_launch_description():
         ydlidar_node,
         tf_laser_node,
         tf_odom_node,
-        slam_node,
+        slam_launch,
         tracker_node,
         rviz_node,
     ])
