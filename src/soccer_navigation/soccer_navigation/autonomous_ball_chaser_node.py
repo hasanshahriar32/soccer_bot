@@ -1,18 +1,17 @@
 #!/usr/bin/env python3
 """
 ====================================================================
-  12-INCH AUTOMATIC PHYSICAL WHEEL CONTROLLER — ROS 2 JAZZY
+  FULL 360° 12-INCH PROXIMITY WHEEL CONTROLLER — ROS 2 JAZZY
 ====================================================================
 Description:
     Connected directly to Raspberry Pi Physical Motor Server (Port 9000).
     
-    1. Threshold: 12 inches (30.48 cm / 0.3048 m).
-    2. When POWERED ON / LAUNCHED:
-       - Automatically moves/spins physical robot wheels.
-    3. When OBJECT DETECTED WITHIN 12 INCHES (<= 0.30m):
-       - INSTANTLY STOPS PHYSICAL WHEELS ('S').
-    4. When NO OBJECT within 12 inches (> 0.30m):
-       - RESUMES AUTOMATIC MOVEMENT ('F' / 'R').
+    1. Distance Threshold: 12 inches (30.48 cm / 0.3048 m).
+    2. Checks ALL Lidar 360° angles + Camera Ball Tracker for objects.
+    3. WHEN OBJECT DETECTED WITHIN 12 INCHES (<= 0.3048m):
+       -> STOPS PHYSICAL WHEELS INSTANTLY ('S').
+    4. WHEN NO OBJECT WITHIN 12 INCHES (> 0.3048m):
+       -> MOVES/SPINS PHYSICAL WHEELS ('F' or 'R').
 ====================================================================
 """
 
@@ -25,7 +24,7 @@ import socket
 import threading
 import time
 
-STOP_DISTANCE_METERS = 0.3048  # 12 inches = 0.3048m
+STOP_DISTANCE_METERS = 0.3048  # 12 inches = 0.3048 m
 
 class PhysicalWheel12InchController(Node):
     def __init__(self):
@@ -50,15 +49,15 @@ class PhysicalWheel12InchController(Node):
         self.ball_distance_m = 99.0
         self.ball_pixel_offset = 0.0
         self.last_ball_time = 0.0
-        self.lidar_front_dist_m = 99.0
+        self.lidar_min_dist_m = 99.0
         self.last_command_sent = None
 
         # Control Loop Timer (20Hz = 50ms)
         self.timer = self.create_timer(0.05, self.control_loop)
 
         self.get_logger().info('====================================================')
-        self.get_logger().info(' 12-INCH AUTOMATIC PHYSICAL WHEEL CONTROLLER ACTIVE  ')
-        self.get_logger().info(f' Threshold: 12 inches ({STOP_DISTANCE_METERS:.2f} meters)')
+        self.get_logger().info(' FULL 360° 12-INCH PROXIMITY WHEEL CONTROLLER READY  ')
+        self.get_logger().info(f' Stop Threshold: 12 inches ({STOP_DISTANCE_METERS:.2f} meters)')
         self.get_logger().info('====================================================')
 
     def connect_pi_motors(self):
@@ -87,17 +86,15 @@ class PhysicalWheel12InchController(Node):
 
     def scan_callback(self, msg):
         ranges = msg.ranges
-        num = len(ranges)
-        if num == 0:
+        if len(ranges) == 0:
             return
 
-        min_d = 99.0
-        for i in range(-15, 15):
-            idx = i % num
-            r = ranges[idx]
-            if 0.05 < r < min_d:
-                min_d = r
-        self.lidar_front_dist_m = min_d
+        # Check ALL 360 degree Lidar range readings
+        valid_ranges = [r for r in ranges if 0.05 < r < 20.0]
+        if valid_ranges:
+            self.lidar_min_dist_m = min(valid_ranges)
+        else:
+            self.lidar_min_dist_m = 99.0
 
     def ball_callback(self, msg):
         self.last_ball_time = time.time()
@@ -111,14 +108,15 @@ class PhysicalWheel12InchController(Node):
         now = time.time()
         has_recent_ball = (now - self.last_ball_time) < 0.8
 
-        closest_object_dist = self.lidar_front_dist_m
+        # Overall closest object distance (from 360° Lidar or Camera Ball Tracker)
+        closest_object_dist = self.lidar_min_dist_m
         if has_recent_ball and self.ball_distance_m < closest_object_dist:
             closest_object_dist = self.ball_distance_m
 
         twist = Twist()
 
         # -----------------------------------------------------------
-        # RULE 1: OBJECT WITHIN 12 INCHES (<= 0.30m) -> STOP PHYSICAL WHEELS!
+        # RULE 1: OBJECT DETECTED WITHIN 12 INCHES (<= 0.3048m) -> STOP!
         # -----------------------------------------------------------
         if closest_object_dist <= STOP_DISTANCE_METERS:
             twist.linear.x = 0.0
@@ -126,13 +124,14 @@ class PhysicalWheel12InchController(Node):
             self.pub_cmd_vel.publish(twist)
             self.send_hardware_motor_cmd('S')
             
+            dist_inches = closest_object_dist * 39.3701
             self.get_logger().info(
-                f'[STOP] Object detected within 12 inches ({closest_object_dist*39.37:.1f} in / {closest_object_dist:.2f}m)! PHYSICAL WHEELS STOPPED.',
-                throttle_duration_sec=0.5
+                f'[STOP] 🛑 OBJECT DETECTED WITHIN 12 INCHES ({dist_inches:.1f} in / {closest_object_dist:.2f}m)! PHYSICAL WHEELS STOPPED.',
+                throttle_duration_sec=0.4
             )
 
         # -----------------------------------------------------------
-        # RULE 2: NO OBJECT WITHIN 12 INCHES (> 0.30m) -> AUTOMATIC MOVE/SPIN!
+        # RULE 2: NO OBJECT WITHIN 12 INCHES (> 0.3048m) -> MOVE / SPIN!
         # -----------------------------------------------------------
         else:
             if has_recent_ball:
@@ -145,18 +144,20 @@ class PhysicalWheel12InchController(Node):
                 
                 self.send_hardware_motor_cmd(cmd)
                 self.pub_cmd_vel.publish(twist)
+                dist_inches = self.ball_distance_m * 39.3701
                 self.get_logger().info(
-                    f'[MOVE] Ball at {self.ball_distance_m*39.37:.1f} in > 12 in. Driving ({cmd}) towards object!',
-                    throttle_duration_sec=0.5
+                    f'[APPROACH] 🎯 Ball detected at {dist_inches:.1f} in ({self.ball_distance_m:.2f}m) > 12 in. Driving ({cmd})!',
+                    throttle_duration_sec=0.4
                 )
             else:
-                # No object seen -> Automatically spin physical wheels to search!
+                # No object seen within 12 inches -> Spin wheels to search!
                 twist.angular.z = 0.65
                 self.send_hardware_motor_cmd('R')
                 self.pub_cmd_vel.publish(twist)
+                dist_inches = closest_object_dist * 39.3701 if closest_object_dist < 90 else 999.0
                 self.get_logger().info(
-                    f'[AUTO SEARCH] No object within 12 inches ({closest_object_dist:.2f}m). PHYSICAL WHEELS AUTOMATICALLY MOVING/SPINNING...',
-                    throttle_duration_sec=0.5
+                    f'[AUTO SEARCH] 🔄 Nearest object at {dist_inches:.1f} in ({closest_object_dist:.2f}m) > 12 in. WHEELS MOVING/SPINNING TO SEARCH...',
+                    throttle_duration_sec=0.4
                 )
 
 def main(args=None):
