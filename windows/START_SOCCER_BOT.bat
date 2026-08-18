@@ -1,13 +1,17 @@
 @echo off
-title "SOCCER BOT ROBOTICS SYSTEM"
+title SOCCER BOT ROBOTICS SYSTEM
 cls
 echo ====================================================================
 echo             SOCCER BOT ROBOTICS SYSTEM (WINDOWS + WSL)
 echo ====================================================================
 echo.
 
-cd /d "C:\Users\jatin\soccer_bot\windows"
-"C:\Python314\python.exe" "launch_windows_hub.py"
+cd /d "%~dp0"
+
+set PYTHON_EXE=python
+if exist "C:\Python312\python.exe" set PYTHON_EXE="C:\Python312\python.exe"
+
+%PYTHON_EXE% "%~dp0launch_windows_hub.py"
 
 if %ERRORLEVEL% NEQ 0 (
     echo.
@@ -18,7 +22,8 @@ if %ERRORLEVEL% NEQ 0 (
 ) else (
     echo.
     echo ====================================================================
-    echo System startup commands sent successfully.
+    echo All processes initiated successfully.
+    echo You may close this window.
     echo ====================================================================
-    timeout /t 5 >nul
+    ping -n 5 127.0.0.1 >nul
 )

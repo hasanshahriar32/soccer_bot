@@ -1,13 +1,12 @@
 #!/usr/bin/env python3
 """
 ====================================================================
-                YDLIDAR RAW TCP PACKET PARSER NODE
+                YDLIDAR X4 RAW TCP PACKET PARSER NODE
 ====================================================================
 Description:
-    ROS 2 node that connects to the Raspberry Pi Lidar TCP server
-    on port 5000, parses YDLidar X4 raw byte frames (0xAA 0x55),
-    calculates distance & angle readings, and publishes standard
-    sensor_msgs/msg/LaserScan to the /scan topic.
+    ROS 2 node that connects to the Raspberry Pi Lidar server on port 5000,
+    parses YDLidar X4 raw byte frames (0xAA 0x55) and JSON frames,
+    and publishes standard sensor_msgs/msg/LaserScan to the /scan topic.
 
 Target Topic: /scan (frame_id: laser_frame)
 ====================================================================
@@ -17,6 +16,7 @@ import rclpy
 from rclpy.node import Node
 from sensor_msgs.msg import LaserScan
 import socket
+import json
 import math
 import struct
 import threading
@@ -31,31 +31,65 @@ class RawLidarPublisher(Node):
         
         self.get_logger().info(f"Connecting to Lidar stream at {self.host}:{self.port}...")
         self.running = True
-        self.thread = threading.Thread(target=self.receive_stream)
-        self.thread.daemon = True
+        self.thread = threading.Thread(target=self.receive_stream, daemon=True)
         self.thread.start()
 
     def receive_stream(self):
+        scan_cnt = 0
+        connected_logged = False
+        
         while self.running:
             try:
                 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-                s.settimeout(5.0)
+                s.settimeout(10.0)
                 s.connect((self.host, self.port))
-                self.get_logger().info("Connected to Lidar Stream successfully!")
+                
+                if not connected_logged:
+                    self.get_logger().info(f"Connected to Lidar Stream at {self.host}:{self.port} successfully!")
+                    connected_logged = True
                 
                 buffer = b''
                 ranges = [float('inf')] * 360
                 
                 while self.running:
-                    chunk = s.recv(4096)
-                    if not chunk:
-                        break
-                    buffer += chunk
-                    
+                    try:
+                        chunk = s.recv(8192)
+                        if not chunk:
+                            time.sleep(0.5)
+                            break
+                        buffer += chunk
+                    except socket.timeout:
+                        continue
+                        
+                    # Parse YDLidar X4 raw binary frame (0xAA 0x55)
                     while len(buffer) >= 10:
                         header_idx = buffer.find(b'\xaa\x55')
                         if header_idx == -1:
-                            buffer = buffer[-2:]
+                            if b'\n' in buffer:
+                                line, buffer = buffer.split(b'\n', 1)
+                                try:
+                                    data = json.loads(line.decode('utf-8', errors='ignore'))
+                                    msg = LaserScan()
+                                    msg.header.stamp = self.get_clock().now().to_msg()
+                                    msg.header.frame_id = 'laser_frame'
+                                    msg.angle_min = float(data.get('angle_min', -math.pi))
+                                    msg.angle_max = float(data.get('angle_max', math.pi))
+                                    msg.angle_increment = float(data.get('angle_increment', (2.0 * math.pi) / 360.0))
+                                    msg.scan_time = float(data.get('scan_time', 0.1))
+                                    msg.range_min = float(data.get('range_min', 0.1))
+                                    msg.range_max = float(data.get('range_max', 10.0))
+                                    msg.ranges = [float(r) for r in data.get('ranges', [])]
+                                    if 'intensities' in data and data['intensities']:
+                                        msg.intensities = [float(i) for i in data['intensities']]
+                                        
+                                    self.publisher_.publish(msg)
+                                    scan_cnt += 1
+                                    if scan_cnt % 100 == 0:
+                                        self.get_logger().info(f"Published {scan_cnt} 360 scans to /scan")
+                                except:
+                                    pass
+                            else:
+                                buffer = buffer[-2:]
                             break
                             
                         if header_idx > 0:
@@ -64,7 +98,6 @@ class RawLidarPublisher(Node):
                         if len(buffer) < 10:
                             break
                             
-                        ls_byte = buffer[3]
                         sample_count = buffer[3]
                         packet_len = 10 + sample_count * 2
                         
@@ -74,42 +107,48 @@ class RawLidarPublisher(Node):
                         packet = buffer[:packet_len]
                         buffer = buffer[packet_len:]
                         
-                        fsa = struct.unpack('<H', packet[4:6])[0] >> 1
-                        lsa = struct.unpack('<H', packet[6:8])[0] >> 1
-                        
-                        start_angle = fsa / 64.0
-                        end_angle = lsa / 64.0
-                        
-                        if end_angle < start_angle:
-                            diff = (end_angle + 360.0) - start_angle
-                        else:
-                            diff = end_angle - start_angle
+                        try:
+                            fsa = struct.unpack('<H', packet[4:6])[0] >> 1
+                            lsa = struct.unpack('<H', packet[6:8])[0] >> 1
                             
-                        step = diff / (sample_count - 1) if sample_count > 1 else 0
-                        
-                        for i in range(sample_count):
-                            dist_mm = struct.unpack('<H', packet[10 + i*2 : 12 + i*2])[0] / 4.0
-                            if dist_mm > 0:
-                                angle = (start_angle + step * i) % 360.0
-                                idx = int(round(angle)) % 360
-                                dist_m = dist_mm / 1000.0
-                                if 0.1 <= dist_m <= 10.0:
-                                    ranges[idx] = dist_m
-                                    
-                        # Publish complete scan message
-                        scan_msg = LaserScan()
-                        scan_msg.header.stamp = self.get_clock().now().to_msg()
-                        scan_msg.header.frame_id = 'laser_frame'
-                        scan_msg.angle_min = 0.0
-                        scan_msg.angle_max = 2.0 * math.pi
-                        scan_msg.angle_increment = (2.0 * math.pi) / 360.0
-                        scan_msg.time_increment = 0.0
-                        scan_msg.scan_time = 0.1
-                        scan_msg.range_min = 0.1
-                        scan_msg.range_max = 10.0
-                        scan_msg.ranges = list(ranges)
-                        self.publisher_.publish(scan_msg)
-                        
+                            start_angle = fsa / 64.0
+                            end_angle = lsa / 64.0
+                            
+                            if end_angle < start_angle:
+                                diff = (end_angle + 360.0) - start_angle
+                            else:
+                                diff = end_angle - start_angle
+                                
+                            step = diff / (sample_count - 1) if sample_count > 1 else 0
+                            
+                            for i in range(sample_count):
+                                dist_mm = struct.unpack('<H', packet[10 + i*2 : 12 + i*2])[0] / 4.0
+                                if dist_mm > 0:
+                                    angle = (start_angle + step * i) % 360.0
+                                    idx = int(round(angle)) % 360
+                                    dist_m = dist_mm / 1000.0
+                                    if 0.1 <= dist_m <= 10.0:
+                                        ranges[idx] = dist_m
+                                        
+                            # Publish complete scan message
+                            scan_msg = LaserScan()
+                            scan_msg.header.stamp = self.get_clock().now().to_msg()
+                            scan_msg.header.frame_id = 'laser_frame'
+                            scan_msg.angle_min = 0.0
+                            scan_msg.angle_max = 2.0 * math.pi
+                            scan_msg.angle_increment = (2.0 * math.pi) / 360.0
+                            scan_msg.scan_time = 0.1
+                            scan_msg.range_min = 0.1
+                            scan_msg.range_max = 10.0
+                            scan_msg.ranges = list(ranges)
+                            self.publisher_.publish(scan_msg)
+                            scan_cnt += 1
+                            if scan_cnt % 100 == 0:
+                                self.get_logger().info(f"Published {scan_cnt} 360 scans to /scan")
+                        except:
+                            pass
+                            
+                s.close()
             except Exception as e:
                 time.sleep(1.0)
 
@@ -120,7 +159,6 @@ def main(args=None):
         rclpy.spin(node)
     except KeyboardInterrupt:
         node.running = False
-        node.thread.join()
     finally:
         node.destroy_node()
         rclpy.shutdown()

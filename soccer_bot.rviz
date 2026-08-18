@@ -6,8 +6,10 @@ Panels:
       Expanded:
         - /Global Options1
         - /LaserScan1
+        - /RobotModel1
+        - /Image1
       Splitter Ratio: 0.5
-    Tree Height: 387
+    Tree Height: 78
 Visualization Manager:
   Class: ""
   Displays:
@@ -38,9 +40,9 @@ Visualization Manager:
       Axis: Z
       Channel Name: intensity
       Class: rviz_default_plugins/LaserScan
-      Color: 0; 255; 255
+      Color: 255; 0; 0
       Color Transformer: FlatColor
-      Decay Time: 0
+      Decay Time: 1
       Enabled: true
       Invert Rainbow: false
       Max Color: 255; 255; 255
@@ -50,15 +52,15 @@ Visualization Manager:
       Name: LaserScan
       Position Transformer: XYZ
       Selectable: true
-      Size (Pixels): 3
-      Size (m): 0.05000000074505806
-      Style: Squares
+      Size (Pixels): 5
+      Size (m): 0.05999999865889549
+      Style: Spheres
       Topic:
-        Depth: 5
+        Depth: 10
         Durability Policy: Volatile
         Filter size: 10
         History Policy: Keep Last
-        Reliability Policy: Best Effort
+        Reliability Policy: System Default
         Value: /scan
       Use Fixed Frame: true
       Use rainbow: true
@@ -70,7 +72,7 @@ Visualization Manager:
       Description Source: Topic
       Description Topic:
         Depth: 5
-        Durability Policy: Volatile
+        Durability Policy: Transient Local
         History Policy: Keep Last
         Reliability Policy: Reliable
         Value: /robot_description
@@ -123,8 +125,21 @@ Visualization Manager:
       Max Value: 1
       Median window: 5
       Min Value: 0
-      Name: PiCamera
-      Normalize Range: true
+      Name: Image
+      Normalize Range: false
+      Topic:
+        Depth: 5
+        Durability Policy: Volatile
+        History Policy: Keep Last
+        Reliability Policy: System Default
+        Value: /image_raw
+      Value: true
+    - Class: rviz_default_plugins/Camera
+      Enabled: true
+      Far Plane Distance: 100
+      Image Rendering: background and overlay
+      Name: Camera
+      Overlay Alpha: 0.5
       Topic:
         Depth: 5
         Durability Policy: Volatile
@@ -132,15 +147,52 @@ Visualization Manager:
         Reliability Policy: Reliable
         Value: /image_raw
       Value: true
+      Visibility:
+        Grid: true
+        Image: true
+        LaserScan: true
+        RobotModel: true
+        Value: true
+      Zoom Factor: 1
   Enabled: true
   Global Options:
-    Background Color: 25; 25; 25
-    Fixed Frame: map
+    Background Color: 48; 48; 48
+    Fixed Frame: base_link
     Frame Rate: 30
   Name: root
   Tools:
     - Class: rviz_default_plugins/Interact
       Hide Inactive Objects: true
+    - Class: rviz_default_plugins/MoveCamera
+    - Class: rviz_default_plugins/Select
+    - Class: rviz_default_plugins/FocusCamera
+    - Class: rviz_default_plugins/SetGoal
+      Topic:
+        Depth: 5
+        Durability Policy: Volatile
+        History Policy: Keep Last
+        Reliability Policy: Reliable
+        Value: goal_pose
+    - Class: rviz_default_plugins/SetInitialPose
+      Covariance x: 0.25
+      Covariance y: 0.25
+      Covariance yaw: 0.06853891909122467
+      Topic:
+        Depth: 5
+        Durability Policy: Volatile
+        History Policy: Keep Last
+        Reliability Policy: Reliable
+        Value: initialpose
+    - Class: rviz_default_plugins/PublishPoint
+      Single click: true
+      Topic:
+        Depth: 5
+        Durability Policy: Volatile
+        History Policy: Keep Last
+        Reliability Policy: Reliable
+        Value: /clicked_point
+    - Class: rviz_default_plugins/Measure
+      Line color: 128; 128; 0
   Transformation:
     Current:
       Class: rviz_default_plugins/TF
@@ -148,35 +200,37 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz_default_plugins/Orbit
-      Distance: 6.129389762878418
+      Distance: 7.652810096740723
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
         Swap Stereo Eyes: false
         Value: false
       Focal Point:
-        X: 0.08907878398895264
-        Y: 1.61989164352417
-        Z: 0.031582530587911606
+        X: 0
+        Y: 0
+        Z: 0
       Focal Shape Fixed Size: true
       Focal Shape Size: 0.05000000074505806
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 1.5697963237762451
+      Pitch: 0.6000000238418579
       Target Frame: <Fixed Frame>
-      Value: Orbit (rviz_default_plugins)
-      Yaw: 3.8949530124664307
+      Value: Orbit (rviz)
+      Yaw: 0.800000011920929
     Saved: ~
 Window Geometry:
+  Camera:
+    collapsed: false
   Displays:
     collapsed: false
-  Height: 784
+  Height: 793
   Hide Left Dock: false
   Hide Right Dock: false
-  PiCamera:
+  Image:
     collapsed: false
-  QMainWindow State: 000000ff00000000fd000000010000000000000156000002bafc0200000002fb000000100050006900430061006d006500720061010000003b000000b00000001600fffffffb000000100044006900730070006c00610079007301000000f100000204000000c700ffffff000004a4000002ba00000004000000040000000800000008fc0000000100000002000000010000000a0054006f006f006c00730100000000ffffffff0000000000000000
+  QMainWindow State: 000000ff00000000fd000000010000000000000156000002c3fc0200000003fb0000000a0049006d006100670065010000003b0000012b0000001600fffffffb000000100044006900730070006c006100790073010000016c000000cf000000c700fffffffb0000000c00430061006d0065007200610100000241000000bd0000001600ffffff000004a4000002c300000004000000040000000800000008fc0000000100000002000000010000000a0054006f006f006c00730100000000ffffffff0000000000000000
   Width: 1536
   X: 8
   Y: 31
