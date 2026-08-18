@@ -21,7 +21,7 @@ try:
 except ImportError:
     HAS_PARAMIKO = False
 
-DEFAULT_PI_IP = '192.168.0.135'
+DEFAULT_PI_IP = '10.73.75.146'
 PI_USER = 'hasan'
 PI_PASS = 'grammarpro'
 
@@ -73,10 +73,10 @@ def find_pi_ip():
     if test_ssh_ip(DEFAULT_PI_IP):
         return DEFAULT_PI_IP
         
-    subnets = ['192.168.0', '192.168.1', '192.168.43', '172.20.10', '192.168.137']
+    subnets = ['10.73.75', '192.168.0', '192.168.1', '192.168.43', '172.20.10', '192.168.137']
     log("Scanning local networks (Wi-Fi / Hotspot) for Raspberry Pi...", symbol="SEARCH")
     
-    targets = [f"{sub}.{i}" for sub in subnets for i in range(1, 255)]
+    targets = [f"{sub}.{i}" for i in range(1, 255)]
     with concurrent.futures.ThreadPoolExecutor(max_workers=100) as ex:
         results = ex.map(test_ssh_ip, targets)
         for ip in results:
@@ -95,14 +95,15 @@ def launch_pi_sensors(pi_ip):
             
             # Stop conflicting Pipewire / Wireplumber camera locks on Pi
             ssh.exec_command("systemctl --user stop wireplumber pipewire 2>/dev/null")
-            ssh.exec_command("pkill -9 -f rpicam ; pkill -9 -f python_socat.py")
+            ssh.exec_command("pkill -9 -f rpicam ; pkill -9 -f python3")
             time.sleep(1.0)
             
-            ssh.exec_command("nohup python3 ~/python_socat.py > ~/socat.log 2>&1 &")
-            ssh.exec_command("nohup bash ~/start_rpicam.sh > ~/rpicam.log 2>&1 &")
+            ssh.exec_command("nohup python3 /home/hasan/python_socat.py > ~/socat.log 2>&1 &")
+            ssh.exec_command("nohup python3 /home/hasan/fast_camera_server.py > ~/camera.log 2>&1 &")
+            ssh.exec_command("nohup python3 /home/hasan/motor_server.py > ~/motor.log 2>&1 &")
             time.sleep(2.0)
             
-            log(f"Pi Lidar (5000) & Native Camera (8088) active at {pi_ip}!", symbol="OK")
+            log(f"Pi Lidar (5000), Camera (8080/8088) & Motors (9000) active at {pi_ip}!", symbol="OK")
             ssh.close()
             return True
         except Exception as err:
@@ -133,7 +134,7 @@ def main():
     if pi_ip:
         pi_ready = launch_pi_sensors(pi_ip)
     else:
-        log("Raspberry Pi (192.168.0.135) is currently OFFLINE or unreachable.", symbol="!")
+        log("Raspberry Pi (10.73.75.146) is currently OFFLINE or unreachable.", symbol="!")
         log("--> Check: 1. Power on Pi. 2. Verify Wi-Fi / Hotspot connection.", symbol="!")
         
     launch_wsl_system()

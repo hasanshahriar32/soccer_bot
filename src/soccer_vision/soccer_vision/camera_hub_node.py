@@ -13,7 +13,7 @@ class CameraHubNode(Node):
         super().__init__('camera_hub_node')
         self.publisher_ = self.create_publisher(Image, '/image_raw', 10)
         self.bridge = CvBridge()
-        self.pi_ip = '192.168.0.135'
+        self.pi_ip = '10.73.75.146'
         self.port = 8088
         self.running = True
         
