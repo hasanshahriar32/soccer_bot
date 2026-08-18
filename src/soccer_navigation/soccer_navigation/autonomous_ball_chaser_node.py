@@ -1,12 +1,14 @@
 #!/usr/bin/env python3
 """
 ====================================================================
-     AUTONOMOUS BALL CHASER & STEERING CONTROL NODE — ROS 2 JAZZY
+  12-INCH PROXIMITY WHEEL CONTROLLER — ROS 2 JAZZY
 ====================================================================
 Description:
-    Subscribes to /ball_position (from ball_tracker_node) and /scan.
-    Computes proportional steering (angular.z) and forward drive (linear.x)
-    to autonomously track, align, and approach detected soccer balls.
+    1. Distance Threshold: 12 inches (30.48 cm / 0.305 meters).
+    2. When Object / Ball / Obstacle is WITHIN 12 inches (<= 0.30m):
+       -> STOP WHEELS IMMEDIATELY (linear.x = 0, angular.z = 0).
+    3. When NO object is within 12 inches (> 0.30m):
+       -> SPIN / MOVE WHEELS AUTOMATICALLY (search / approach mode).
 ====================================================================
 """
 
@@ -17,9 +19,12 @@ from geometry_msgs.msg import Point, Twist
 from sensor_msgs.msg import LaserScan
 import time
 
-class AutonomousBallChaser(Node):
+# 12 inches in meters = 12 * 0.0254 = 0.3048 m
+STOP_DISTANCE_METERS = 0.3048
+
+class TwelveInchProximityController(Node):
     def __init__(self):
-        super().__init__('autonomous_ball_chaser')
+        super().__init__('twelve_inch_proximity_controller')
 
         # Subscriptions
         self.sub_ball = self.create_subscription(
@@ -27,90 +32,103 @@ class AutonomousBallChaser(Node):
         self.sub_scan = self.create_subscription(
             LaserScan, '/scan', self.scan_callback, 10)
 
-        # Publisher for standard ROS velocity commands
+        # Publisher for wheel motor commands
         self.pub_cmd_vel = self.create_publisher(Twist, '/cmd_vel', 10)
 
-        # Control Parameters
-        self.target_dist_m = 0.20        # Stop 20 cm from ball
-        self.kp_linear = 0.45            # Forward speed gain
-        self.kp_angular = 0.0035         # Steering gain per pixel offset
-        self.max_linear_speed = 0.35     # Max forward speed m/s
-        self.max_angular_speed = 1.2     # Max turning speed rad/s
-
-        # Safety State
-        self.obstacle_blocked = False
+        # State tracking
+        self.ball_distance_m = 99.0
+        self.ball_pixel_offset = 0.0
         self.last_ball_time = 0.0
+        self.lidar_front_dist_m = 99.0
+
+        # Control loop timer (20Hz = every 50ms)
+        self.timer = self.create_timer(0.05, self.control_loop)
 
         self.get_logger().info('====================================================')
-        self.get_logger().info(' AUTONOMOUS BALL CHASER & STEERING CONTROLLER ACTIVE')
+        self.get_logger().info(' 12-INCH AUTOMATIC PROXIMITY WHEEL CONTROLLER READY ')
+        self.get_logger().info(f' Threshold: 12 inches ({STOP_DISTANCE_METERS:.2f} meters)')
         self.get_logger().info('====================================================')
 
     def scan_callback(self, msg):
         ranges = msg.ranges
-        num_readings = len(ranges)
-        if num_readings == 0:
+        num = len(ranges)
+        if num == 0:
             return
 
-        front_min_dist = 99.0
+        min_d = 99.0
         for i in range(-15, 15):
-            idx = i % num_readings
+            idx = i % num
             r = ranges[idx]
-            if 0.05 < r < front_min_dist:
-                front_min_dist = r
-
-        if front_min_dist < 0.15: # 15 cm safety buffer
-            if not self.obstacle_blocked:
-                self.get_logger().warn(f'SAFETY OBSTACLE DETECTED at {front_min_dist:.2f}m! Pausing drive.')
-            self.obstacle_blocked = True
-        else:
-            self.obstacle_blocked = False
+            if 0.05 < r < min_d:
+                min_d = r
+        self.lidar_front_dist_m = min_d
 
     def ball_callback(self, msg):
         self.last_ball_time = time.time()
+        self.ball_distance_m = msg.x
+        self.ball_pixel_offset = msg.y
 
-        dist_m = msg.x
-        pixel_offset_x = msg.y
+    def control_loop(self):
+        if not rclpy.ok():
+            return
+            
+        now = time.time()
+        has_recent_ball = (now - self.last_ball_time) < 0.8
+
+        closest_object_dist = self.lidar_front_dist_m
+        if has_recent_ball and self.ball_distance_m < closest_object_dist:
+            closest_object_dist = self.ball_distance_m
 
         twist = Twist()
 
-        if self.obstacle_blocked:
+        # -----------------------------------------------------------
+        # RULE 1: OBJECT WITHIN 12 INCHES (<= 0.30m) -> STOP WHEELS!
+        # -----------------------------------------------------------
+        if closest_object_dist <= STOP_DISTANCE_METERS:
             twist.linear.x = 0.0
             twist.angular.z = 0.0
             self.pub_cmd_vel.publish(twist)
-            return
+            self.get_logger().info(
+                f'[STOP] Object detected within 12 inches ({closest_object_dist*39.37:.1f} in / {closest_object_dist:.2f}m)! WHEELS STOPPED.',
+                throttle_duration_sec=0.5
+            )
 
-        # 1. Proportional Angular Steering Control
-        angular_z = -self.kp_angular * pixel_offset_x
-        angular_z = max(-self.max_angular_speed, min(self.max_angular_speed, angular_z))
-
-        # 2. Proportional Linear Forward Drive Control
-        dist_error = dist_m - self.target_dist_m
-        if abs(pixel_offset_x) < 45 and dist_error > 0.02:
-            linear_x = self.kp_linear * dist_error
-            linear_x = max(0.0, min(self.max_linear_speed, linear_x))
+        # -----------------------------------------------------------
+        # RULE 2: NO OBJECT WITHIN 12 INCHES (> 0.30m) -> MOVE / SPIN!
+        # -----------------------------------------------------------
         else:
-            linear_x = 0.0
+            if has_recent_ball:
+                angular_z = -0.0035 * self.ball_pixel_offset
+                angular_z = max(-1.0, min(1.0, angular_z))
+                
+                linear_x = 0.25 * (self.ball_distance_m - STOP_DISTANCE_METERS)
+                linear_x = max(0.08, min(0.30, linear_x))
+                
+                twist.linear.x = linear_x
+                twist.angular.z = angular_z
+                self.get_logger().info(
+                    f'[APPROACH] Ball at {self.ball_distance_m*39.37:.1f} in ({self.ball_distance_m:.2f}m) > 12 in. Driving forward (v_x={linear_x:.2f}, w_z={angular_z:.2f})',
+                    throttle_duration_sec=0.5
+                )
+            else:
+                twist.linear.x = 0.0
+                twist.angular.z = 0.65  # Spin wheels at 0.65 rad/s to scan area
+                self.get_logger().info(
+                    f'[SEARCH] No object within 12 inches ({closest_object_dist:.2f}m). WHEELS SPINNING TO SEARCH...',
+                    throttle_duration_sec=0.5
+                )
 
-        twist.linear.x = linear_x
-        twist.angular.z = angular_z
-        self.pub_cmd_vel.publish(twist)
-
-        self.get_logger().info(
-            f'Ball Track -> Dist: {dist_m:.2f}m | Offset: {pixel_offset_x:.0f}px | Cmd -> v_x: {linear_x:.2f} m/s, w_z: {angular_z:.2f} rad/s',
-            throttle_duration_sec=0.5
-        )
+            self.pub_cmd_vel.publish(twist)
 
 def main(args=None):
     rclpy.init(args=args)
-    node = AutonomousBallChaser()
+    node = TwelveInchProximityController()
     try:
         rclpy.spin(node)
     except (KeyboardInterrupt, ExternalShutdownException):
         pass
     finally:
         node.destroy_node()
-        if rclpy.ok():
-            rclpy.shutdown()
 
 if __name__ == '__main__':
     main()
