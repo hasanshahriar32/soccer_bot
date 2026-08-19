@@ -26,6 +26,7 @@ setup(
         'console_scripts': [
             'coordinate_tracker = soccer_slam.coordinate_tracker:main',
             'slam_map_saver = soccer_slam.slam_map_saver:main',
+            'phone_imu_bridge = soccer_slam.phone_imu_bridge:main',
         ],
     },
 )

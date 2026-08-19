@@ -5,10 +5,11 @@ Soccer Bot Real-Time SLAM & Mapping Master Launch Description
 ====================================================================
 Launches:
   1. YDLidar ROS 2 Driver (/scan)
-  2. Static TF Publishers (base_link -> laser_frame, odom -> base_link)
-  3. SLAM Toolbox Online Async Node (/map, loop closure, graph SLAM)
-  4. Real-Time Spatial Coordinate Tracker Node (/robot_map_pose)
-  5. RViz2 Live Mapping GUI
+  2. Static TF: base_link -> laser_frame
+  3. Phone IMU Gyroscope Bridge (Web Server on :8080 & dynamic odom -> base_link)
+  4. SLAM Toolbox Online Async Node (/map, loop closure, graph SLAM)
+  5. Real-Time Spatial Coordinate Tracker Node (/robot_map_pose)
+  6. RViz2 Live Mapping GUI
 ====================================================================
 """
 
@@ -49,12 +50,20 @@ def generate_launch_description():
         arguments=['--x', '0', '--y', '0', '--z', '0.05', '--roll', '0', '--pitch', '0', '--yaw', '0', '--frame-id', 'base_link', '--child-frame-id', 'laser_frame'],
     )
 
-    # 3. Static TF: odom -> base_link (baseline odometry identity frame for scan matcher)
-    tf_odom_node = Node(
-        package='tf2_ros',
-        executable='static_transform_publisher',
-        name='static_tf_pub_odom',
-        arguments=['--x', '0', '--y', '0', '--z', '0', '--roll', '0', '--pitch', '0', '--yaw', '0', '--frame-id', 'odom', '--child-frame-id', 'base_link'],
+    # 3. Phone IMU & Gyroscope Bridge (serves web UI on :8080 & publishes dynamic odom -> base_link)
+    phone_imu_node = Node(
+        package='soccer_slam',
+        executable='phone_imu_bridge',
+        name='phone_imu_bridge',
+        output='screen',
+        emulate_tty=True,
+        parameters=[{
+            'http_port': 8080,
+            'ws_port': 8081,
+            'publish_tf': True,
+            'odom_frame': 'odom',
+            'base_frame': 'base_link',
+        }],
     )
 
     # 4. SLAM Toolbox (Online Asynchronous Mapping with Lifecycle Management)
@@ -87,7 +96,7 @@ def generate_launch_description():
     return LaunchDescription([
         ydlidar_node,
         tf_laser_node,
-        tf_odom_node,
+        phone_imu_node,
         slam_launch,
         tracker_node,
         rviz_node,
