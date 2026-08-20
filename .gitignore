@@ -4,3 +4,4 @@ log/
 *.tar.gz
 __pycache__/
 *.pyc
+src/YDLidar-SDK/
