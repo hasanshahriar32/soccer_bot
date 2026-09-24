@@ -41,13 +41,19 @@ else
         echo "[INFO] Establishing wireless PTY serial bridge..."
         
         rm -f /tmp/ttyLIDAR
-        socat -d -d PTY,link=/tmp/ttyLIDAR,raw,echo=0,mode=666 TCP:"$PI_IP":"$PI_PORT" >/tmp/laptop_socat.log 2>&1 &
+        # Persistent auto-reconnecting wireless serial bridge
+        (
+            while true; do
+                socat -d -d PTY,link=/tmp/ttyLIDAR,raw,echo=0,mode=666 TCP:"$PI_IP":"$PI_PORT",retry=999,interval=1 >>/tmp/laptop_socat.log 2>&1
+                sleep 1
+            done
+        ) &
         SOCAT_PID=$!
-        sleep 1.5
+        sleep 2
 
         if [ -e /tmp/ttyLIDAR ]; then
             echo 1992 | sudo -S ln -sf /tmp/ttyLIDAR /dev/ttyUSB0
-            echo 1992 | sudo -S chmod 666 /dev/ttyUSB0
+            echo 1992 | sudo -S chmod 666 /tmp/ttyLIDAR /dev/ttyUSB0 2>/dev/null || true
             echo "[SUCCESS] Wireless LiDAR successfully mapped to /dev/ttyUSB0!"
         else
             echo "[ERROR] Failed to establish /tmp/ttyLIDAR bridge."
