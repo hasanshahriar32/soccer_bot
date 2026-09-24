@@ -1,7 +1,7 @@
 import cv2
 
-print("Opening TCP Camera Stream at tcp://10.127.69.146:8000...")
-cap = cv2.VideoCapture('tcp://10.127.69.146:8000')
+print("Opening TCP Camera Stream at tcp://10.72.30.146:8000...")
+cap = cv2.VideoCapture('tcp://10.72.30.146:8000')
 print("Is cap opened:", cap.isOpened())
 
 for i in range(5):

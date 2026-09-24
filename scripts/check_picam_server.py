@@ -3,7 +3,7 @@ import paramiko
 def main():
     ssh = paramiko.SSHClient()
     ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-    ssh.connect('10.127.69.146', username='hasan', password='grammarpro', timeout=8)
+    ssh.connect('10.72.30.146', username='hasan', password='grammarpro', timeout=8)
     
     stdin, stdout, stderr = ssh.exec_command('cat /home/hasan/picam_server.py 2>/dev/null || head -n 30 /home/hasan/*.py')
     print("--- Pi Camera Script ---")

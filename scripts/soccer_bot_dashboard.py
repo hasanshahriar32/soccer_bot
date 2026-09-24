@@ -7,7 +7,7 @@ import struct
 import numpy as np
 import cv2
 
-PI_IP = '10.127.69.146'
+PI_IP = '10.72.30.146'
 LIDAR_PORT = 5000
 CAMERA_PORT = 8000
 

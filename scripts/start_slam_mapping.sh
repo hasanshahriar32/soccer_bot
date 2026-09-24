@@ -3,10 +3,10 @@
 # Soccer Bot Real-Time 2D LiDAR SLAM & Spatial Mapping Launcher
 # Supports:
 #   Mode A: Direct USB connection on Laptop (/dev/ttyUSB0)
-#   Mode B: Wireless TCP Bridge from Raspberry Pi (10.127.69.146:5000)
+#   Mode B: Wireless TCP Bridge from Raspberry Pi (10.72.30.146:5000)
 # ====================================================================
 
-PI_IP="10.127.69.146"
+PI_IP="10.72.30.146"
 PI_PORT="5000"
 SOCAT_PID=""
 

@@ -19,7 +19,7 @@ import rclpy
 from rclpy.node import Node
 from geometry_msgs.msg import Twist
 
-PI_IP = '10.127.69.146'
+PI_IP = '10.72.30.146'
 PI_PORT = 6000
 
 

@@ -4,7 +4,7 @@ def main():
     try:
         ssh = paramiko.SSHClient()
         ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-        ssh.connect('10.127.69.146', username='hasan', password='grammarpro', timeout=5)
+        ssh.connect('10.72.30.146', username='hasan', password='grammarpro', timeout=5)
         # Send safe stop to Arduino
         ssh.exec_command('python3 -c "import serial; s = serial.Serial(\'/dev/ttyACM0\', 9600, timeout=1); s.write(b\'S\'); s.close()"')
         ssh.close()

@@ -3,7 +3,7 @@ import time
 import subprocess
 import os
 
-PI_IP = '10.127.69.146'
+PI_IP = '10.72.30.146'
 PI_USER = 'hasan'
 PI_PASS = 'grammarpro'
 
@@ -81,7 +81,7 @@ def main():
 
     print("\n==========================================")
     print(" SUCCESS! System launched.")
-    print(" Camera Web Stream: http://10.127.69.146:8080/video")
+    print(" Camera Web Stream: http://10.72.30.146:8080/video")
     print("==========================================")
 
 if __name__ == '__main__':

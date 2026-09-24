@@ -4,7 +4,7 @@ def main():
     ssh = paramiko.SSHClient()
     ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
     try:
-        ssh.connect('10.127.69.146', username='hasan', password='grammarpro', timeout=8)
+        ssh.connect('10.72.30.146', username='hasan', password='grammarpro', timeout=8)
         stdin, stdout, stderr = ssh.exec_command('vcgencmd get_throttled ; echo "=== DMESG ===" ; dmesg | tail -n 25')
         print(stdout.read().decode('utf-8', errors='ignore'))
         ssh.close()

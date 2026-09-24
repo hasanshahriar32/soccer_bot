@@ -3,7 +3,7 @@ import paramiko
 def main():
     ssh = paramiko.SSHClient()
     ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-    ssh.connect('10.127.69.146', username='hasan', password='grammarpro', timeout=8)
+    ssh.connect('10.72.30.146', username='hasan', password='grammarpro', timeout=8)
     
     print("=== MOTOR SERVER LOG ===")
     stdin, stdout, stderr = ssh.exec_command('cat /tmp/motor_server.log')

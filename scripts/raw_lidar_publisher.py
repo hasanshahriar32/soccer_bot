@@ -24,7 +24,7 @@ class RawLidarPublisher(Node):
     def __init__(self):
         super().__init__('raw_lidar_publisher')
         self.publisher_ = self.create_publisher(LaserScan, '/scan', 10)
-        self.pi_ip = '10.127.69.146'
+        self.pi_ip = '10.72.30.146'
         self.port = 5000
         self.running = True
         

@@ -16,7 +16,7 @@ pkill -f motor_bridge_node 2>/dev/null
 
 # 2. Trigger Pi Camera stream & Motor Edge Server over SSH
 echo "Initializing Pi Camera stream & Motor Server..."
-sshpass -p "grammarpro" ssh -o StrictHostKeyChecking=no hasan@10.127.69.146 'pkill -f rpicam-vid || true; pkill -f start_camera || true; pkill -f motor_edge_server || true; nohup ~/start_camera.sh >/dev/null 2>&1 & nohup python3 -u ~/soccer_bot/src/arduino/motor_driver/motor_edge_server.py >/tmp/motor_server.log 2>&1 & sleep 2'
+sshpass -p "grammarpro" ssh -o StrictHostKeyChecking=no hasan@10.72.30.146 'pkill -f rpicam-vid || true; pkill -f start_camera || true; pkill -f motor_edge_server || true; nohup ~/start_camera.sh >/dev/null 2>&1 & nohup python3 -u ~/soccer_bot/src/arduino/motor_driver/motor_edge_server.py >/tmp/motor_server.log 2>&1 & sleep 2'
 sleep 2
 
 # 3. Launch Camera Receiver Node

@@ -3,7 +3,7 @@ import time
 import subprocess
 
 def main():
-    ip = '10.127.69.146'
+    ip = '10.72.30.146'
     user = 'hasan'
     password = 'grammarpro'
     

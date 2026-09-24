@@ -22,8 +22,8 @@ class LidarHub(Node):
             try:
                 sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
                 sock.settimeout(4.0)
-                sock.connect(('10.127.69.146', 5000))
-                self.get_logger().info("Connected to Edge Lidar at 10.127.69.146:5000!")
+                sock.connect(('10.72.30.146', 5000))
+                self.get_logger().info("Connected to Edge Lidar at 10.72.30.146:5000!")
                 buffer = ""
                 
                 while self.running:

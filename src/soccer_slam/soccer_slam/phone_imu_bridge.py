@@ -41,7 +41,7 @@ KEY_FILE = '/home/sharmin/Desktop/iot/soccer_bot/certs/key.pem'
 
 def get_local_ip():
     """Detect local LAN / Hotspot IP address."""
-    for target in [('10.127.69.146', 80), ('8.8.8.8', 80), ('10.255.255.255', 1)]:
+    for target in [('10.72.30.146', 80), ('8.8.8.8', 80), ('10.255.255.255', 1)]:
         try:
             s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
             s.connect(target)

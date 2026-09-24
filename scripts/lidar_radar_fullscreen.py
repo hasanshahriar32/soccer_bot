@@ -9,7 +9,7 @@ import time
 latest_scan = {}
 lock = threading.Lock()
 running = True
-pi_ip = '10.127.69.146'
+pi_ip = '10.72.30.146'
 lidar_port = 5000
 
 def lidar_client():

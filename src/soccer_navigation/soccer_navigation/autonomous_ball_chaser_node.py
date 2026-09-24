@@ -31,7 +31,7 @@ class ActiveDrive12InchController(Node):
     def __init__(self):
         super().__init__('active_drive_12inch_controller')
 
-        self.pi_ip = '10.127.69.146'
+        self.pi_ip = '10.72.30.146'
         self.motor_port = 9000
         self.motor_sock = None
         self.sock_lock = threading.Lock()

@@ -2,7 +2,7 @@ import paramiko
 import time
 import socket
 
-PI_IP = '10.127.69.146'
+PI_IP = '10.72.30.146'
 PI_USER = 'hasan'
 PI_PASS = 'grammarpro'
 

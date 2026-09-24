@@ -319,7 +319,7 @@ class PiScreenHUD:
                 conn_lbl = font_small.render("○ LINK: CONNECTING...", True, COLOR_DISCONNECTED)
             screen.blit(conn_lbl, (MAP_VIEW_W + 10, y_off))
             y_off += 13
-            screen.blit(font_small.render(f"PI: 10.127.69.146", True, TEXT_MUTED), (MAP_VIEW_W + 10, y_off))
+            screen.blit(font_small.render(f"PI: 10.72.30.146", True, TEXT_MUTED), (MAP_VIEW_W + 10, y_off))
 
             pygame.display.flip()
             clock.tick(30)

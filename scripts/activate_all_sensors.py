@@ -2,7 +2,7 @@ import paramiko
 import time
 import socket
 
-PI_IP = '10.127.69.146'
+PI_IP = '10.72.30.146'
 PI_USER = 'hasan'
 PI_PASS = 'grammarpro'
 
@@ -14,7 +14,7 @@ def main():
     ssh = paramiko.SSHClient()
     ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
     ssh.connect(PI_IP, username=PI_USER, password=PI_PASS, timeout=8)
-    print("[1] SSH Connected to Raspberry Pi (10.127.69.146)!")
+    print("[1] SSH Connected to Raspberry Pi (10.72.30.146)!")
 
     # Start Docker for Lidar
     print("[2] Starting Docker container soccer_bot_edge...")

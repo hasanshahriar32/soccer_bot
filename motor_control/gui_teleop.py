@@ -31,7 +31,7 @@ class UniversalRobotTeleopGUI:
         wifi_row.pack(fill="x", padx=8, pady=4)
         tk.Label(wifi_row, text="Robot IP:", font=("Segoe UI", 9, "bold"), fg="white", bg="#1a1a24").pack(side="left")
         self.ip_entry = tk.Entry(wifi_row, font=("Segoe UI", 10), width=16, bg="#2a2a38", fg="#00e5ff", insertbackground="white")
-        self.ip_entry.insert(0, "10.127.69.146")
+        self.ip_entry.insert(0, "10.72.30.146")
         self.ip_entry.pack(side="left", padx=6)
         
         self.btn_wifi_connect = tk.Button(wifi_row, text="Connect Wi-Fi", font=("Segoe UI", 9, "bold"), bg="#0288d1", fg="white",
