@@ -27,6 +27,7 @@ setup(
             'coordinate_tracker = soccer_slam.coordinate_tracker:main',
             'slam_map_saver = soccer_slam.slam_map_saver:main',
             'phone_imu_bridge = soccer_slam.phone_imu_bridge:main',
+            'pi_screen_streamer = soccer_slam.pi_screen_streamer:main',
         ],
     },
 )
