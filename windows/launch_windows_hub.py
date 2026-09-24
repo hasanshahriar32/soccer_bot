@@ -21,7 +21,7 @@ try:
 except ImportError:
     HAS_PARAMIKO = False
 
-DEFAULT_PI_IP = '10.73.75.146'
+DEFAULT_PI_IP = '10.127.69.146'
 PI_USER = 'hasan'
 PI_PASS = 'grammarpro'
 
@@ -73,7 +73,7 @@ def find_pi_ip():
     if test_ssh_ip(DEFAULT_PI_IP):
         return DEFAULT_PI_IP
         
-    subnets = ['10.73.75', '192.168.0', '192.168.1', '192.168.43', '172.20.10', '192.168.137']
+    subnets = ['10.127.69', '10.73.75', '192.168.0', '192.168.1', '192.168.43', '172.20.10', '192.168.137']
     log("Scanning local networks (Wi-Fi / Hotspot) for Raspberry Pi...", symbol="SEARCH")
     
     targets = [f"{sub}.{i}" for i in range(1, 255)]

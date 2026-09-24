@@ -1,6 +1,6 @@
 import pexpect
 def main():
-    ip = '192.168.0.135'
+    ip = '10.127.69.146'
     user = 'hasan'
     password = 'grammarpro'
     try:

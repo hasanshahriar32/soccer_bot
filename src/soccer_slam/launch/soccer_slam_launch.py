@@ -93,6 +93,17 @@ def generate_launch_description():
         arguments=['-d', rviz_config_file],
     )
 
+    # 7. Raspberry Pi Built-in Screen Navigation Streamer Node (Port 8765)
+    pi_screen_node = Node(
+        package='soccer_slam',
+        executable='pi_screen_streamer',
+        name='pi_screen_streamer',
+        output='screen',
+        parameters=[{
+            'port': 8765,
+        }],
+    )
+
     return LaunchDescription([
         ydlidar_node,
         tf_laser_node,
@@ -100,4 +111,5 @@ def generate_launch_description():
         slam_launch,
         tracker_node,
         rviz_node,
+        pi_screen_node,
     ])
