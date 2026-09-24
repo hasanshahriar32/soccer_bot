@@ -3,7 +3,7 @@ import socket
 import json
 import time
 
-PI_IP = '192.168.0.135'
+PI_IP = '10.127.69.146'
 PI_USER = 'hasan'
 PI_PASS = 'grammarpro'
 

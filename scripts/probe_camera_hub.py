@@ -6,7 +6,7 @@ def main():
     print("1. Checking Pi Camera processes...")
     ssh = paramiko.SSHClient()
     ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-    ssh.connect('192.168.0.135', username='hasan', password='grammarpro', timeout=8)
+    ssh.connect('10.127.69.146', username='hasan', password='grammarpro', timeout=8)
     
     stdin, stdout, stderr = ssh.exec_command('ps aux | grep -E "python3|rpicam"')
     print(stdout.read().decode())
@@ -24,7 +24,7 @@ def main():
     try:
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         s.settimeout(3.0)
-        s.connect(('192.168.0.135', 8000))
+        s.connect(('10.127.69.146', 8000))
         data = s.recv(4096)
         print(f"[SUCCESS] Connected to Pi Camera server! Received {len(data)} bytes of JPEG data.")
         s.close()

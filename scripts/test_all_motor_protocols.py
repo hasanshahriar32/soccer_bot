@@ -8,7 +8,7 @@ def main():
     
     ssh = paramiko.SSHClient()
     ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-    ssh.connect('192.168.0.135', username='hasan', password='grammarpro', timeout=8)
+    ssh.connect('10.127.69.146', username='hasan', password='grammarpro', timeout=8)
     
     pi_code = """import serial
 import time

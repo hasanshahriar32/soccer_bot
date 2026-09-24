@@ -7,7 +7,7 @@ def main():
     print("     DIAGNOSTIC TEST: INDIVIDUAL MOTOR PULSES")
     print("=" * 60)
 
-    PI_IP = '192.168.0.135'
+    PI_IP = '10.127.69.146'
     
     commands = [
         ('F', 'FORWARD (Both Motors 100% Torque)', 3.0),

@@ -26,7 +26,7 @@ class RawLidarPublisher(Node):
     def __init__(self):
         super().__init__('raw_lidar_publisher')
         self.publisher_ = self.create_publisher(LaserScan, '/scan', 10)
-        self.host = '192.168.0.135'
+        self.host = '10.127.69.146'
         self.port = 5000
         
         self.get_logger().info(f"Connecting to Lidar stream at {self.host}:{self.port}...")

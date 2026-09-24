@@ -27,8 +27,8 @@ echo "Launching 3D URDF Robot Model..."
 ros2 run robot_state_publisher robot_state_publisher /home/sharmin/Desktop/iot/soccer_bot/scripts/robot.urdf &
 
 # 4. Trigger Pi Camera Stream and Motor Server over SSH
-echo "Connecting to Raspberry Pi (192.168.0.135) to start Camera & Motor Server..."
-sshpass -p "grammarpro" ssh -o StrictHostKeyChecking=no hasan@192.168.0.135 'pkill -f rpicam-vid || true; pkill -f start_camera || true; pkill -f motor_edge_server || true; nohup ~/start_camera.sh >/dev/null 2>&1 & nohup python3 -u ~/soccer_bot/src/arduino/motor_driver/motor_edge_server.py >/tmp/motor_server.log 2>&1 & sleep 2'
+echo "Connecting to Raspberry Pi (10.127.69.146) to start Camera & Motor Server..."
+sshpass -p "grammarpro" ssh -o StrictHostKeyChecking=no hasan@10.127.69.146 'pkill -f rpicam-vid || true; pkill -f start_camera || true; pkill -f motor_edge_server || true; nohup ~/start_camera.sh >/dev/null 2>&1 & nohup python3 -u ~/soccer_bot/src/arduino/motor_driver/motor_edge_server.py >/tmp/motor_server.log 2>&1 & sleep 2'
 sleep 3
 
 # 5. Launch ROS 2 Motor Bridge Node
