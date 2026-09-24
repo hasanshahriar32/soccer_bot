@@ -4,7 +4,7 @@ import socket
 import threading
 import time
 
-PI_IP = '192.168.0.135'
+PI_IP = '10.73.75.146'
 MOTOR_PORT = 9000
 
 class RobotTeleopGUI:
@@ -23,7 +23,7 @@ class RobotTeleopGUI:
         title_lbl.pack(pady=8)
 
         # Status Label
-        self.status_lbl = tk.Label(root, text="● SERVER: 192.168.0.135:9000 (CONNECTED)", font=("Segoe UI", 10, "bold"), fg="#00e676", bg="#121216")
+        self.status_lbl = tk.Label(root, text="● SERVER: 10.73.75.146:9000 (CONNECTED)", font=("Segoe UI", 10, "bold"), fg="#00e676", bg="#121216")
         self.status_lbl.pack(pady=2)
 
         # Mode Indicator

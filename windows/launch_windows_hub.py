@@ -85,6 +85,8 @@ def find_pi_ip():
                 return ip
     return None
 
+import webbrowser
+
 def launch_pi_sensors(pi_ip):
     log(f"Connecting to Raspberry Pi at {pi_ip}...", symbol="1/3")
     if HAS_PARAMIKO:
@@ -93,17 +95,18 @@ def launch_pi_sensors(pi_ip):
             ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
             ssh.connect(pi_ip, username=PI_USER, password=PI_PASS, timeout=5)
             
-            # Stop conflicting Pipewire / Wireplumber camera locks on Pi
-            ssh.exec_command("systemctl --user stop wireplumber pipewire 2>/dev/null")
-            ssh.exec_command("pkill -9 -f rpicam ; pkill -9 -f python3")
+            # Stop conflicting Pipewire, Wireplumber, and old streaming services on Pi
+            ssh.exec_command("systemctl --user stop wireplumber pipewire live_inference 2>/dev/null")
+            ssh.exec_command("echo grammarpro | sudo -S systemctl stop soccer_camera soccer_lidar 2>/dev/null ; echo grammarpro | sudo -S chmod 666 /dev/ttyACM* /dev/ttyUSB* 2>/dev/null ; pkill -9 -f rpicam ; pkill -9 -f fast_camera_server ; pkill -9 -f python_socat ; pkill -9 -f motor_server ; pkill -9 -f detect_live_picamera2")
             time.sleep(1.0)
             
+            # Start LiDAR (5000), AI INT8 Ball Detector (8000), and Motor Server (9000)
             ssh.exec_command("nohup python3 /home/hasan/python_socat.py > ~/socat.log 2>&1 &")
-            ssh.exec_command("nohup python3 /home/hasan/fast_camera_server.py > ~/camera.log 2>&1 &")
+            ssh.exec_command("systemd-run --user --unit=live_inference /home/hasan/ball_detector_pi/pi_inference/venv/bin/python3 -u /home/hasan/ball_detector_pi/pi_inference/detect_live_picamera2.py 2>/dev/null || nohup /home/hasan/ball_detector_pi/pi_inference/venv/bin/python3 -u /home/hasan/ball_detector_pi/pi_inference/detect_live_picamera2.py > ~/inference.log 2>&1 &")
             ssh.exec_command("nohup python3 /home/hasan/motor_server.py > ~/motor.log 2>&1 &")
             time.sleep(2.0)
             
-            log(f"Pi Lidar (5000), Camera (8080/8088) & Motors (9000) active at {pi_ip}!", symbol="OK")
+            log(f"Pi LiDAR (5000), AI Ball Detector (8000) & Motors (9000) active at {pi_ip}!", symbol="OK")
             ssh.close()
             return True
         except Exception as err:
@@ -112,7 +115,7 @@ def launch_pi_sensors(pi_ip):
     return False
 
 def launch_wsl_system():
-    log("Launching ROS 2 Sensor Hubs & RViz2 GUI in WSL...", symbol="2/3")
+    log("Launching ROS 2 Sensor Hubs, Ball Tracker & RViz2 GUI in WSL...", symbol="2/3")
     
     rviz_cmd = f"bash {WSL_BASE}/scripts/launch_rviz.sh"
     if IS_WINDOWS:
@@ -139,9 +142,17 @@ def main():
         
     launch_wsl_system()
     
+    if pi_ready and pi_ip:
+        time.sleep(1.5)
+        log(f"Opening AI Object Detection Stream: http://{pi_ip}:8000", symbol="WEB")
+        try:
+            webbrowser.open(f"http://{pi_ip}:8000")
+        except:
+            pass
+    
     print("\n" + "=" * 65)
     if pi_ready:
-        log(f"ALL SYSTEMS ONLINE! RViz2 GUI is running with LIVE SENSORS.", symbol="SUCCESS")
+        log(f"ALL SYSTEMS ONLINE! Live RViz2 + AI Camera Stream is running.", symbol="SUCCESS")
     else:
         log("LOCAL VISUALIZER OPEN! (Turn on Pi & connect to Wi-Fi to stream live data).", symbol="READY")
     print("=" * 65 + "\n")

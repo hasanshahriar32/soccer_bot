@@ -48,10 +48,12 @@ echo "==========================================================="
 echo "   Launching RViz2 GUI on DISPLAY: $DISPLAY"
 echo "==========================================================="
 
-# 4. Start ROS 2 Sensor & Model Hub Nodes
+# 4. Start ROS 2 Sensor, Model, Mapping & Vision Tracking Nodes
 python3 "${WSL_BASE}/scripts/raw_lidar_publisher.py" &
-python3 "${WSL_BASE}/src/soccer_vision/soccer_vision/camera_hub_node.py" &
+python3 "${WSL_BASE}/src/soccer_vision/soccer_vision/camera_hub_node.py" 2>/dev/null &
+python3 "${WSL_BASE}/src/soccer_vision/soccer_vision/ball_tracker_node.py" &
 python3 "${WSL_BASE}/scripts/robot_model_publisher.py" &
+python3 "${WSL_BASE}/scripts/fast_occupancy_mapper.py" &
 
 sleep 2
 

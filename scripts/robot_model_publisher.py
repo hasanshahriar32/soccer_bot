@@ -121,7 +121,21 @@ class RobotModelPublisher(Node):
         t_cam.transform.rotation.y = 0.5
         t_cam.transform.rotation.z = -0.5
         t_cam.transform.rotation.w = 0.5
-        tfs.append(t_cam)
+        # odom -> base_link (Odometry base transform)
+        t_odom = TransformStamped()
+        t_odom.header.stamp = now
+        t_odom.header.frame_id = 'odom'
+        t_odom.child_frame_id = 'base_link'
+        t_odom.transform.rotation.w = 1.0
+        tfs.append(t_odom)
+
+        # map -> odom (World map anchor)
+        t_map = TransformStamped()
+        t_map.header.stamp = now
+        t_map.header.frame_id = 'map'
+        t_map.child_frame_id = 'odom'
+        t_map.transform.rotation.w = 1.0
+        tfs.append(t_map)
 
         # Send complete TF array
         self.tf_broadcaster.sendTransform(tfs)

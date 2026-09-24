@@ -1,31 +1,25 @@
-import paramiko
+import socket
 import time
 import sys
-import threading
 
-PI_IP = '192.168.0.135'
-PI_USER = 'hasan'
-PI_PASS = 'grammarpro'
+PI_IP = '10.73.75.146'
+MOTOR_PORT = 9000
 
 def main():
     print("=" * 60)
     print("       SOCCER BOT - INTERACTIVE KEYBOARD TELEOP")
     print("=" * 60)
-    print("Connecting to Raspberry Pi & Arduino (/dev/ttyACM0)...")
+    print(f"Connecting to Robot Motor Server at {PI_IP}:{MOTOR_PORT}...")
     
+    sock = None
     try:
-        ssh = paramiko.SSHClient()
-        ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-        ssh.connect(PI_IP, username=PI_USER, password=PI_PASS, timeout=8)
-        print("[SUCCESS] Connected to Robot!")
+        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        sock.settimeout(5.0)
+        sock.connect((PI_IP, MOTOR_PORT))
+        print("[SUCCESS] Connected to Soccer Bot Motors!")
     except Exception as e:
-        print(f"[ERROR] Could not connect to Pi: {e}")
+        print(f"[ERROR] Could not connect to motor server: {e}")
         return
-
-    # Deploy remote driver session
-    channel = ssh.invoke_shell()
-    channel.send("python3 -u -c \"import serial, sys; s = serial.Serial('/dev/ttyACM0', 9600, timeout=1); print('READY'); sys.stdout.flush(); [s.write(c.encode()) for c in iter(lambda: sys.stdin.read(1), '')]\"\n")
-    time.sleep(1.5)
 
     print("\n" + "-" * 60)
     print("  CONTROL KEYS:")
@@ -46,32 +40,36 @@ def main():
                 
                 if key == 'W':
                     print(">> [FORWARD]")
-                    channel.send("F")
+                    sock.sendall(b"F\n")
                 elif key == 'S':
                     print(">> [BACKWARD]")
-                    channel.send("B")
+                    sock.sendall(b"B\n")
                 elif key == 'A':
                     print(">> [TURN LEFT]")
-                    channel.send("L")
+                    sock.sendall(b"L\n")
                 elif key == 'D':
                     print(">> [TURN RIGHT]")
-                    channel.send("R")
+                    sock.sendall(b"R\n")
                 elif key in (' ', 'X'):
                     print(">> [STOP]")
-                    channel.send("S")
+                    sock.sendall(b"S\n")
                 elif key == 'Q':
                     print(">> Exiting Teleop...")
-                    channel.send("S")
+                    sock.sendall(b"S\n")
                     break
             time.sleep(0.05)
             
     except KeyboardInterrupt:
-        channel.send("S")
+        if sock:
+            sock.sendall(b"S\n")
         print("\nStopping motors...")
     finally:
-        channel.send("S")
-        channel.close()
-        ssh.close()
+        if sock:
+            try:
+                sock.sendall(b"S\n")
+                sock.close()
+            except:
+                pass
         print("Teleop closed safely.")
 
 if __name__ == '__main__':

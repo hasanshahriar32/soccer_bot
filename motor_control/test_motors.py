@@ -1,7 +1,7 @@
 import paramiko
 import time
 
-PI_IP = '192.168.0.135'
+PI_IP = '10.73.75.146'
 PI_USER = 'hasan'
 PI_PASS = 'grammarpro'
 

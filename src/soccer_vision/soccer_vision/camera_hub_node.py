@@ -14,47 +14,45 @@ class CameraHubNode(Node):
         self.publisher_ = self.create_publisher(Image, '/image_raw', 10)
         self.bridge = CvBridge()
         self.pi_ip = '10.73.75.146'
-        self.port = 8088
+        self.port = 8000
         self.running = True
         
-        self.get_logger().info(f"Camera Hub Node started, connecting to rpicam-vid stream at {self.pi_ip}:{self.port}...")
+        self.get_logger().info(f"Camera Hub Node started, streaming from http://{self.pi_ip}:{self.port}...")
         self.thread = threading.Thread(target=self.receive_stream, daemon=True)
         self.thread.start()
 
     def receive_stream(self):
+        import urllib.request
         frame_cnt = 0
         while self.running:
             try:
-                sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-                sock.settimeout(5.0)
-                sock.connect((self.pi_ip, self.port))
-                self.get_logger().info(f"Connected to Pi Camera rpicam stream at {self.pi_ip}:{self.port}!")
-                
-                stream_bytes = b''
-                while self.running:
-                    chunk = sock.recv(65536)
-                    if not chunk:
-                        break
-                    stream_bytes += chunk
-                    
-                    a = stream_bytes.find(b'\xff\xd8')
-                    b = stream_bytes.find(b'\xff\xd9')
-                    if a != -1 and b != -1 and b > a:
-                        jpg = stream_bytes[a : b + 2]
-                        stream_bytes = stream_bytes[b + 2 :]
+                url = f"http://{self.pi_ip}:{self.port}"
+                req = urllib.request.Request(url)
+                with urllib.request.urlopen(req, timeout=5.0) as resp:
+                    self.get_logger().info(f"Connected to Pi Camera Stream at {url}!")
+                    stream_bytes = b''
+                    while self.running:
+                        chunk = resp.read(32768)
+                        if not chunk:
+                            break
+                        stream_bytes += chunk
                         
-                        frame = cv2.imdecode(np.frombuffer(jpg, dtype=np.uint8), cv2.IMREAD_COLOR)
-                        if frame is not None:
-                            msg = self.bridge.cv2_to_imgmsg(frame, "bgr8")
-                            msg.header.stamp = self.get_clock().now().to_msg()
-                            msg.header.frame_id = "camera_link"
-                            self.publisher_.publish(msg)
+                        a = stream_bytes.find(b'\xff\xd8')
+                        b = stream_bytes.find(b'\xff\xd9')
+                        if a != -1 and b != -1 and b > a:
+                            jpg = stream_bytes[a : b + 2]
+                            stream_bytes = stream_bytes[b + 2 :]
                             
-                            frame_cnt += 1
-                            if frame_cnt % 60 == 0:
-                                self.get_logger().info(f"Published {frame_cnt} camera frames to /image_raw")
+                            frame = cv2.imdecode(np.frombuffer(jpg, dtype=np.uint8), cv2.IMREAD_COLOR)
+                            if frame is not None:
+                                msg = self.bridge.cv2_to_imgmsg(frame, "bgr8")
+                                msg.header.stamp = self.get_clock().now().to_msg()
+                                msg.header.frame_id = "camera_link"
+                                self.publisher_.publish(msg)
                                 
-                sock.close()
+                                frame_cnt += 1
+                                if frame_cnt % 30 == 0:
+                                    self.get_logger().info(f"Published {frame_cnt} camera frames to /image_raw")
             except Exception as e:
                 time.sleep(1.0)
 
