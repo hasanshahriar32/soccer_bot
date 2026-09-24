@@ -38,16 +38,18 @@ import websockets
 
 
 def get_local_ip():
-    """Detect local LAN IP address."""
-    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    try:
-        s.connect(('8.8.8.8', 80))
-        ip = s.getsockname()[0]
-    except Exception:
-        ip = '127.0.0.1'
-    finally:
-        s.close()
-    return ip
+    """Detect local LAN / Hotspot IP address."""
+    for target in [('10.127.69.146', 80), ('8.8.8.8', 80), ('10.255.255.255', 1)]:
+        try:
+            s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+            s.connect(target)
+            ip = s.getsockname()[0]
+            s.close()
+            if ip and not ip.startswith('127.'):
+                return ip
+        except Exception:
+            pass
+    return '127.0.0.1'
 
 
 def quaternion_from_euler(roll, pitch, yaw):
