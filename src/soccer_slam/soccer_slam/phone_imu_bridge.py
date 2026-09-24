@@ -160,6 +160,7 @@ HTML_PAGE = """<!DOCTYPE html>
     <div>
       <div id="yawDisplay" class="angle-display">0.0°</div>
       <div class="angle-unit">HEADING (YAW)</div>
+      <div id="directionInfo" style="font-size: 0.75rem; color: #8b949e; margin-top: 4px; font-weight: bold;">⏸ Centered (0°)</div>
     </div>
   </div>
 
@@ -183,11 +184,18 @@ HTML_PAGE = """<!DOCTYPE html>
   </div>
 
   <button id="btnStart" class="btn btn-start">🚀 Allow Sensors & Start Gyro</button>
-  <button id="btnZero" class="btn btn-zero" style="display:none;">🎯 Zero Heading (Tare to 0°)</button>
+  <div style="display: flex; gap: 8px; margin-top: 10px;">
+    <button id="btnZero" class="btn btn-zero" style="display:none; flex: 1; margin-top: 0;">🎯 Zero Heading</button>
+    <button id="btnInvert" class="btn" style="display:none; flex: 1; margin-top: 0; background: #238636; color: white;">🔄 Mode: Normal (+)</button>
+  </div>
 </div>
 
 <div class="footer">
-  💡 <b>How it works:</b> Your phone sends real-time rotation directly to the laptop's ROS 2 SLAM system. Place the phone flat on the robot facing forward, then tap <b>Zero Heading</b>.
+  <b>Setup Instructions:</b><br>
+  1. Mount phone <b>flat & facing forward</b> on robot chassis.<br>
+  2. Tap <b>Zero Heading</b> to calibrate robot forward heading.<br>
+  3. Turn Left: Heading should show <b>+ (positive)</b>.<br>
+  4. If Left turn shows <b>- (negative)</b>, tap <b>🔄 Mode</b> to invert!
 </div>
 
 <script>
@@ -204,6 +212,7 @@ HTML_PAGE = """<!DOCTYPE html>
   const httpsWarning = document.getElementById('httpsWarning');
   const httpsLink = document.getElementById('httpsLink');
   const yawDisplay = document.getElementById('yawDisplay');
+  const directionInfo = document.getElementById('directionInfo');
   const rawAlpha = document.getElementById('rawAlpha');
   const rateZ = document.getElementById('rateZ');
   const hzDisplay = document.getElementById('hzDisplay');
@@ -211,6 +220,7 @@ HTML_PAGE = """<!DOCTYPE html>
   const needle = document.getElementById('needle');
   const btnStart = document.getElementById('btnStart');
   const btnZero = document.getElementById('btnZero');
+  const btnInvert = document.getElementById('btnInvert');
 
   // Check if loaded over HTTPS vs HTTP
   const isHttps = (window.location.protocol === 'https:');
@@ -279,7 +289,8 @@ HTML_PAGE = """<!DOCTYPE html>
     // 2. Listen to device orientation
     window.addEventListener('deviceorientation', (e) => {
       eventsReceived++;
-      let raw = (e.alpha !== null && e.alpha !== undefined) ? e.alpha : (e.webkitCompassHeading || 0);
+      const isIOS = (e.webkitCompassHeading !== null && e.webkitCompassHeading !== undefined);
+      let raw = isIOS ? e.webkitCompassHeading : ((e.alpha !== null && e.alpha !== undefined) ? e.alpha : 0);
       let beta = e.beta || 0;
       let gamma = e.gamma || 0;
 
@@ -288,9 +299,32 @@ HTML_PAGE = """<!DOCTYPE html>
       // Heading calculation with Tare offset
       let relYaw = (raw - tareOffset + 360) % 360;
       if (relYaw > 180) relYaw -= 360;
-      currentYaw = -relYaw; // CCW standard
 
-      yawDisplay.textContent = currentYaw.toFixed(1) + '°';
+      // ROS REP-103 standard: Counter-Clockwise (Left) turn MUST be positive (+).
+      // iOS webkitCompassHeading increases CLOCKWISE -> negate to make CCW positive.
+      // Android / W3C standard e.alpha increases COUNTER-CLOCKWISE -> already positive for CCW.
+      let baseYaw = isIOS ? -relYaw : relYaw;
+      currentYaw = invertYaw ? -baseYaw : baseYaw;
+
+      // Update UI displays
+      const signPrefix = currentYaw > 0.05 ? '+' : '';
+      yawDisplay.textContent = signPrefix + currentYaw.toFixed(1) + '°';
+      
+      // Update turn indicator
+      if (Math.abs(currentYaw) > 1.0) {
+        if (currentYaw > 0) {
+          directionInfo.textContent = '⟲ Turning LEFT (CCW / +)';
+          directionInfo.style.color = '#3fb950';
+        } else {
+          directionInfo.textContent = '⟳ Turning RIGHT (CW / -)';
+          directionInfo.style.color = '#f85149';
+        }
+      } else {
+        directionInfo.textContent = '⏸ Straight / Centered (0°)';
+        directionInfo.style.color = '#8b949e';
+      }
+
+      // Compass needle shows room orientation relative to robot
       needle.style.transform = `rotate(${-currentYaw}deg)`;
 
       sampleCount++;
@@ -317,13 +351,15 @@ HTML_PAGE = """<!DOCTYPE html>
     // 3. Listen to device motion (Gyroscope Rate)
     window.addEventListener('devicemotion', (e) => {
       const rot = e.rotationRate || {};
-      const gz = rot.gamma || rot.alpha || rot.beta || 0;
-      rateZ.textContent = gz.toFixed(1) + ' °/s';
+      const gz_raw = rot.alpha || rot.gamma || rot.beta || 0;
+      const gz_sign = (invertYaw ? -1 : 1);
+      const gz = gz_raw * gz_sign;
+      rateZ.textContent = (gz > 0 ? '+' : '') + gz.toFixed(1) + ' °/s';
 
       if (ws && ws.readyState === WebSocket.OPEN) {
         ws.send(JSON.stringify({
           type: 'motion',
-          gyro_z: -gz * (Math.PI / 180.0),
+          gyro_z: gz * (Math.PI / 180.0),
           acc_x: (e.accelerationIncludingGravity && e.accelerationIncludingGravity.x) || 0,
           acc_y: (e.accelerationIncludingGravity && e.accelerationIncludingGravity.y) || 0,
           acc_z: (e.accelerationIncludingGravity && e.accelerationIncludingGravity.z) || 0
@@ -333,6 +369,7 @@ HTML_PAGE = """<!DOCTYPE html>
 
     btnStart.style.display = 'none';
     btnZero.style.display = 'block';
+    btnInvert.style.display = 'block';
     isStreaming = true;
 
     // Check after 2 seconds if events were blocked
@@ -347,9 +384,32 @@ HTML_PAGE = """<!DOCTYPE html>
     }, 2000);
   }
 
+  let invertYaw = false;
+  btnInvert.addEventListener('click', () => {
+    invertYaw = !invertYaw;
+    btnInvert.textContent = invertYaw ? '🔄 Mode: Inverted (-)' : '🔄 Mode: Normal (+)';
+    btnInvert.style.background = invertYaw ? '#d29922' : '#238636';
+    btnInvert.style.color = '#ffffff';
+  });
+
   btnStart.addEventListener('click', requestPermissionsAndStart);
   btnZero.addEventListener('click', () => {
-    tareOffset = (tareOffset - currentYaw + 360) % 360;
+    // Current raw reading becomes the tare offset
+    const curRaw = parseFloat(rawAlpha.textContent) || 0;
+    tareOffset = curRaw;
+    currentYaw = 0.0;
+    yawDisplay.textContent = '+0.0°';
+    directionInfo.textContent = '⏸ Zeroed / Centered';
+    needle.style.transform = 'rotate(0deg)';
+    if (ws && ws.readyState === WebSocket.OPEN) {
+      ws.send(JSON.stringify({
+        type: 'orientation',
+        yaw: 0.0,
+        pitch: 0.0,
+        roll: 0.0,
+        stamp: Date.now() / 1000.0
+      }));
+    }
   });
 </script>
 </body>
