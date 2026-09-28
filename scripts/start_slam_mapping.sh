@@ -21,6 +21,7 @@ cleanup() {
         echo 1992 | sudo -S rm -f /dev/ttyUSB0 2>/dev/null || true
     fi
     pkill -f "socat.*$PI_PORT" 2>/dev/null || true
+    pkill -f "web_teleop_server.py" 2>/dev/null || true
     exit 0
 }
 
@@ -35,8 +36,19 @@ if [ -e /dev/ttyUSB0 ] && [ ! -L /dev/ttyUSB0 ]; then
     echo "[INFO] Direct hardware LiDAR detected at /dev/ttyUSB0 (Laptop USB Mode)."
     echo 1992 | sudo -S chmod 666 /dev/ttyUSB0
 else
-    echo "[INFO] No local /dev/ttyUSB0. Checking for Wireless LiDAR on Pi ($PI_IP:$PI_PORT)..."
-    if nc -z -w 3 "$PI_IP" "$PI_PORT" 2>/dev/null; then
+    echo "[INFO] Checking for Wireless LiDAR on Pi ($PI_IP:$PI_PORT)..."
+    FOUND=0
+    for attempt in $(seq 1 30); do
+        if nc -z -w 2 "$PI_IP" "$PI_PORT" 2>/dev/null; then
+            FOUND=1
+            break
+        fi
+        echo -ne "\r[WAIT] Waiting for Raspberry Pi ($PI_IP:$PI_PORT) to boot... [${attempt}/30]  "
+        sleep 2
+    done
+    echo ""
+
+    if [ "$FOUND" -eq 1 ]; then
         echo "[SUCCESS] Found active LiDAR TCP server on Raspberry Pi ($PI_IP:$PI_PORT)!"
         echo "[INFO] Establishing wireless PTY serial bridge..."
         
@@ -61,8 +73,8 @@ else
             exit 1
         fi
     else
-        echo "[ERROR] Could not connect to LiDAR on Raspberry Pi ($PI_IP:$PI_PORT) or local USB!"
-        echo "Please ensure Raspberry Pi is powered on, connected to the hotspot, or LiDAR is plugged into laptop."
+        echo "[ERROR] Raspberry Pi ($PI_IP:$PI_PORT) did not respond in time."
+        echo "Please verify Raspberry Pi is powered on and connected to the Wi-Fi."
         exit 1
     fi
 fi
@@ -70,6 +82,14 @@ fi
 # Source ROS 2 environment
 source /opt/ros/jazzy/setup.bash
 source /home/sharmin/Desktop/iot/soccer_bot/install/setup.bash
+
+# Start Mobile Web Teleop & Autopilot Server (Port 5050)
+pkill -f "web_teleop_server.py" 2>/dev/null || true
+python3 /home/sharmin/Desktop/iot/soccer_bot/motor_control/web_teleop_server.py >/tmp/web_teleop.log 2>&1 &
+echo "=================================================="
+echo " 📱 MOBILE CONTROLLER: http://192.168.0.122:5050"
+echo " Open the above link on your phone browser!"
+echo "=================================================="
 
 echo "[INFO] Launching SLAM Toolbox, LiDAR Driver, TF, Phone Gyro & RViz2..."
 ros2 launch soccer_slam soccer_slam_launch.py
