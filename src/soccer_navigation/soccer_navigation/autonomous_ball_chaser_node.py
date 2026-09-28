@@ -100,15 +100,16 @@ class ActiveDrive12InchController(Node):
 
     def ball_callback(self, msg):
         self.last_ball_time = time.time()
-        self.ball_distance_m = msg.x
-        self.ball_pixel_offset = msg.y
+        # msg.x = forward(m), msg.y = lateral(m), msg.z = total_distance(m)
+        self.ball_distance_m = msg.z if msg.z > 0 else msg.x
+        self.ball_lateral_m = msg.y
 
     def control_loop(self):
         if not rclpy.ok():
             return
 
         now = time.time()
-        has_recent_ball = (now - self.last_ball_time) < 0.8
+        has_recent_ball = (now - self.last_ball_time) < 1.0 and self.ball_distance_m > 0
 
         closest_object_dist = self.lidar_min_dist_m
         if has_recent_ball and self.ball_distance_m < closest_object_dist:
@@ -127,7 +128,7 @@ class ActiveDrive12InchController(Node):
             
             dist_inches = closest_object_dist * 39.3701
             self.get_logger().info(
-                f'[STOP] 🛑 OBJECT AT {dist_inches:.1f} in (<= 12 in)! PHYSICAL WHEELS STOPPED.',
+                f'[STOP] 🛑 BALL REACHED AT {dist_inches:.1f} in ({closest_object_dist:.2f}m)! PHYSICAL WHEELS STOPPED.',
                 throttle_duration_sec=0.4
             )
 
@@ -138,22 +139,22 @@ class ActiveDrive12InchController(Node):
             if has_recent_ball:
                 dist_inches = self.ball_distance_m * 39.3701
                 
-                # Check alignment with object
-                if self.ball_pixel_offset < -35:
+                # Check alignment with object (metric lateral offset in meters)
+                if self.ball_lateral_m > 0.10:
                     # Object to the left -> Turn left
                     self.send_motor_pwm(-170, 170, 'L')
                     twist.angular.z = 0.6
-                    action = f"TURNING LEFT towards object ({dist_inches:.1f} in)"
-                elif self.ball_pixel_offset > 35:
+                    action = f"TURNING LEFT towards ball ({dist_inches:.1f} in, y={self.ball_lateral_m:+.2f}m)"
+                elif self.ball_lateral_m < -0.10:
                     # Object to the right -> Turn right
                     self.send_motor_pwm(170, -170, 'R')
                     twist.angular.z = -0.6
-                    action = f"TURNING RIGHT towards object ({dist_inches:.1f} in)"
+                    action = f"TURNING RIGHT towards ball ({dist_inches:.1f} in, y={self.ball_lateral_m:+.2f}m)"
                 else:
                     # Centered -> DRIVE FORWARD TO OBJECT!
                     self.send_motor_pwm(195, 195, 'F')
                     twist.linear.x = 0.28
-                    action = f"DRIVING FORWARD to object ({dist_inches:.1f} in)"
+                    action = f"DRIVING FORWARD to ball ({dist_inches:.1f} in, dist={self.ball_distance_m:.2f}m)"
 
                 self.pub_cmd_vel.publish(twist)
                 self.get_logger().info(

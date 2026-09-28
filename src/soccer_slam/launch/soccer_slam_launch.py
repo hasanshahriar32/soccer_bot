@@ -120,6 +120,14 @@ def generate_launch_description():
         output='screen',
     )
 
+    # 10. Camera-LiDAR Synchronized Ball Tracker Node
+    ball_tracker_node = Node(
+        package='soccer_vision',
+        executable='ball_tracker',
+        name='ball_tracker_node',
+        output='screen',
+    )
+
     return LaunchDescription([
         ydlidar_node,
         tf_laser_node,
@@ -130,4 +138,5 @@ def generate_launch_description():
         rviz_node,
         pi_screen_node,
         camera_node,
+        ball_tracker_node,
     ])

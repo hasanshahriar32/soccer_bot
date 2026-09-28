@@ -21,7 +21,7 @@ import zlib
 import rclpy
 from rclpy.node import Node
 from rclpy.qos import QoSProfile, DurabilityPolicy, ReliabilityPolicy
-from geometry_msgs.msg import PoseStamped
+from geometry_msgs.msg import PoseStamped, Point
 from nav_msgs.msg import OccupancyGrid, Path
 from std_msgs.msg import Float32
 
@@ -51,12 +51,15 @@ class PiScreenStreamerNode(Node):
         self.pose_sub = self.create_subscription(PoseStamped, '/robot_map_pose', self.pose_callback, 10)
         self.path_sub = self.create_subscription(Path, '/robot_trajectory', self.path_callback, 10)
         self.yaw_sub = self.create_subscription(Float32, '/phone_imu/yaw', self.yaw_callback, 10)
+        self.ball_sub = self.create_subscription(Point, '/ball_position', self.ball_callback, 10)
 
         # State
         self.lock = threading.Lock()
         self.latest_pose = {'x': 0.0, 'y': 0.0, 'yaw_deg': 0.0}
         self.latest_path = []
         self.latest_yaw = 0.0
+        self.latest_ball = {'detected': False, 'x': 0.0, 'y': 0.0, 'dist': 0.0}
+        self.latest_ball_time = 0.0
         self.latest_map_packet = None
         self.has_new_map = False
 
@@ -122,6 +125,19 @@ class PiScreenStreamerNode(Node):
         with self.lock:
             self.latest_yaw = round(msg.data, 1)
 
+    def ball_callback(self, msg: Point):
+        with self.lock:
+            if msg.z > 0:
+                self.latest_ball = {
+                    'detected': True,
+                    'x': round(msg.x, 2),
+                    'y': round(msg.y, 2),
+                    'dist': round(msg.z, 2),
+                }
+                self.latest_ball_time = time.time()
+            else:
+                self.latest_ball = {'detected': False, 'x': 0.0, 'y': 0.0, 'dist': 0.0}
+
     def run_tcp_server(self):
         server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
@@ -180,11 +196,18 @@ class PiScreenStreamerNode(Node):
                             self.tcp_clients.remove(d)
 
         # 2. Send 10 Hz telemetry
+        with self.lock:
+            if (time.time() - self.latest_ball_time) < 1.2:
+                ball_data = self.latest_ball
+            else:
+                ball_data = {'detected': False, 'x': 0.0, 'y': 0.0, 'dist': 0.0}
+
         telem_pkt = {
             'type': 'telemetry',
             'pose': pose,
             'path': path,
             'phone_yaw': phone_yaw,
+            'ball': ball_data,
             'stamp': time.time()
         }
 

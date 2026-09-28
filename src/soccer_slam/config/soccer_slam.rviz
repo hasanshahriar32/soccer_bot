@@ -13,6 +13,7 @@ Panels:
         - /Robot Trajectory1
         - /Robot Pose1
         - /Live Camera1
+        - /⚽ Tracked Ball1
       Splitter Ratio: 0.5
     Tree Height: 600
 Visualization Manager:
@@ -163,6 +164,16 @@ Visualization Manager:
         History Policy: Keep Last
         Reliability Policy: Reliable
         Value: /image_raw
+      Value: true
+    - Class: rviz_default_plugins/MarkerArray
+      Enabled: true
+      Name: ⚽ Tracked Ball
+      Topic:
+        Depth: 5
+        Durability Policy: Volatile
+        History Policy: Keep Last
+        Reliability Policy: Reliable
+        Value: /ball_marker
       Value: true
   Enabled: true
   Global Options:
