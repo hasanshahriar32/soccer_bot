@@ -21,7 +21,7 @@ import zlib
 import pygame
 
 # Configuration
-LAPTOP_IP = "10.127.69.107"
+LAPTOP_IP = "192.168.0.122"
 LAPTOP_PORT = 8765
 SCREEN_W = 480
 SCREEN_H = 320
@@ -162,9 +162,9 @@ class PiScreenHUD:
         pygame.init()
         pygame.font.init()
 
-        # Target full screen 480x320
-        screen = pygame.display.set_mode((SCREEN_W, SCREEN_H))
-        pygame.display.set_caption("⚽ SOCCER BOT NAV HUD")
+        # Borderless fullscreen for 480x320 LCD screen
+        screen = pygame.display.set_mode((SCREEN_W, SCREEN_H), pygame.NOFRAME)
+        pygame.display.set_caption("SOCCER BOT NAV HUD")
         clock = pygame.time.Clock()
 
         # Fonts
@@ -256,7 +256,7 @@ class PiScreenHUD:
             pygame.draw.line(screen, BORDER_COLOR, (MAP_VIEW_W, 0), (MAP_VIEW_W, SCREEN_H), 2)
 
             # Title
-            t1 = font_title.render("⚽ SOCCER BOT", True, TEXT_CYAN)
+            t1 = font_title.render("SOCCER BOT", True, TEXT_CYAN)
             t2 = font_small.render("SLAM NAVIGATION HUD", True, TEXT_MUTED)
             screen.blit(t1, (MAP_VIEW_W + 10, 8))
             screen.blit(t2, (MAP_VIEW_W + 10, 26))
@@ -319,7 +319,7 @@ class PiScreenHUD:
                 conn_lbl = font_small.render("○ LINK: CONNECTING...", True, COLOR_DISCONNECTED)
             screen.blit(conn_lbl, (MAP_VIEW_W + 10, y_off))
             y_off += 13
-            screen.blit(font_small.render(f"PI: 10.72.30.146", True, TEXT_MUTED), (MAP_VIEW_W + 10, y_off))
+            screen.blit(font_small.render(f"PI: 192.168.0.135", True, TEXT_MUTED), (MAP_VIEW_W + 10, y_off))
 
             pygame.display.flip()
             clock.tick(30)

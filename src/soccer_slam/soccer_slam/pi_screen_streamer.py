@@ -60,8 +60,8 @@ class PiScreenStreamerNode(Node):
         self.latest_map_packet = None
         self.has_new_map = False
 
-        self.clients = []
-        self.clients_lock = threading.Lock()
+        self.tcp_clients = []
+        self.tcp_clients_lock = threading.Lock()
 
         # Start TCP Server thread
         threading.Thread(target=self.run_tcp_server, daemon=True).start()
@@ -133,8 +133,8 @@ class PiScreenStreamerNode(Node):
                 conn, addr = server.accept()
                 conn.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1)
                 self.get_logger().info(f"📺 [CONNECTED] Raspberry Pi Screen client connected from {addr[0]}:{addr[1]}")
-                with self.clients_lock:
-                    self.clients.append(conn)
+                with self.tcp_clients_lock:
+                    self.tcp_clients.append(conn)
 
                 # Send initial map immediately if available
                 with self.lock:
@@ -154,10 +154,10 @@ class PiScreenStreamerNode(Node):
             return False
 
     def broadcast_telemetry(self):
-        with self.clients_lock:
-            if not self.clients:
+        with self.tcp_clients_lock:
+            if not self.tcp_clients:
                 return
-            active_clients = list(self.clients)
+            active_clients = list(self.tcp_clients)
 
         with self.lock:
             pose = self.latest_pose
@@ -174,10 +174,10 @@ class PiScreenStreamerNode(Node):
                 if not self.send_packet_to_client(c, map_pkt):
                     dead_clients.append(c)
             if dead_clients:
-                with self.clients_lock:
+                with self.tcp_clients_lock:
                     for d in dead_clients:
-                        if d in self.clients:
-                            self.clients.remove(d)
+                        if d in self.tcp_clients:
+                            self.tcp_clients.remove(d)
 
         # 2. Send 10 Hz telemetry
         telem_pkt = {
@@ -194,10 +194,10 @@ class PiScreenStreamerNode(Node):
                 dead_clients.append(c)
 
         if dead_clients:
-            with self.clients_lock:
+            with self.tcp_clients_lock:
                 for d in dead_clients:
-                    if d in self.clients:
-                        self.clients.remove(d)
+                    if d in self.tcp_clients:
+                        self.tcp_clients.remove(d)
 
 
 def main(args=None):

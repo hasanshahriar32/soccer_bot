@@ -21,7 +21,7 @@ try:
 except ImportError:
     HAS_PARAMIKO = False
 
-DEFAULT_PI_IP = '10.72.30.146'
+DEFAULT_PI_IP = '192.168.0.135'
 PI_USER = 'hasan'
 PI_PASS = 'grammarpro'
 
@@ -137,7 +137,7 @@ def main():
     if pi_ip:
         pi_ready = launch_pi_sensors(pi_ip)
     else:
-        log("Raspberry Pi (10.72.30.146) is currently OFFLINE or unreachable.", symbol="!")
+        log("Raspberry Pi (192.168.0.135) is currently OFFLINE or unreachable.", symbol="!")
         log("--> Check: 1. Power on Pi. 2. Verify Wi-Fi / Hotspot connection.", symbol="!")
         
     launch_wsl_system()

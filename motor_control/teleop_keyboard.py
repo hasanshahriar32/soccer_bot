@@ -2,7 +2,7 @@ import socket
 import time
 import sys
 
-PI_IP = '10.72.30.146'
+PI_IP = '192.168.0.135'
 MOTOR_PORT = 9000
 
 def main():

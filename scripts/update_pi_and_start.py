@@ -3,7 +3,7 @@ import time
 
 def main():
     laptop_ip = '192.168.0.108'
-    pi_ip = '10.72.30.146'
+    pi_ip = '192.168.0.135'
     user = 'hasan'
     password = 'grammarpro'
     
