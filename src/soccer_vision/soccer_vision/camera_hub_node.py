@@ -17,6 +17,7 @@ class CameraHubNode(Node):
         self.port = 8000
         self.running = True
         
+        print(f"[CameraHub] Node started, streaming from http://{self.pi_ip}:{self.port}...", flush=True)
         self.get_logger().info(f"Camera Hub Node started, streaming from http://{self.pi_ip}:{self.port}...")
         self.thread = threading.Thread(target=self.receive_stream, daemon=True)
         self.thread.start()
@@ -29,6 +30,7 @@ class CameraHubNode(Node):
                 url = f"http://{self.pi_ip}:{self.port}"
                 req = urllib.request.Request(url)
                 with urllib.request.urlopen(req, timeout=5.0) as resp:
+                    print(f"[CameraHub] Connected to Pi Camera Stream at {url}!", flush=True)
                     self.get_logger().info(f"Connected to Pi Camera Stream at {url}!")
                     stream_bytes = b''
                     while self.running:
@@ -36,24 +38,31 @@ class CameraHubNode(Node):
                         if not chunk:
                             break
                         stream_bytes += chunk
-                        
                         a = stream_bytes.find(b'\xff\xd8')
-                        b = stream_bytes.find(b'\xff\xd9')
-                        if a != -1 and b != -1 and b > a:
-                            jpg = stream_bytes[a : b + 2]
-                            stream_bytes = stream_bytes[b + 2 :]
-                            
-                            frame = cv2.imdecode(np.frombuffer(jpg, dtype=np.uint8), cv2.IMREAD_COLOR)
-                            if frame is not None:
-                                msg = self.bridge.cv2_to_imgmsg(frame, "bgr8")
-                                msg.header.stamp = self.get_clock().now().to_msg()
-                                msg.header.frame_id = "camera_link"
-                                self.publisher_.publish(msg)
+                        if a != -1:
+                            # Trim leading garbage before SOI marker
+                            if a > 0:
+                                stream_bytes = stream_bytes[a:]
+                                a = 0
+                            b = stream_bytes.find(b'\xff\xd9', a + 2)
+                            if b != -1:
+                                jpg = stream_bytes[a : b + 2]
+                                stream_bytes = stream_bytes[b + 2 :]
                                 
-                                frame_cnt += 1
-                                if frame_cnt % 30 == 0:
-                                    self.get_logger().info(f"Published {frame_cnt} camera frames to /image_raw")
+                                frame = cv2.imdecode(np.frombuffer(jpg, dtype=np.uint8), cv2.IMREAD_COLOR)
+                                if frame is not None:
+                                    msg = self.bridge.cv2_to_imgmsg(frame, "bgr8")
+                                    msg.header.stamp = self.get_clock().now().to_msg()
+                                    msg.header.frame_id = "camera_link"
+                                    self.publisher_.publish(msg)
+                                    
+                                    frame_cnt += 1
+                                    if frame_cnt % 30 == 0:
+                                        print(f"[CameraHub] Published {frame_cnt} frames to /image_raw", flush=True)
+                                        self.get_logger().info(f"Published {frame_cnt} camera frames to /image_raw")
             except Exception as e:
+                print(f"[CameraHub] Stream error: {e}", flush=True)
+                self.get_logger().warn(f"Camera stream error: {e}, retrying in 1s...")
                 time.sleep(1.0)
 
 def main(args=None):

@@ -104,12 +104,30 @@ def generate_launch_description():
         }],
     )
 
+    # 8. Static TF: base_link -> camera_link
+    tf_camera_node = Node(
+        package='tf2_ros',
+        executable='static_transform_publisher',
+        name='static_tf_pub_camera',
+        arguments=['--x', '0.1', '--y', '0', '--z', '0.1', '--roll', '0', '--pitch', '0', '--yaw', '0', '--frame-id', 'base_link', '--child-frame-id', 'camera_link'],
+    )
+
+    # 9. Camera Hub Node (Streams MJPEG from Pi :8000 -> /image_raw)
+    camera_node = Node(
+        package='soccer_vision',
+        executable='camera_hub',
+        name='camera_hub_node',
+        output='screen',
+    )
+
     return LaunchDescription([
         ydlidar_node,
         tf_laser_node,
+        tf_camera_node,
         phone_imu_node,
         slam_launch,
         tracker_node,
         rviz_node,
         pi_screen_node,
+        camera_node,
     ])
