@@ -19,8 +19,8 @@ const int LEFT_ENC_B  = 3;
 const int RIGHT_ENC_A = 4;
 const int RIGHT_ENC_B = 7;
 
-// Default Full Speed (0 - 255)
-int motorSpeed = 255; // Full 100% power for maximum torque
+// Default Controlled Speed (0 - 255)
+int motorSpeed = 130; // Smooth controllable speed
 
 void setup() {
   // Motor Output Pins
@@ -73,19 +73,19 @@ void loop() {
         Serial.println("CMD: Stop");
         break;
       case '1':
-        motorSpeed = 100; // Super Slow
+        motorSpeed = 85;  // Gentle precision
         break;
       case '2':
-        motorSpeed = 135; // Slow
+        motorSpeed = 120; // Smooth cruise (Default)
         break;
       case '3':
-        motorSpeed = 175; // Medium
+        motorSpeed = 150; // Medium
         break;
       case '4':
-        motorSpeed = 215; // Fast
+        motorSpeed = 185; // Fast
         break;
       case '5':
-        motorSpeed = 255; // Full Speed
+        motorSpeed = 220; // High speed
         break;
       default:
         break;
@@ -93,34 +93,21 @@ void loop() {
   }
 }
 
-// 1. FORWARD
+// 1. FORWARD (Corrected per live testing)
 void forward() {
-  digitalWrite(IN1, HIGH);
-  digitalWrite(IN2, LOW);
-  // Right motor physically reversed
-  digitalWrite(IN3, LOW);
-  digitalWrite(IN4, HIGH);
+  digitalWrite(IN1, LOW);
+  digitalWrite(IN2, HIGH);
+  digitalWrite(IN3, HIGH);
+  digitalWrite(IN4, LOW);
 
   analogWrite(ENA, motorSpeed);
   analogWrite(ENB, motorSpeed);
 }
 
-// 2. BACKWARD
+// 2. BACKWARD (Corrected per live testing)
 void backward() {
-  digitalWrite(IN1, LOW);
-  digitalWrite(IN2, HIGH);
-  // Right motor physically reversed
-  digitalWrite(IN3, HIGH);
-  digitalWrite(IN4, LOW);
-
-  analogWrite(ENA, motorSpeed);
-  analogWrite(ENB, motorSpeed);
-}
-
-// 3. LEFT TURN
-void left() {
-  digitalWrite(IN1, LOW);
-  digitalWrite(IN2, HIGH);
+  digitalWrite(IN1, HIGH);
+  digitalWrite(IN2, LOW);
   digitalWrite(IN3, LOW);
   digitalWrite(IN4, HIGH);
 
@@ -128,12 +115,23 @@ void left() {
   analogWrite(ENB, motorSpeed);
 }
 
-// 4. RIGHT TURN
-void right() {
+// 3. LEFT TURN (Corrected per live testing)
+void left() {
   digitalWrite(IN1, HIGH);
   digitalWrite(IN2, LOW);
   digitalWrite(IN3, HIGH);
   digitalWrite(IN4, LOW);
+
+  analogWrite(ENA, motorSpeed);
+  analogWrite(ENB, motorSpeed);
+}
+
+// 4. RIGHT TURN (Corrected per live testing)
+void right() {
+  digitalWrite(IN1, LOW);
+  digitalWrite(IN2, HIGH);
+  digitalWrite(IN3, LOW);
+  digitalWrite(IN4, HIGH);
 
   analogWrite(ENA, motorSpeed);
   analogWrite(ENB, motorSpeed);
