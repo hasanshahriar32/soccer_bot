@@ -1,0 +1,1 @@
+/home/sharmin/Desktop/iot/soccer_bot/scripts/start_slam_mapping.sh

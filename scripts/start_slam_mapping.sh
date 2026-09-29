@@ -12,7 +12,14 @@ SOCAT_PID=""
 
 cleanup() {
     echo ""
-    echo "[INFO] Shutting down SLAM mapping session..."
+    echo "[INFO] Shutting down full system session..."
+    # 1. Stop local web teleop & autopilot
+    pkill -f "web_teleop_server.py" 2>/dev/null || true
+
+    # 2. Stop robot motors immediately for safety
+    curl -s -X POST -H "Content-Type: application/json" -d '{"action":"S"}' http://127.0.0.1:5050/api/drive 2>/dev/null || true
+
+    # 3. Stop wireless LiDAR serial bridge
     if [ -n "$SOCAT_PID" ]; then
         echo "[INFO] Stopping wireless LiDAR bridge..."
         kill "$SOCAT_PID" 2>/dev/null || true
@@ -21,37 +28,78 @@ cleanup() {
         echo 1992 | sudo -S rm -f /dev/ttyUSB0 2>/dev/null || true
     fi
     pkill -f "socat.*$PI_PORT" 2>/dev/null || true
-    pkill -f "web_teleop_server.py" 2>/dev/null || true
+
+    # 4. Stop Pi Screen HUD on Raspberry Pi
+    echo "[INFO] Stopping Pi screen HUD on robot..."
+    sshpass -p "grammarpro" ssh -o StrictHostKeyChecking=no -o ConnectTimeout=3 hasan@"$PI_IP" 'pkill -f pi_screen_hud.py' 2>/dev/null || true
+
+    echo "[INFO] Full system shutdown complete."
     exit 0
 }
 
 trap cleanup INT TERM EXIT
 
-echo "=================================================="
-echo " 🗺️ Starting Real-Time LiDAR SLAM & Mapping System"
-echo "=================================================="
+echo "=========================================================="
+echo " 🤖 SOCCER BOT - UNIFIED FULL SYSTEM AUTONOMOUS LAUNCHER"
+echo "=========================================================="
 
 # Check if LiDAR USB exists locally
 if [ -e /dev/ttyUSB0 ] && [ ! -L /dev/ttyUSB0 ]; then
     echo "[INFO] Direct hardware LiDAR detected at /dev/ttyUSB0 (Laptop USB Mode)."
     echo 1992 | sudo -S chmod 666 /dev/ttyUSB0
 else
-    echo "[INFO] Checking for Wireless LiDAR on Pi ($PI_IP:$PI_PORT)..."
+    echo "[INFO] Checking connection to Raspberry Pi ($PI_IP)..."
     FOUND=0
-    for attempt in $(seq 1 30); do
-        if nc -z -w 2 "$PI_IP" "$PI_PORT" 2>/dev/null; then
+    for attempt in $(seq 1 40); do
+        if ping -c 1 -W 1 "$PI_IP" >/dev/null 2>&1; then
             FOUND=1
             break
         fi
-        echo -ne "\r[WAIT] Waiting for Raspberry Pi ($PI_IP:$PI_PORT) to boot... [${attempt}/30]  "
+        echo -ne "\r[WAIT] Waiting for Raspberry Pi ($PI_IP) on Wi-Fi... [${attempt}/40]  "
         sleep 2
     done
     echo ""
 
     if [ "$FOUND" -eq 1 ]; then
-        echo "[SUCCESS] Found active LiDAR TCP server on Raspberry Pi ($PI_IP:$PI_PORT)!"
+        echo "[SUCCESS] Raspberry Pi is online at $PI_IP!"
+
+        # Ensure all Pi Onboard Services & Hardware are active
+        echo "[INFO] Initializing Pi onboard services (LiDAR, Camera, Motors)..."
+        sshpass -p "grammarpro" ssh -o StrictHostKeyChecking=no -o ConnectTimeout=6 hasan@"$PI_IP" bash -s << 'EOF'
+            # 1. LiDAR socat bridge on port 5000
+            if ! pgrep -f "TCP-LISTEN:5000" >/dev/null; then
+                echo "[PI] Starting YDLidar TCP bridge on port 5000..."
+                nohup /usr/bin/socat -d -d TCP-LISTEN:5000,reuseaddr,max-children=1,fork FILE:/dev/ttyUSB0,b115200,raw,echo=0 >/tmp/socat.log 2>&1 &
+            fi
+
+            # 2. Motor Server on port 9000
+            if ! pgrep -f "motor_server.py" >/dev/null; then
+                echo "[PI] Starting Motor Server on port 9000..."
+                nohup /usr/bin/python3 -u /home/hasan/motor_server.py >/tmp/motor_server.log 2>&1 &
+            fi
+
+            # 3. Camera & Live Ball Detector on port 8000
+            if ! pgrep -f "detect_live_picamera2.py" >/dev/null; then
+                echo "[PI] Starting Camera Server on port 8000..."
+                nohup /home/hasan/ball_detector_pi/pi_inference/venv/bin/python3 -u /home/hasan/ball_detector_pi/pi_inference/detect_live_picamera2.py >/tmp/camera.log 2>&1 &
+            fi
+EOF
+
+        # Deploy and launch Pi Screen HUD on Pi's 480x320 LCD screen
+        echo "[INFO] Updating and launching SLAM HUD on Raspberry Pi Screen..."
+        sshpass -p "grammarpro" scp -o StrictHostKeyChecking=no -o ConnectTimeout=5 /home/sharmin/Desktop/iot/soccer_bot/scripts/pi_screen_hud.py hasan@"$PI_IP":/home/hasan/pi_screen_hud.py 2>/dev/null || true
+        sshpass -p "grammarpro" ssh -o StrictHostKeyChecking=no -o ConnectTimeout=5 hasan@"$PI_IP" 'pkill -f pi_screen_hud.py 2>/dev/null || true; DISPLAY=:0.0 nohup python3 /home/hasan/pi_screen_hud.py >/tmp/pi_hud.log 2>&1 &' || true
+        echo "[SUCCESS] Raspberry Pi Screen HUD running!"
+
+        # Wait for LiDAR TCP port 5000
+        for l_attempt in $(seq 1 10); do
+            if nc -z -w 1 "$PI_IP" "$PI_PORT" 2>/dev/null; then
+                break
+            fi
+            sleep 1
+        done
+
         echo "[INFO] Establishing wireless PTY serial bridge..."
-        
         rm -f /tmp/ttyLIDAR
         # Persistent auto-reconnecting wireless serial bridge
         (

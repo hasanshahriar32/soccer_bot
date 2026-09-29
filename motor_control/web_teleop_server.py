@@ -234,6 +234,40 @@ def ros2_subscriber_worker():
 
 threading.Thread(target=ros2_subscriber_worker, daemon=True).start()
 
+# Direct HTTP Camera Stream Worker (Pulls from Pi port 8000 when ROS 2 topic is idle)
+def http_camera_worker():
+    import urllib.request
+    stream_url = f"http://{PI_IP}:8000/video"
+    while True:
+        try:
+            req = urllib.request.Request(stream_url)
+            stream = urllib.request.urlopen(req, timeout=5)
+            bytes_buf = b''
+            while True:
+                # If ROS 2 has actively updated frames recently, yield
+                with state.lock:
+                    ros2_fresh = (time.time() - state.last_frame_time) < 0.5
+                if ros2_fresh:
+                    time.sleep(0.3)
+                    continue
+
+                chunk = stream.read(4096)
+                if not chunk:
+                    break
+                bytes_buf += chunk
+                a = bytes_buf.find(b'\xff\xd8')
+                b = bytes_buf.find(b'\xff\xd9')
+                if a != -1 and b != -1:
+                    jpg = bytes_buf[a:b+2]
+                    bytes_buf = bytes_buf[b+2:]
+                    with state.lock:
+                        state.latest_jpeg = jpg
+                        state.last_frame_time = time.time()
+        except Exception:
+            time.sleep(2.0)
+
+threading.Thread(target=http_camera_worker, daemon=True).start()
+
 # Generate Synthetic HUD frame if camera not yet streaming
 def get_current_frame():
     with state.lock:
