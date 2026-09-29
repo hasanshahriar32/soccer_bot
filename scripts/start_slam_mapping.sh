@@ -50,12 +50,12 @@ if [ -e /dev/ttyUSB0 ] && [ ! -L /dev/ttyUSB0 ]; then
 else
     echo "[INFO] Checking connection to Raspberry Pi ($PI_IP)..."
     FOUND=0
-    for attempt in $(seq 1 40); do
+    for attempt in $(seq 1 100); do
         if ping -c 1 -W 1 "$PI_IP" >/dev/null 2>&1; then
             FOUND=1
             break
         fi
-        echo -ne "\r[WAIT] Waiting for Raspberry Pi ($PI_IP) on Wi-Fi... [${attempt}/40]  "
+        echo -ne "\r[WAIT] Waiting for Raspberry Pi ($PI_IP) on Wi-Fi... [${attempt}/100]  "
         sleep 2
     done
     echo ""
