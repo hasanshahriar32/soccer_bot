@@ -1092,19 +1092,19 @@ HTML_PAGE = """<!DOCTYPE html>
       <div class="joint-row">
         <div class="joint-info">
           <span class="joint-label">🔷 BASE SERVO (Arduino Pin 9)</span>
-          <span id="valBase" class="joint-val">0°</span>
+          <span id="valBase" class="joint-val">0° (Right)</span>
         </div>
         <div class="joint-slider-wrap">
-          <button class="jog-btn" onclick="jogJoint('B', -5)">-</button>
-          <input type="range" id="sliderBase" min="0" max="180" value="0" class="arm-slider" oninput="updateJointLabel('B', this.value)" onchange="onJointChange('B', this.value)">
-          <button class="jog-btn" onclick="jogJoint('B', +5)">+</button>
+          <button class="jog-btn" title="Turn Left (+5°)" onclick="jogJoint('B', +5)">⟵ Left</button>
+          <input type="range" id="sliderBase" min="0" max="180" value="0" class="arm-slider" style="direction: rtl;" oninput="updateJointLabel('B', this.value)" onchange="onJointChange('B', this.value)">
+          <button class="jog-btn" title="Turn Right (-5°)" onclick="jogJoint('B', -5)">Right ⟶</button>
         </div>
         <div class="quick-angles">
-          <button class="angle-btn" onclick="sendAngle('B', 0)">0° Left</button>
-          <button class="angle-btn" onclick="sendAngle('B', 45)">45°</button>
-          <button class="angle-btn" onclick="sendAngle('B', 90)">90° Center</button>
+          <button class="angle-btn" onclick="sendAngle('B', 180)">⟵ 180° Left</button>
           <button class="angle-btn" onclick="sendAngle('B', 135)">135°</button>
-          <button class="angle-btn" onclick="sendAngle('B', 180)">180° Right</button>
+          <button class="angle-btn" onclick="sendAngle('B', 90)">90° Center</button>
+          <button class="angle-btn" onclick="sendAngle('B', 45)">45°</button>
+          <button class="angle-btn" onclick="sendAngle('B', 0)">0° Right ⟶</button>
           <button class="angle-btn btn-sweep" onclick="testBaseSweep()">⚡ Test Sweep</button>
         </div>
       </div>
@@ -1458,7 +1458,10 @@ HTML_PAGE = """<!DOCTYPE html>
 
     function updateJointLabel(joint, val) {
       val = parseInt(val);
-      if (joint === 'B') document.getElementById('valBase').innerText = val + '°';
+      if (joint === 'B') {
+        let dir = val > 90 ? ' (Left)' : val < 90 ? ' (Right)' : ' (Center)';
+        document.getElementById('valBase').innerText = val + '°' + dir;
+      }
       else if (joint === 'S') document.getElementById('valShoulder').innerText = val + '°';
       else if (joint === 'A') document.getElementById('valAlbo').innerText = val + '°';
       else if (joint === 'G') document.getElementById('valGripper').innerText = val + '° ' + (val <= 130 ? '(Grip)' : val >= 220 ? '(Open)' : '(Neutral)');
