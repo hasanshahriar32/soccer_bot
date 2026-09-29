@@ -1,17 +1,19 @@
 #!/usr/bin/env python3
 """
 ====================================================================
-  SOCCER BOT - MOBILE PHONE WEB TELEOP & AUTOPILOT CONTROLLER
+  SOCCER BOT - MOBILE PHONE WEB TELEOP, AUTOPILOT & SLAM CONTROLLER
 ====================================================================
 Accessible from any phone browser on the same Wi-Fi:
-    http://<LAPTOP_IP>:5050   (e.g., http://192.168.0.122:5050)
+    http://192.168.0.122:5050
 
 Features:
-  1. Live Low-Latency Camera Feed (directly above touch controls)
+  1. Dual View Modes:
+     - 📷 Live Low-Latency Camera Feed with AI ball crosshair
+     - 🗺️ 2D LiDAR SLAM Occupancy Map with robot pose & obstacles
   2. Responsive Touch D-Pad with Hold-to-Drive & Auto-Brake on release
   3. One-Touch Autonomous Ball Follower (Autopilot with LiDAR sync)
   4. Automatic Proximity Stop at 35 cm for Object / Ball Pickup
-  5. Live Telemetry HUD: Distance, Bearing, Mode, Status
+  5. Live Telemetry HUD: LiDAR health, SLAM status, Distance, Bearing
   6. Smooth Speed Control Presets (Slow, Cruise, Fast, Sport)
 ====================================================================
 """
@@ -32,8 +34,10 @@ import numpy as np
 try:
     import rclpy
     from rclpy.node import Node as RosNode
-    from sensor_msgs.msg import Image as RosImage
-    from geometry_msgs.msg import Point as RosPoint
+    from rclpy.qos import QoSProfile, DurabilityPolicy, ReliabilityPolicy
+    from sensor_msgs.msg import Image as RosImage, LaserScan
+    from geometry_msgs.msg import Point as RosPoint, PoseStamped
+    from nav_msgs.msg import OccupancyGrid
     from cv_bridge import CvBridge
     HAS_ROS2 = True
 except ImportError:
@@ -66,6 +70,14 @@ class RobotState:
         # Camera Frame
         self.latest_jpeg = None
         self.last_frame_time = 0.0
+
+        # LiDAR & SLAM State
+        self.laser_time = 0.0
+        self.raw_map = None
+        self.map_time = 0.0
+        self.robot_x = 0.0
+        self.robot_y = 0.0
+        self.robot_yaw = 0.0
 
 state = RobotState()
 
@@ -109,9 +121,6 @@ def motor_client_worker():
 threading.Thread(target=motor_client_worker, daemon=True).start()
 
 def send_motor_command(action, speed=None):
-    if speed is None:
-        speed = state.speed
-    
     with state.lock:
         state.current_action = action
         sock = state.sock
@@ -141,30 +150,25 @@ def autopilot_loop():
                 tracked = (now - state.ball_time) < 1.2 and state.ball_dist > 0
                 dist = state.ball_dist
                 lat = state.ball_y
-                fwd = state.ball_x
 
             if tracked:
-                # Proximity Threshold: 0.35m (~14 inches) -> STOP FOR PICKUP TASK
                 if dist <= 0.35:
                     send_motor_command('S')
                     with state.lock:
-                        state.autopilot_status = f"🎯 BALL REACHED ({dist:.2f}m)! STOPPED READY FOR PICKUP"
+                        state.autopilot_status = f"🎯 BALL REACHED ({dist:.2f}m)! READY FOR PICKUP"
                 else:
                     if lat > 0.12:
-                        # Ball to the left -> Steer left
-                        send_motor_command('L', speed=100)
+                        send_motor_command('L')
                         with state.lock:
                             state.autopilot_status = f"🔄 ALIGNING: Turning Left (Dist: {dist:.2f}m)"
                     elif lat < -0.12:
-                        # Ball to the right -> Steer right
-                        send_motor_command('R', speed=100)
+                        send_motor_command('R')
                         with state.lock:
                             state.autopilot_status = f"🔄 ALIGNING: Turning Right (Dist: {dist:.2f}m)"
                     else:
-                        # Ball centered -> Drive forward
-                        send_motor_command('F', speed=120)
+                        send_motor_command('F')
                         with state.lock:
-                            state.autopilot_status = f"🚀 APPROACHING: Driving Forward to Ball ({dist:.2f}m)"
+                            state.autopilot_status = f"🚀 APPROACHING: Driving to Ball ({dist:.2f}m)"
             else:
                 send_motor_command('S')
                 with state.lock:
@@ -174,7 +178,7 @@ def autopilot_loop():
 threading.Thread(target=autopilot_loop, daemon=True).start()
 
 # ====================================================================
-# ROS 2 SUBSCRIBER THREAD (Camera & Ball Position)
+# ROS 2 SUBSCRIBER THREAD (Camera, Ball Position, Map, Pose, LiDAR)
 # ====================================================================
 def ros2_subscriber_worker():
     if not HAS_ROS2:
@@ -190,16 +194,14 @@ def ros2_subscriber_worker():
                 frame = bridge.imgmsg_to_cv2(msg, "bgr8")
                 h, w = frame.shape[:2]
                 
-                # Overlay Crosshair
+                # Crosshair
                 cv2.drawMarker(frame, (w // 2, h // 2), (0, 229, 255), cv2.MARKER_CROSS, 20, 1)
 
-                # Overlay Ball Tracking Visuals if tracked
                 with state.lock:
                     tracked = (time.time() - state.ball_time) < 1.2 and state.ball_dist > 0
                     dist = state.ball_dist
                     lat = state.ball_y
                     auto = state.autopilot_active
-                    status = state.autopilot_status
 
                 if tracked:
                     deg = math.degrees(math.atan2(lat, max(0.01, state.ball_x)))
@@ -213,13 +215,12 @@ def ros2_subscriber_worker():
                 mode_color = (0, 255, 0) if auto else (255, 200, 0)
                 cv2.putText(frame, mode_text, (10, h - 15), cv2.FONT_HERSHEY_SIMPLEX, 0.5, mode_color, 1)
 
-                # Encode JPEG
                 ret, buf = cv2.imencode('.jpg', frame, [cv2.IMWRITE_JPEG_QUALITY, 70])
                 if ret:
                     with state.lock:
                         state.latest_jpeg = buf.tobytes()
                         state.last_frame_time = time.time()
-            except Exception as e:
+            except Exception:
                 pass
 
         def ball_cb(msg: RosPoint):
@@ -230,8 +231,36 @@ def ros2_subscriber_worker():
                 state.ball_time = time.time()
                 state.ball_tracked = (msg.z > 0)
 
+        def scan_cb(msg: LaserScan):
+            with state.lock:
+                state.laser_time = time.time()
+
+        map_qos = QoSProfile(
+            depth=1,
+            durability=DurabilityPolicy.TRANSIENT_LOCAL,
+            reliability=ReliabilityPolicy.RELIABLE
+        )
+
+        def map_cb(msg: OccupancyGrid):
+            with state.lock:
+                state.raw_map = msg
+                state.map_time = time.time()
+
+        def pose_cb(msg: PoseStamped):
+            q = msg.pose.orientation
+            t3 = +2.0 * (q.w * q.z + q.x * q.y)
+            t4 = +1.0 - 2.0 * (q.y * q.y + q.z * q.z)
+            yaw = math.degrees(math.atan2(t3, t4))
+            with state.lock:
+                state.robot_x = msg.pose.position.x
+                state.robot_y = msg.pose.position.y
+                state.robot_yaw = yaw
+
         node.create_subscription(RosImage, '/image_raw', image_cb, 5)
         node.create_subscription(RosPoint, '/ball_position', ball_cb, 10)
+        node.create_subscription(LaserScan, '/scan', scan_cb, 10)
+        node.create_subscription(OccupancyGrid, '/map', map_cb, map_qos)
+        node.create_subscription(PoseStamped, '/robot_map_pose', pose_cb, 10)
 
         while rclpy.ok():
             rclpy.spin_once(node, timeout_sec=0.1)
@@ -251,7 +280,6 @@ def http_camera_worker():
             stream = urllib.request.urlopen(req, timeout=5)
             bytes_buf = b''
             while True:
-                # If ROS 2 has actively updated frames recently, yield
                 with state.lock:
                     ros2_fresh = (time.time() - state.last_frame_time) < 0.5
                 if ros2_fresh:
@@ -275,43 +303,119 @@ def http_camera_worker():
 
 threading.Thread(target=http_camera_worker, daemon=True).start()
 
-# Generate Synthetic HUD frame if camera not yet streaming
-def get_current_frame():
+def get_current_camera_frame():
     with state.lock:
         if state.latest_jpeg and (time.time() - state.last_frame_time) < 1.5:
             return state.latest_jpeg
-        tracked = state.ball_tracked
-        dist = state.ball_dist
-        status = state.autopilot_status
-        auto = state.autopilot_active
 
-    # Clean Synthetic Radar Frame (320x240)
-    frame = np.zeros((240, 320, 3), dtype=np.uint8)
-    frame[:] = (18, 18, 24) # Dark slate background
-
-    # Radar concentric circles
-    cv2.circle(frame, (160, 160), 40, (35, 45, 50), 1)
-    cv2.circle(frame, (160, 160), 80, (35, 45, 50), 1)
-    cv2.circle(frame, (160, 160), 120, (35, 45, 50), 1)
-    cv2.line(frame, (160, 20), (160, 220), (35, 45, 50), 1)
-    cv2.line(frame, (20, 160), (300, 160), (35, 45, 50), 1)
-
-    # Robot Center
-    cv2.circle(frame, (160, 160), 6, (0, 229, 255), -1)
-    cv2.putText(frame, "ROBOT", (145, 180), cv2.FONT_HERSHEY_SIMPLEX, 0.35, (0, 229, 255), 1)
-
-    if tracked and dist > 0:
-        cv2.putText(frame, f"BALL: {dist:.2f}m", (10, 25), cv2.FONT_HERSHEY_SIMPLEX, 0.55, (0, 230, 118), 1)
-        cv2.circle(frame, (160, 80), 8, (0, 230, 118), -1)
-    else:
-        cv2.putText(frame, "RADAR ACTIVE / SEARCHING...", (10, 25), cv2.FONT_HERSHEY_SIMPLEX, 0.45, (255, 214, 0), 1)
-
-    cv2.putText(frame, "STANDBY CAMERA FEED", (90, 115), cv2.FONT_HERSHEY_SIMPLEX, 0.4, (80, 80, 100), 1)
-
-    mode_str = "[AUTOPILOT ACTIVE]" if auto else "[MANUAL TELEOP]"
-    cv2.putText(frame, mode_str, (10, 225), cv2.FONT_HERSHEY_SIMPLEX, 0.4, (0, 230, 118) if auto else (0, 229, 255), 1)
-
+    # Synthetic Standby Frame (480x240)
+    frame = np.zeros((240, 480, 3), dtype=np.uint8)
+    frame[:] = (14, 18, 26)
+    cv2.putText(frame, "CONNECTING TO CAMERA...", (110, 115), cv2.FONT_HERSHEY_SIMPLEX, 0.65, (0, 229, 255), 2)
+    cv2.putText(frame, f"Target: http://{PI_IP}:8000/video", (130, 145), cv2.FONT_HERSHEY_SIMPLEX, 0.45, (139, 148, 158), 1)
     ret, buf = cv2.imencode('.jpg', frame, [cv2.IMWRITE_JPEG_QUALITY, 60])
+    return buf.tobytes() if ret else b''
+
+def render_slam_map_frame():
+    with state.lock:
+        map_msg = state.raw_map
+        rx = state.robot_x
+        ry = state.robot_y
+        ryaw = state.robot_yaw
+        bx = state.ball_x
+        by = state.ball_y
+        b_tracked = state.ball_tracked
+        lidar_fresh = (time.time() - state.laser_time) < 2.0
+
+    OUT_W, OUT_H = 480, 240
+    if map_msg is None:
+        frame = np.zeros((OUT_H, OUT_W, 3), dtype=np.uint8)
+        frame[:] = (10, 14, 23)
+        lidar_str = "LiDAR: 🟢 360° STREAMING" if lidar_fresh else "LiDAR: 🟡 CONNECTING..."
+        cv2.putText(frame, lidar_str, (OUT_W//2 - 120, OUT_H//2 - 25), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 229, 255) if lidar_fresh else (255, 214, 0), 2)
+        cv2.putText(frame, "BUILDING INITIAL SLAM MAP...", (OUT_W//2 - 130, OUT_H//2 + 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 1)
+        cv2.putText(frame, "Drive the robot to expand map coverage", (OUT_W//2 - 145, OUT_H//2 + 35), cv2.FONT_HERSHEY_SIMPLEX, 0.4, (139, 148, 158), 1)
+        ret, buf = cv2.imencode('.jpg', frame, [cv2.IMWRITE_JPEG_QUALITY, 70])
+        return buf.tobytes() if ret else b''
+
+    w = map_msg.info.width
+    h = map_msg.info.height
+    res = map_msg.info.resolution
+    ox = map_msg.info.origin.position.x
+    oy = map_msg.info.origin.position.y
+
+    data = np.array(map_msg.data, dtype=np.int8).reshape((h, w))
+    img = np.zeros((h, w, 3), dtype=np.uint8)
+    img[data == -1] = (14, 18, 26)   # Unknown dark
+    img[data == 0] = (30, 42, 60)    # Explored free space
+    img[data > 50] = (0, 240, 255)   # Obstacle walls in cyan
+
+    img = cv2.flip(img, 0)
+
+    zoom = 28.0 # Pixels per meter
+    scale = (zoom * res)
+    scaled_w = max(1, int(w * scale))
+    scaled_h = max(1, int(h * scale))
+    scaled_map = cv2.resize(img, (scaled_w, scaled_h), interpolation=cv2.INTER_NEAREST)
+
+    canvas = np.zeros((OUT_H, OUT_W, 3), dtype=np.uint8)
+    canvas[:] = (10, 14, 23)
+
+    cx = OUT_W // 2
+    cy = OUT_H // 2
+
+    sc_rx = int((rx - ox) * zoom)
+    sc_ry = scaled_h - int((ry - oy) * zoom)
+
+    top_left_x = cx - sc_rx
+    top_left_y = cy - sc_ry
+
+    x1 = max(0, top_left_x)
+    y1 = max(0, top_left_y)
+    x2 = min(OUT_W, top_left_x + scaled_w)
+    y2 = min(OUT_H, top_left_y + scaled_h)
+
+    mx1 = max(0, -top_left_x)
+    my1 = max(0, -top_left_y)
+    mx2 = mx1 + (x2 - x1)
+    my2 = my1 + (y2 - y1)
+
+    if x2 > x1 and y2 > y1 and mx2 > mx1 and my2 > my1:
+        canvas[y1:y2, x1:x2] = scaled_map[my1:my2, mx1:mx2]
+
+    # Grid crosshairs
+    meter_px = int(zoom)
+    for gx in range(cx % meter_px, OUT_W, meter_px):
+        cv2.line(canvas, (gx, 0), (gx, OUT_H), (20, 28, 40), 1)
+    for gy in range(cy % meter_px, OUT_H, meter_px):
+        cv2.line(canvas, (0, gy), (OUT_W, gy), (20, 28, 40), 1)
+
+    # Robot Center Marker & Needle
+    cv2.circle(canvas, (cx, cy), 10, (255, 215, 0), 2)
+    cv2.circle(canvas, (cx, cy), 5, (0, 68, 255), -1)
+
+    rad = math.radians(ryaw)
+    tip_x = int(cx + 22 * math.cos(rad))
+    tip_y = int(cy - 22 * math.sin(rad))
+    cv2.line(canvas, (cx, cy), (tip_x, tip_y), (0, 229, 255), 3)
+
+    # Ball Marker
+    if b_tracked:
+        fwd = state.ball_x
+        lat = state.ball_y
+        bx_px = int(cx + (fwd * math.cos(rad) - lat * math.sin(rad)) * zoom)
+        by_px = int(cy - (fwd * math.sin(rad) + lat * math.cos(rad)) * zoom)
+        if 0 <= bx_px < OUT_W and 0 <= by_px < OUT_H:
+            cv2.circle(canvas, (bx_px, by_px), 8, (0, 255, 0), -1)
+            cv2.putText(canvas, "BALL", (bx_px + 10, by_px + 4), cv2.FONT_HERSHEY_SIMPLEX, 0.4, (0, 255, 0), 1)
+
+    # Overlays
+    map_text = f"MAP: {w*res:.1f}m x {h*res:.1f}m"
+    cv2.putText(canvas, map_text, (10, 20), cv2.FONT_HERSHEY_SIMPLEX, 0.45, (0, 229, 255), 1)
+    pose_text = f"X:{rx:+.2f}m Y:{ry:+.2f}m θ:{ryaw:+.1f}°"
+    cv2.putText(canvas, pose_text, (10, OUT_H - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.42, (255, 255, 255), 1)
+
+    ret, buf = cv2.imencode('.jpg', canvas, [cv2.IMWRITE_JPEG_QUALITY, 80])
     return buf.tobytes() if ret else b''
 
 # ====================================================================
@@ -322,8 +426,6 @@ HTML_PAGE = """<!DOCTYPE html>
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <title>⚽ Soccer Bot Mobile HQ</title>
   <style>
     * {
@@ -343,7 +445,7 @@ HTML_PAGE = """<!DOCTYPE html>
       align-items: center;
       min-height: 100vh;
       overflow-x: hidden;
-      padding: 10px;
+      padding: 8px;
     }
     header {
       width: 100%;
@@ -355,10 +457,10 @@ HTML_PAGE = """<!DOCTYPE html>
       background: #141720;
       border-radius: 12px;
       border: 1px solid #232936;
-      margin-bottom: 8px;
+      margin-bottom: 6px;
     }
     .title {
-      font-size: 16px;
+      font-size: 15px;
       font-weight: 700;
       color: #00e5ff;
       letter-spacing: 0.5px;
@@ -378,7 +480,38 @@ HTML_PAGE = """<!DOCTYPE html>
       border-color: #ff5252;
     }
 
-    /* Video Container */
+    /* View Switcher Tabs */
+    .view-switcher {
+      display: flex;
+      width: 100%;
+      max-width: 480px;
+      gap: 6px;
+      margin-bottom: 6px;
+    }
+    .view-btn {
+      flex: 1;
+      padding: 10px;
+      font-size: 13px;
+      font-weight: 700;
+      border-radius: 10px;
+      border: 1px solid #232936;
+      background: #141720;
+      color: #8b949e;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: all 0.2s;
+    }
+    .view-btn.active {
+      background: #00e5ff18;
+      color: #00e5ff;
+      border-color: #00e5ff;
+      box-shadow: 0 0 10px rgba(0, 229, 255, 0.2);
+    }
+
+    /* Stream Container */
     .stream-card {
       width: 100%;
       max-width: 480px;
@@ -388,7 +521,7 @@ HTML_PAGE = """<!DOCTYPE html>
       border: 2px solid #232936;
       position: relative;
       box-shadow: 0 4px 20px rgba(0,0,0,0.5);
-      margin-bottom: 8px;
+      margin-bottom: 6px;
     }
     .stream-img {
       width: 100%;
@@ -415,6 +548,7 @@ HTML_PAGE = """<!DOCTYPE html>
       border: 1px solid rgba(255, 255, 255, 0.1);
     }
     .pill-green { color: #00e676; border-color: rgba(0, 230, 118, 0.3); }
+    .pill-cyan { color: #00e5ff; border-color: rgba(0, 229, 255, 0.3); }
     .pill-yellow { color: #ffd600; border-color: rgba(255, 214, 0, 0.3); }
 
     /* Autopilot Control Card */
@@ -423,15 +557,15 @@ HTML_PAGE = """<!DOCTYPE html>
       max-width: 480px;
       background: #141720;
       border-radius: 12px;
-      padding: 10px;
+      padding: 8px;
       border: 1px solid #232936;
-      margin-bottom: 8px;
+      margin-bottom: 6px;
       text-align: center;
     }
     .btn-autopilot {
       width: 100%;
-      padding: 13px;
-      font-size: 14px;
+      padding: 12px;
+      font-size: 13px;
       font-weight: 700;
       border-radius: 10px;
       border: none;
@@ -448,21 +582,15 @@ HTML_PAGE = """<!DOCTYPE html>
     .btn-autopilot.active {
       background: linear-gradient(135deg, #b71c1c, #d32f2f);
       box-shadow: 0 4px 12px rgba(211, 47, 47, 0.5);
-      animation: pulse 1.5s infinite;
     }
-    @keyframes pulse {
-      0% { box-shadow: 0 0 0 0 rgba(211, 47, 47, 0.6); }
-      70% { box-shadow: 0 0 0 10px rgba(211, 47, 47, 0); }
-      100% { box-shadow: 0 0 0 0 rgba(211, 47, 47, 0); }
-    }
-    .auto-status {
+    .status-text {
       font-size: 11px;
-      margin-top: 6px;
-      color: #9e9e9e;
-      font-weight: 500;
+      color: #8b949e;
+      margin-top: 5px;
+      font-family: monospace;
     }
 
-    /* Speed Selector */
+    /* Speed Pills Bar */
     .speed-bar {
       width: 100%;
       max-width: 480px;
@@ -470,139 +598,153 @@ HTML_PAGE = """<!DOCTYPE html>
       gap: 6px;
       margin-bottom: 8px;
     }
-    .btn-speed {
+    .speed-pill {
       flex: 1;
-      padding: 7px 4px;
+      padding: 8px 4px;
+      text-align: center;
       background: #141720;
       border: 1px solid #232936;
-      color: #9e9e9e;
       border-radius: 8px;
       font-size: 11px;
-      font-weight: 600;
-      cursor: pointer;
-    }
-    .btn-speed.selected {
-      background: #00e5ff;
-      color: #0a0a0f;
-      border-color: #00e5ff;
       font-weight: 700;
+      color: #8b949e;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .speed-pill.active {
+      background: #00e5ff;
+      color: #000;
+      border-color: #00e5ff;
+      box-shadow: 0 0 10px rgba(0, 229, 255, 0.4);
     }
 
     /* Touch D-Pad */
-    .dpad-container {
+    .controls-container {
       width: 100%;
       max-width: 480px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 6px 0;
+    }
+    .dpad-grid {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      grid-template-rows: repeat(3, 72px);
+      grid-template-columns: repeat(3, 76px);
+      grid-template-rows: repeat(3, 76px);
       gap: 8px;
-      margin-bottom: 10px;
     }
     .dpad-btn {
       background: #181d28;
-      border: 1px solid #283144;
-      border-radius: 14px;
+      border: 2px solid #2a3346;
+      border-radius: 16px;
       color: #fff;
-      font-size: 20px;
+      font-size: 24px;
       display: flex;
-      flex-direction: column;
       align-items: center;
       justify-content: center;
-      gap: 2px;
       cursor: pointer;
-      box-shadow: 0 3px 8px rgba(0,0,0,0.3);
-      touch-action: none;
-    }
-    .dpad-btn span {
-      font-size: 10px;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      opacity: 0.8;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+      transition: all 0.1s ease;
+      touch-action: manipulation;
     }
     .dpad-btn:active, .dpad-btn.pressed {
       background: #00e5ff;
-      color: #0a0a0f;
-      transform: scale(0.96);
+      color: #000;
+      border-color: #00e5ff;
+      transform: scale(0.94);
       box-shadow: 0 0 16px rgba(0, 229, 255, 0.6);
     }
-    .btn-fwd { grid-column: 2; grid-row: 1; border-color: #00e676; color: #00e676; }
-    .btn-fwd:active, .btn-fwd.pressed { background: #00e676; color: #000; }
-    .btn-left { grid-column: 1; grid-row: 2; border-color: #29b6f6; color: #29b6f6; }
-    .btn-left:active, .btn-left.pressed { background: #29b6f6; color: #000; }
-    .btn-stop { grid-column: 2; grid-row: 2; border-color: #ff5252; color: #ff5252; font-size: 22px; }
-    .btn-stop:active, .btn-stop.pressed { background: #ff5252; color: #fff; }
-    .btn-right { grid-column: 3; grid-row: 2; border-color: #29b6f6; color: #29b6f6; }
-    .btn-right:active, .btn-right.pressed { background: #29b6f6; color: #000; }
-    .btn-back { grid-column: 2; grid-row: 3; border-color: #ff9100; color: #ff9100; }
-    .btn-back:active, .btn-back.pressed { background: #ff9100; color: #000; }
-
-    footer {
-      font-size: 10px;
-      color: #616161;
-      text-align: center;
-      margin-top: auto;
-      padding: 6px;
+    .dpad-stop {
+      background: #2a1b1b;
+      border-color: #552525;
+      color: #ff5252;
+      font-size: 13px;
+      font-weight: 800;
+    }
+    .dpad-stop:active, .dpad-stop.pressed {
+      background: #ff5252;
+      color: #fff;
+      border-color: #ff5252;
+      box-shadow: 0 0 16px rgba(255, 82, 82, 0.6);
     }
   </style>
 </head>
 <body>
-
-  <!-- Top Status Bar -->
   <header>
     <div class="title">⚽ SOCCER BOT HQ</div>
-    <div id="connBadge" class="badge">● ONLINE</div>
+    <div id="connBadge" class="badge">● CONNECTING...</div>
   </header>
 
-  <!-- Live Camera Feed (Directly above controls) -->
+  <!-- View Switcher -->
+  <div class="view-switcher">
+    <button id="viewCamBtn" class="view-btn active" onclick="switchView('cam')">📷 Camera Feed</button>
+    <button id="viewMapBtn" class="view-btn" onclick="switchView('map')">🗺️ 2D LiDAR SLAM Map</button>
+  </div>
+
+  <!-- Video Stream / SLAM Map Card -->
   <div class="stream-card">
-    <img class="stream-img" src="/stream.mjpg" alt="Live Camera Stream" />
+    <img id="streamImg" class="stream-img" src="/stream.mjpg" alt="Robot Feed">
     <div class="stream-overlay">
       <div id="ballTelemetry" class="telemetry-pill pill-yellow">⚽ SEARCHING...</div>
-      <div id="actionTelemetry" class="telemetry-pill">STOPPED</div>
+      <div id="lidarTelemetry" class="telemetry-pill pill-cyan">📡 LiDAR: READY</div>
     </div>
   </div>
 
-  <!-- Autopilot / Autonomous Ball Follower Card -->
+  <!-- Autopilot Card -->
   <div class="autopilot-card">
     <button id="autopilotBtn" class="btn-autopilot" onclick="toggleAutopilot()">
       <span>⚽</span> <span>START BALL AUTOPILOT</span>
     </button>
-    <div id="autopilotStatus" class="auto-status">Target: Automatically track & brake at 35cm for pickup.</div>
+    <div id="autopilotStatus" class="status-text">IDLE (Manual Mode)</div>
   </div>
 
-  <!-- Speed Selector Presets -->
+  <!-- Speed Selector -->
   <div class="speed-bar">
-    <button class="btn-speed" onclick="setSpeed(85, this)">🐢 Slow</button>
-    <button class="btn-speed selected" onclick="setSpeed(120, this)">🚗 Cruise</button>
-    <button class="btn-speed" onclick="setSpeed(175, this)">🏎️ Fast</button>
-    <button class="btn-speed" onclick="setSpeed(220, this)">⚡ Max</button>
+    <div class="speed-pill" onclick="setSpeed(85, this)">SLOW (85)</div>
+    <div class="speed-pill active" onclick="setSpeed(120, this)">CRUISE (120)</div>
+    <div class="speed-pill" onclick="setSpeed(160, this)">FAST (160)</div>
+    <div class="speed-pill" onclick="setSpeed(210, this)">SPORT (210)</div>
   </div>
 
-  <!-- Touch D-Pad (Touch & Hold to Drive, Release to Stop) -->
-  <div class="dpad-container">
-    <button class="dpad-btn btn-fwd" data-action="F">▲<span>Forward</span></button>
-    <button class="dpad-btn btn-left" data-action="L">◀<span>Left</span></button>
-    <button class="dpad-btn btn-stop" data-action="S">⏹<span>STOP</span></button>
-    <button class="dpad-btn btn-right" data-action="R">▶<span>Right</span></button>
-    <button class="dpad-btn btn-back" data-action="B">▼<span>Back</span></button>
+  <!-- Touch D-Pad -->
+  <div class="controls-container">
+    <div class="dpad-grid">
+      <div></div>
+      <button class="dpad-btn" data-action="F">▲</button>
+      <div></div>
+      
+      <button class="dpad-btn" data-action="L">◀</button>
+      <button class="dpad-btn dpad-stop" data-action="S">STOP</button>
+      <button class="dpad-btn" data-action="R">▶</button>
+      
+      <div></div>
+      <button class="dpad-btn" data-action="B">▼</button>
+      <div></div>
+    </div>
   </div>
-
-  <footer>
-    Touch & hold buttons to drive. Release to brake.<br>
-    Connected to Pi TCP 9000 & Camera 8000.
-  </footer>
 
   <script>
     let currentSpeed = 120;
     let autopilotActive = false;
     let activePressInterval = null;
+    let currentView = 'cam';
 
-    // Set Speed Preset
-    function setSpeed(spd, btn) {
+    function switchView(mode) {
+      currentView = mode;
+      document.getElementById('viewCamBtn').className = (mode === 'cam') ? 'view-btn active' : 'view-btn';
+      document.getElementById('viewMapBtn').className = (mode === 'map') ? 'view-btn active' : 'view-btn';
+      const img = document.getElementById('streamImg');
+      if (mode === 'cam') {
+        img.src = '/stream.mjpg';
+      } else {
+        img.src = '/map_stream.mjpg';
+      }
+    }
+
+    function setSpeed(spd, el) {
       currentSpeed = spd;
-      document.querySelectorAll('.btn-speed').forEach(b => b.classList.remove('selected'));
-      btn.classList.add('selected');
+      document.querySelectorAll('.speed-pill').forEach(p => p.classList.remove('active'));
+      el.classList.add('active');
       fetch('/api/speed', {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
@@ -610,13 +752,12 @@ HTML_PAGE = """<!DOCTYPE html>
       });
     }
 
-    // Toggle Autopilot
     function toggleAutopilot() {
       autopilotActive = !autopilotActive;
       const btn = document.getElementById('autopilotBtn');
       if (autopilotActive) {
         btn.classList.add('active');
-        btn.innerHTML = '<span>⏹</span> <span>DISENGAGE AUTOPILOT</span>';
+        btn.innerHTML = '<span>⏹️</span> <span>STOP AUTOPILOT</span>';
       } else {
         btn.classList.remove('active');
         btn.innerHTML = '<span>⚽</span> <span>START BALL AUTOPILOT</span>';
@@ -628,10 +769,8 @@ HTML_PAGE = """<!DOCTYPE html>
       });
     }
 
-    // Send Motor Drive Command
     function sendDrive(action) {
       if (autopilotActive && action !== 'S') {
-        // Manual override disengages autopilot immediately
         autopilotActive = false;
         const btn = document.getElementById('autopilotBtn');
         btn.classList.remove('active');
@@ -644,7 +783,7 @@ HTML_PAGE = """<!DOCTYPE html>
       });
     }
 
-    // Touch & Hold Handlers for Smooth Driving
+    // Touch & Mouse Handlers for Smooth Driving
     document.querySelectorAll('.dpad-btn').forEach(btn => {
       const act = btn.getAttribute('data-action');
       
@@ -653,7 +792,6 @@ HTML_PAGE = """<!DOCTYPE html>
         btn.classList.add('pressed');
         sendDrive(act);
         if (act !== 'S') {
-          // Keep sending every 200ms while held
           clearInterval(activePressInterval);
           activePressInterval = setInterval(() => sendDrive(act), 200);
         }
@@ -664,7 +802,7 @@ HTML_PAGE = """<!DOCTYPE html>
         btn.classList.remove('pressed');
         clearInterval(activePressInterval);
         if (act !== 'S') {
-          sendDrive('S'); // Stop on release!
+          sendDrive('S');
         }
       };
 
@@ -676,7 +814,7 @@ HTML_PAGE = """<!DOCTYPE html>
       btn.addEventListener('mouseleave', stopAction);
     });
 
-    // Keyboard Hotkey Fallback (W, A, S, D, F, Space)
+    // Keyboard Fallback (W, A, S, D, Arrows, Space)
     window.addEventListener('keydown', (e) => {
       if (e.repeat) return;
       const k = e.key.toLowerCase();
@@ -685,7 +823,6 @@ HTML_PAGE = """<!DOCTYPE html>
       else if (k === 'a' || k === 'arrowleft') sendDrive('L');
       else if (k === 'd' || k === 'arrowright') sendDrive('R');
       else if (k === ' ' || k === 'x') sendDrive('S');
-      else if (k === 'f') toggleAutopilot();
     });
 
     window.addEventListener('keyup', (e) => {
@@ -700,7 +837,6 @@ HTML_PAGE = """<!DOCTYPE html>
       fetch('/api/status')
         .then(r => r.json())
         .then(data => {
-          // Connection Badge
           const conn = document.getElementById('connBadge');
           if (data.connected) {
             conn.className = 'badge';
@@ -720,8 +856,15 @@ HTML_PAGE = """<!DOCTYPE html>
             ball.innerText = '⚽ SEARCHING...';
           }
 
-          // Action Telemetry
-          document.getElementById('actionTelemetry').innerText = data.current_action;
+          // LiDAR Telemetry
+          const ldr = document.getElementById('lidarTelemetry');
+          if (data.lidar_active) {
+            ldr.className = 'telemetry-pill pill-cyan';
+            ldr.innerText = `📡 LiDAR: 🟢 360° | X:${data.robot_x.toFixed(1)}m`;
+          } else {
+            ldr.className = 'telemetry-pill pill-yellow';
+            ldr.innerText = '📡 LiDAR: SCANNING...';
+          }
 
           // Autopilot Status
           document.getElementById('autopilotStatus').innerText = data.autopilot_status;
@@ -738,7 +881,7 @@ HTML_PAGE = """<!DOCTYPE html>
 # ====================================================================
 class TeleopHandler(BaseHTTPRequestHandler):
     def log_message(self, format, *args):
-        pass # Suppress noisy request logging
+        pass
 
     def do_HEAD(self):
         self.send_response(200)
@@ -753,7 +896,6 @@ class TeleopHandler(BaseHTTPRequestHandler):
             self.end_headers()
             self.wfile.write(HTML_PAGE.encode('utf-8'))
         elif self.path == '/stream.mjpg':
-            # Low latency multipart MJPEG stream
             self.send_response(200)
             self.send_header('Content-Type', 'multipart/x-mixed-replace; boundary=--frame')
             self.send_header('Cache-Control', 'no-cache, private')
@@ -761,13 +903,30 @@ class TeleopHandler(BaseHTTPRequestHandler):
             self.end_headers()
             try:
                 while True:
-                    frame_bytes = get_current_frame()
+                    frame_bytes = get_current_camera_frame()
                     self.wfile.write(b"--frame\r\n")
                     self.wfile.write(b"Content-Type: image/jpeg\r\n")
                     self.wfile.write(f"Content-Length: {len(frame_bytes)}\r\n\r\n".encode())
                     self.wfile.write(frame_bytes)
                     self.wfile.write(b"\r\n")
-                    time.sleep(0.04) # ~25 FPS
+                    time.sleep(0.04)
+            except Exception:
+                pass
+        elif self.path == '/map_stream.mjpg':
+            self.send_response(200)
+            self.send_header('Content-Type', 'multipart/x-mixed-replace; boundary=--frame')
+            self.send_header('Cache-Control', 'no-cache, private')
+            self.send_header('Pragma', 'no-cache')
+            self.end_headers()
+            try:
+                while True:
+                    frame_bytes = render_slam_map_frame()
+                    self.wfile.write(b"--frame\r\n")
+                    self.wfile.write(b"Content-Type: image/jpeg\r\n")
+                    self.wfile.write(f"Content-Length: {len(frame_bytes)}\r\n\r\n".encode())
+                    self.wfile.write(frame_bytes)
+                    self.wfile.write(b"\r\n")
+                    time.sleep(0.08)
             except Exception:
                 pass
         elif self.path == '/api/status':
@@ -789,7 +948,12 @@ class TeleopHandler(BaseHTTPRequestHandler):
                     "bearing": float(bearing),
                     "autopilot_active": state.autopilot_active,
                     "autopilot_status": state.autopilot_status,
-                    "speed": state.speed
+                    "speed": state.speed,
+                    "lidar_active": (now - state.laser_time) < 2.0,
+                    "slam_active": state.raw_map is not None,
+                    "robot_x": float(state.robot_x),
+                    "robot_y": float(state.robot_y),
+                    "robot_yaw": float(state.robot_yaw)
                 }
             self.wfile.write(json.dumps(resp).encode('utf-8'))
         else:

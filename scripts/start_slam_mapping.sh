@@ -86,18 +86,17 @@ else
                 nohup /home/hasan/ball_detector_pi/pi_inference/venv/bin/python3 -u /home/hasan/ball_detector_pi/pi_inference/detect_live_picamera2.py </dev/null >/tmp/camera.log 2>&1 & disown
             fi
 
-            # 3. LiDAR socat bridge on port 5000
-            if ! pgrep -f "TCP-LISTEN:5000" >/dev/null; then
-                echo "[PI] Initializing YDLidar motor power & DTR line..."
-                python3 -c "import serial, time; s=serial.Serial('/dev/ttyUSB0', 115200, timeout=0.2); s.setDTR(True); s.setRTS(True); s.write(b'\xa5\x65'); time.sleep(0.3); s.close()" 2>/dev/null || true
-                echo "[PI] Starting YDLidar TCP bridge on port 5000..."
-                nohup /usr/bin/socat -d -d TCP-LISTEN:5000,reuseaddr,max-children=1,fork FILE:/dev/ttyUSB0,b115200,raw,echo=0 </dev/null >/tmp/socat.log 2>&1 & disown
+            # 3. YDLidar DTR-Powered TCP Bridge on port 5000
+            echo "[PI] Ensuring YDLidar DTR Bridge on port 5000..."
+            pkill -f "socat.*5000" 2>/dev/null || true
+            if ! pgrep -f "lidar_bridge.py" >/dev/null; then
+                nohup python3 -u /home/hasan/lidar_bridge.py </dev/null >/tmp/lidar_bridge.log 2>&1 & disown
             fi
 EOF
 
-        # Deploy and launch Pi Screen HUD on Pi's 480x320 LCD screen
+        # Deploy and launch Pi Screen HUD & LiDAR Bridge on Raspberry Pi
         echo "[INFO] Updating and launching SLAM HUD on Raspberry Pi Screen..."
-        sshpass -p "grammarpro" scp -o StrictHostKeyChecking=no -o ConnectTimeout=5 /home/sharmin/Desktop/iot/soccer_bot/scripts/pi_screen_hud.py hasan@"$PI_IP":/home/hasan/pi_screen_hud.py 2>/dev/null || true
+        sshpass -p "grammarpro" scp -o StrictHostKeyChecking=no -o ConnectTimeout=5 /home/sharmin/Desktop/iot/soccer_bot/scripts/lidar_bridge.py /home/sharmin/Desktop/iot/soccer_bot/scripts/pi_screen_hud.py hasan@"$PI_IP":/home/hasan/ 2>/dev/null || true
         sshpass -p "grammarpro" ssh -o StrictHostKeyChecking=no -o ConnectTimeout=5 hasan@"$PI_IP" 'pkill -f pi_screen_hud.py 2>/dev/null || true; DISPLAY=:0.0 XAUTHORITY=/home/hasan/.Xauthority nohup python3 -u /home/hasan/pi_screen_hud.py </dev/null >/tmp/pi_hud.log 2>&1 & disown' || true
         echo "[SUCCESS] Raspberry Pi Screen HUD running!"
 
