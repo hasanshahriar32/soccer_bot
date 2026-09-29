@@ -18,6 +18,7 @@ import sys
 import threading
 import time
 import zlib
+import numpy as np
 import pygame
 
 # Configuration
@@ -131,22 +132,15 @@ class PiScreenHUD:
                 raw_b64 = packet['data']
                 decompressed = zlib.decompress(base64.b64decode(raw_b64))
 
-                # Create pygame surface for map
-                surf = pygame.Surface((w, h))
-                pixels = pygame.PixelArray(surf)
+                # Fast vectorized unpack using numpy
+                grid = np.frombuffer(decompressed, dtype=np.int8).reshape((h, w))
+                grid = np.flipud(grid).T
+                rgb = np.full((w, h, 3), COLOR_UNKNOWN, dtype=np.uint8)
+                rgb[grid == 0] = COLOR_FREE
+                rgb[grid > 50] = COLOR_WALL
 
-                # Unpack int8 cells
-                for idx, val in enumerate(decompressed):
-                    val = val if val < 128 else val - 256
-                    x = idx % w
-                    y = h - 1 - (idx // w)  # Flip Y for Cartesian coords
-                    if val == 0:
-                        pixels[x, y] = COLOR_FREE
-                    elif val > 50:
-                        pixels[x, y] = COLOR_WALL
-                    else:
-                        pixels[x, y] = COLOR_UNKNOWN
-                del pixels
+                surf = pygame.Surface((w, h))
+                pygame.surfarray.blit_array(surf, rgb)
 
                 with self.lock:
                     self.map_surface = surf
@@ -155,8 +149,8 @@ class PiScreenHUD:
                     self.map_res = res
                     self.map_ox = ox
                     self.map_oy = oy
-            except Exception:
-                pass
+            except Exception as e:
+                print(f"[HUD ERR] Failed unpacking map: {e}", flush=True)
 
     def run_gui(self):
         pygame.init()

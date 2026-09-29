@@ -148,23 +148,26 @@ class PiScreenStreamerNode(Node):
             try:
                 conn, addr = server.accept()
                 conn.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1)
+                client_item = (conn, threading.Lock())
                 self.get_logger().info(f"📺 [CONNECTED] Raspberry Pi Screen client connected from {addr[0]}:{addr[1]}")
                 with self.tcp_clients_lock:
-                    self.tcp_clients.append(conn)
+                    self.tcp_clients.append(client_item)
 
                 # Send initial map immediately if available
                 with self.lock:
                     map_pkt = self.latest_map_packet
                 if map_pkt:
-                    self.send_packet_to_client(conn, map_pkt)
+                    self.send_packet_to_client(client_item, map_pkt)
             except Exception as e:
                 self.get_logger().warn(f"TCP accept error: {e}")
 
-    def send_packet_to_client(self, conn, packet_dict):
+    def send_packet_to_client(self, client_item, packet_dict):
+        conn, lock = client_item
         try:
             raw_json = json.dumps(packet_dict).encode('utf-8')
             msg = struct.pack('!I', len(raw_json)) + raw_json
-            conn.sendall(msg)
+            with lock:
+                conn.sendall(msg)
             return True
         except Exception:
             return False

@@ -31,7 +31,7 @@ cleanup() {
 
     # 4. Stop Pi Screen HUD on Raspberry Pi
     echo "[INFO] Stopping Pi screen HUD on robot..."
-    sshpass -p "grammarpro" ssh -o StrictHostKeyChecking=no -o ConnectTimeout=3 hasan@"$PI_IP" 'pkill -f pi_screen_hud.py' 2>/dev/null || true
+    sshpass -p "grammarpro" ssh -o StrictHostKeyChecking=no -o ConnectTimeout=3 hasan@"$PI_IP" "pkill -f '[p]i_screen_hud.py'" 2>/dev/null || true
 
     echo "[INFO] Full system shutdown complete."
     exit 0
@@ -97,7 +97,7 @@ EOF
         # Deploy and launch Pi Screen HUD & LiDAR Bridge on Raspberry Pi
         echo "[INFO] Updating and launching SLAM HUD on Raspberry Pi Screen..."
         sshpass -p "grammarpro" scp -o StrictHostKeyChecking=no -o ConnectTimeout=5 /home/sharmin/Desktop/iot/soccer_bot/scripts/lidar_bridge.py /home/sharmin/Desktop/iot/soccer_bot/scripts/pi_screen_hud.py hasan@"$PI_IP":/home/hasan/ 2>/dev/null || true
-        sshpass -p "grammarpro" ssh -o StrictHostKeyChecking=no -o ConnectTimeout=5 hasan@"$PI_IP" 'pkill -f pi_screen_hud.py 2>/dev/null || true; DISPLAY=:0.0 XAUTHORITY=/home/hasan/.Xauthority nohup python3 -u /home/hasan/pi_screen_hud.py </dev/null >/tmp/pi_hud.log 2>&1 & disown' || true
+        sshpass -p "grammarpro" ssh -o StrictHostKeyChecking=no -o ConnectTimeout=5 hasan@"$PI_IP" "pkill -f '[p]i_screen_hud.py' 2>/dev/null || true; DISPLAY=:0.0 XAUTHORITY=/home/hasan/.Xauthority nohup python3 -u /home/hasan/pi_screen_hud.py </dev/null >/tmp/pi_hud.log 2>&1 & disown" || true
         echo "[SUCCESS] Raspberry Pi Screen HUD running!"
 
         # Wait for LiDAR TCP port 5000

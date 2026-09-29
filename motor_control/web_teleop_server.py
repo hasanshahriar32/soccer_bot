@@ -511,29 +511,72 @@ HTML_PAGE = """<!DOCTYPE html>
       box-shadow: 0 0 10px rgba(0, 229, 255, 0.2);
     }
 
-    /* Stream Container */
-    .stream-card {
+    /* Stream Containers */
+    .streams-wrapper {
       width: 100%;
       max-width: 480px;
-      background: #000;
-      border-radius: 14px;
-      overflow: hidden;
-      border: 2px solid #232936;
-      position: relative;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
       margin-bottom: 6px;
+    }
+    .stream-card {
+      width: 100%;
+      background: #141720;
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1px solid #232936;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.4);
+      display: flex;
+      flex-direction: column;
+    }
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 5px 10px;
+      background: #181d28;
+      border-bottom: 1px solid #232936;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      color: #8b949e;
+    }
+    .card-header span:first-child {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      color: #00e5ff;
+    }
+    .mini-badge {
+      font-size: 10px;
+      padding: 2px 7px;
+      border-radius: 12px;
+      font-weight: 600;
+      font-family: monospace;
+    }
+    .badge-searching { background: #332612; color: #ffd600; border: 1px solid rgba(255, 214, 0, 0.4); }
+    .badge-tracked { background: #12331c; color: #00e676; border: 1px solid rgba(0, 230, 118, 0.4); }
+    .badge-active { background: #0e2b38; color: #00e5ff; border: 1px solid rgba(0, 229, 255, 0.4); }
+    .badge-scanning { background: #2b2310; color: #ffd600; border: 1px solid rgba(255, 214, 0, 0.4); }
+
+    .media-box {
+      position: relative;
+      background: #000;
+      width: 100%;
+      overflow: hidden;
     }
     .stream-img {
       width: 100%;
-      height: 220px;
+      height: 100%;
       object-fit: cover;
       display: block;
     }
     .stream-overlay {
       position: absolute;
-      top: 8px;
-      left: 8px;
-      right: 8px;
+      bottom: 6px;
+      left: 6px;
+      right: 6px;
       display: flex;
       justify-content: space-between;
       pointer-events: none;
@@ -541,8 +584,8 @@ HTML_PAGE = """<!DOCTYPE html>
     .telemetry-pill {
       background: rgba(14, 18, 26, 0.85);
       backdrop-filter: blur(4px);
-      padding: 4px 10px;
-      border-radius: 8px;
+      padding: 3px 8px;
+      border-radius: 6px;
       font-size: 11px;
       font-weight: 600;
       border: 1px solid rgba(255, 255, 255, 0.1);
@@ -550,6 +593,13 @@ HTML_PAGE = """<!DOCTYPE html>
     .pill-green { color: #00e676; border-color: rgba(0, 230, 118, 0.3); }
     .pill-cyan { color: #00e5ff; border-color: rgba(0, 229, 255, 0.3); }
     .pill-yellow { color: #ffd600; border-color: rgba(255, 214, 0, 0.3); }
+
+    /* Layout modes */
+    .mode-dual .media-box { height: 160px; }
+    .mode-cam #mapCard { display: none; }
+    .mode-cam .media-box { height: 230px; }
+    .mode-map #camCard { display: none; }
+    .mode-map .media-box { height: 240px; }
 
     /* Autopilot Control Card */
     .autopilot-card {
@@ -677,16 +727,37 @@ HTML_PAGE = """<!DOCTYPE html>
 
   <!-- View Switcher -->
   <div class="view-switcher">
-    <button id="viewCamBtn" class="view-btn active" onclick="switchView('cam')">📷 Camera Feed</button>
-    <button id="viewMapBtn" class="view-btn" onclick="switchView('map')">🗺️ 2D LiDAR SLAM Map</button>
+    <button id="viewDualBtn" class="view-btn active" onclick="switchView('dual')">✨ Dual View</button>
+    <button id="viewCamBtn" class="view-btn" onclick="switchView('cam')">📷 Camera</button>
+    <button id="viewMapBtn" class="view-btn" onclick="switchView('map')">🗺️ LiDAR Map</button>
   </div>
 
-  <!-- Video Stream / SLAM Map Card -->
-  <div class="stream-card">
-    <img id="streamImg" class="stream-img" src="/stream.mjpg" alt="Robot Feed">
-    <div class="stream-overlay">
-      <div id="ballTelemetry" class="telemetry-pill pill-yellow">⚽ SEARCHING...</div>
-      <div id="lidarTelemetry" class="telemetry-pill pill-cyan">📡 LiDAR: READY</div>
+  <!-- Streams Container -->
+  <div id="streamsWrapper" class="streams-wrapper mode-dual">
+    <!-- Camera Feed Card -->
+    <div id="camCard" class="stream-card">
+      <div class="card-header">
+        <span>📷 LIVE CAMERA FEED</span>
+        <span id="ballBadge" class="mini-badge badge-searching">⚽ SEARCHING...</span>
+      </div>
+      <div class="media-box">
+        <img id="camImg" class="stream-img" src="/stream.mjpg" alt="Camera Feed">
+      </div>
+    </div>
+
+    <!-- 2D LiDAR SLAM Map Card -->
+    <div id="mapCard" class="stream-card">
+      <div class="card-header">
+        <span>🗺️ 2D LIDAR SLAM MAP</span>
+        <span id="lidarBadge" class="mini-badge badge-active">📡 360° ACTIVE</span>
+      </div>
+      <div class="media-box">
+        <img id="mapImg" class="stream-img" src="/map_stream.mjpg" alt="2D SLAM Map">
+        <div class="stream-overlay">
+          <div id="poseTelemetry" class="telemetry-pill pill-cyan">θ: +0.0° | X: +0.00m Y: +0.00m</div>
+          <div id="slamBadge" class="telemetry-pill pill-green">SLAM: ONLINE</div>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -727,18 +798,15 @@ HTML_PAGE = """<!DOCTYPE html>
     let currentSpeed = 120;
     let autopilotActive = false;
     let activePressInterval = null;
-    let currentView = 'cam';
+    let currentView = 'dual';
 
     function switchView(mode) {
       currentView = mode;
+      document.getElementById('viewDualBtn').className = (mode === 'dual') ? 'view-btn active' : 'view-btn';
       document.getElementById('viewCamBtn').className = (mode === 'cam') ? 'view-btn active' : 'view-btn';
       document.getElementById('viewMapBtn').className = (mode === 'map') ? 'view-btn active' : 'view-btn';
-      const img = document.getElementById('streamImg');
-      if (mode === 'cam') {
-        img.src = '/stream.mjpg';
-      } else {
-        img.src = '/map_stream.mjpg';
-      }
+      const wrapper = document.getElementById('streamsWrapper');
+      wrapper.className = 'streams-wrapper mode-' + mode;
     }
 
     function setSpeed(spd, el) {
@@ -847,23 +915,36 @@ HTML_PAGE = """<!DOCTYPE html>
           }
 
           // Ball Telemetry
-          const ball = document.getElementById('ballTelemetry');
-          if (data.ball_tracked) {
-            ball.className = 'telemetry-pill pill-green';
-            ball.innerText = `⚽ ${data.dist.toFixed(2)}m (${data.bearing > 0 ? '+' : ''}${data.bearing.toFixed(1)}°)`;
-          } else {
-            ball.className = 'telemetry-pill pill-yellow';
-            ball.innerText = '⚽ SEARCHING...';
+          const ball = document.getElementById('ballBadge');
+          if (ball) {
+            if (data.ball_tracked) {
+              ball.className = 'mini-badge badge-tracked';
+              ball.innerText = `⚽ ${data.dist.toFixed(2)}m (${data.bearing > 0 ? '+' : ''}${data.bearing.toFixed(1)}°)`;
+            } else {
+              ball.className = 'mini-badge badge-searching';
+              ball.innerText = '⚽ SEARCHING...';
+            }
           }
 
           // LiDAR Telemetry
-          const ldr = document.getElementById('lidarTelemetry');
-          if (data.lidar_active) {
-            ldr.className = 'telemetry-pill pill-cyan';
-            ldr.innerText = `📡 LiDAR: 🟢 360° | X:${data.robot_x.toFixed(1)}m`;
-          } else {
-            ldr.className = 'telemetry-pill pill-yellow';
-            ldr.innerText = '📡 LiDAR: SCANNING...';
+          const ldr = document.getElementById('lidarBadge');
+          if (ldr) {
+            if (data.lidar_active) {
+              ldr.className = 'mini-badge badge-active';
+              ldr.innerText = `📡 360° ACTIVE`;
+            } else {
+              ldr.className = 'mini-badge badge-scanning';
+              ldr.innerText = '📡 SCANNING...';
+            }
+          }
+
+          // Pose Telemetry
+          const poseEl = document.getElementById('poseTelemetry');
+          if (poseEl) {
+            const rx = (typeof data.robot_x === 'number') ? data.robot_x : 0;
+            const ry = (typeof data.robot_y === 'number') ? data.robot_y : 0;
+            const ryaw = (typeof data.robot_yaw === 'number') ? data.robot_yaw : 0;
+            poseEl.innerText = `θ: ${ryaw > 0 ? '+' : ''}${ryaw.toFixed(1)}° | X: ${rx > 0 ? '+' : ''}${rx.toFixed(2)}m Y: ${ry > 0 ? '+' : ''}${ry.toFixed(2)}m`;
           }
 
           // Autopilot Status
