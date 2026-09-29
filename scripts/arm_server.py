@@ -13,15 +13,30 @@ import time
 import socket
 import threading
 import json
+import re
 import serial
 
-ARM_PORT = "/dev/ttyUSB1"
+import glob
+
+def get_arm_port():
+    ch340_by_id = "/dev/serial/by-id/usb-1a86_USB2.0-Ser_-if00-port0"
+    if os.path.exists(ch340_by_id):
+        return ch340_by_id
+    for p in glob.glob("/dev/serial/by-id/*"):
+        name = os.path.basename(p).lower()
+        if "1a86" in name or "ch340" in name:
+            return p
+    for candidate in ["/dev/ttyUSB2", "/dev/ttyUSB0"]:
+        if os.path.exists(candidate):
+            return candidate
+    return "/dev/ttyUSB0"
+
 ARM_BAUD = 9600
 TCP_PORT = 9001
 
 class ArmController:
-    def __init__(self, port=ARM_PORT, baud=ARM_BAUD):
-        self.port = port
+    def __init__(self, port=None, baud=ARM_BAUD):
+        self.port = port or get_arm_port()
         self.baud = baud
         self.ser = None
         self.lock = threading.RLock()
@@ -37,6 +52,7 @@ class ArmController:
 
     def connect(self):
         with self.lock:
+            self.port = get_arm_port()
             if self.ser and self.ser.is_open:
                 try:
                     self.ser.close()
@@ -47,7 +63,7 @@ class ArmController:
                 try:
                     print(f"[ARM] Opening serial port {self.port} @ {self.baud} baud (attempt {attempt+1})...", flush=True)
                     self.ser = serial.Serial(self.port, self.baud, timeout=0.2)
-                    time.sleep(2.2)
+                    time.sleep(2.5)
                     # Drain startup boot messages safely without calling reset_input_buffer
                     while self.ser.in_waiting:
                         self.ser.read(self.ser.in_waiting)
@@ -70,11 +86,16 @@ class ArmController:
     def _send_raw(self, cmd_str):
         if not cmd_str.endswith('\n'):
             cmd_str += '\n'
+        try:
+            if self.ser and self.ser.is_open:
+                self.ser.reset_input_buffer()
+        except Exception:
+            pass
         print(f"[ARM RAW SEND] {cmd_str.strip()}", flush=True)
         self.ser.write(cmd_str.encode('utf-8'))
         self.ser.flush()
 
-    def _read_lines(self, timeout=6.0):
+    def _read_lines(self, timeout=3.5):
         lines = []
         t0 = time.time()
         while time.time() - t0 < timeout:
@@ -85,7 +106,8 @@ class ArmController:
                         if line:
                             print(f"[ARM RAW RECV] {line}", flush=True)
                             lines.append(line)
-                            if line.startswith("OK") or line.startswith("ERR") or line.startswith("ARM_STATUS"):
+                            if ("OK" in line or "ERR" in line or "ARM_STATUS" in line or 
+                                "Pulse =" in line or "deg" in line or line.startswith("::")):
                                 break
                     else:
                         time.sleep(0.02)
@@ -121,36 +143,59 @@ class ArmController:
                     return {"status": "ERR", "msg": "Serial disconnected"}
 
             try:
+                cmd_upper = cmd_str.upper().strip()
+                if cmd_upper in ["GRAB", "CLOSE"]:
+                    cmd_str = "G 90"
+                elif cmd_upper == "OPEN":
+                    cmd_str = "G 270"
+
+                # Keep local state in sync with requested position
+                parts = cmd_str.strip().split()
+                if len(parts) >= 2:
+                    try:
+                        j_prefix = parts[0].upper()
+                        val = int(parts[1])
+                        if j_prefix == "B": self.base = val
+                        elif j_prefix == "S": self.shoulder = val
+                        elif j_prefix in ("A", "E"): self.albo = val
+                        elif j_prefix == "G": self.gripper = val
+                    except Exception:
+                        pass
+
                 self._send_raw(cmd_str)
-                timeout = 15.0 if "TEST" in cmd_str.upper() else 6.0
+                timeout = 15.0 if "TEST" in cmd_str.upper() else 3.5
                 lines = self._read_lines(timeout=timeout)
                 resp_text = " ".join(lines) if lines else "OK"
                 
                 for l in lines:
                     self._parse_status_line(l)
-                    if l.startswith("OK B:"):
-                        self.base = int(l.split(":")[1])
-                    elif l.startswith("OK S:"):
-                        self.shoulder = int(l.split(":")[1])
-                    elif l.startswith("OK A:"):
-                        self.albo = int(l.split(":")[1])
-                    elif l.startswith("OK G:"):
-                        self.gripper = int(l.split(":")[1])
-                    elif "HOME" in l:
+                    m = re.search(r'B:(\d+)', l)
+                    if m: self.base = int(m.group(1))
+                    m = re.search(r'S:(\d+)', l)
+                    if m: self.shoulder = int(m.group(1))
+                    m = re.search(r'A:(\d+)', l)
+                    if m: self.albo = int(m.group(1))
+                    m = re.search(r'G:(\d+)', l)
+                    if m: self.gripper = int(m.group(1))
+                    m = re.search(r'Gripper\s*=\s*(\d+)', l)
+                    if m: self.gripper = int(m.group(1))
+                    
+                    if "HOME" in l:
                         self.base = 0
                         self.shoulder = 0
                         self.albo = 0
-                        self.gripper = 180
+                        self.gripper = 90
                     elif "READY" in l:
                         self.base = 90
                         self.shoulder = 70
                         self.albo = 80
                         self.gripper = 240
-                    elif "GRAB" in l:
-                        self.gripper = 125
+                    elif "GRAB" in l or "CLOSE" in l:
+                        self.gripper = 90
                     elif "OPEN" in l:
-                        self.gripper = 240
+                        self.gripper = 270
 
+                self.last_update = time.time()
                 return {
                     "status": "OK",
                     "response": resp_text,
@@ -211,10 +256,22 @@ def handle_client(conn, addr):
                             resp = arm.send_command("HOME")
                         elif act == "ready":
                             resp = arm.send_command("READY")
-                        elif act == "grab":
-                            resp = arm.send_command("GRAB")
+                        elif act == "grab" or act == "close":
+                            resp = arm.send_command("G 90")
                         elif act == "open":
-                            resp = arm.send_command("OPEN")
+                            resp = arm.send_command("G 270")
+                        elif act == "pickup":
+                            # Automated smooth pickup sequence per user specs
+                            arm.send_command("G 270") # Open gripper
+                            time.sleep(1.0)
+                            arm.send_command("S 70")  # Lower shoulder
+                            arm.send_command("A 80")  # Lower elbow
+                            time.sleep(1.5)
+                            arm.send_command("G 90")  # Grip ball
+                            time.sleep(1.2)
+                            arm.send_command("S 0")   # Lift shoulder
+                            arm.send_command("A 0")   # Lift elbow
+                            resp = arm.get_status()
                         elif act == "test":
                             resp = arm.send_command("TEST")
                         elif act == "joint":
@@ -250,7 +307,7 @@ def main():
     server.listen(10)
     print("=" * 60)
     print(f"   🦾 SOCCER BOT ROBOTIC ARM SERVER LISTENING ON 0.0.0.0:{TCP_PORT}")
-    print(f"   Serial Link: {ARM_PORT} @ {ARM_BAUD} Baud")
+    print(f"   Serial Link: {arm.port} @ {ARM_BAUD} Baud")
     print("=" * 60, flush=True)
 
     while True:

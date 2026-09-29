@@ -1155,17 +1155,17 @@ HTML_PAGE = """<!DOCTYPE html>
         </div>
         <div class="joint-slider-wrap">
           <button class="jog-btn" onclick="jogJoint('G', -10)">-</button>
-          <input type="range" id="sliderGripper" min="115" max="270" value="180" class="arm-slider" oninput="updateJointLabel('G', this.value)" onchange="onJointChange('G', this.value)">
+          <input type="range" id="sliderGripper" min="90" max="270" value="90" class="arm-slider" oninput="updateJointLabel('G', this.value)" onchange="onJointChange('G', this.value)">
           <button class="jog-btn" onclick="jogJoint('G', +10)">+</button>
         </div>
         <div class="quick-angles">
-          <button class="angle-btn btn-grab" onclick="sendAngle('G', 125)">✊ Clamp (125°)</button>
-          <button class="angle-btn" onclick="sendAngle('G', 180)">✋ Neutral (180°)</button>
-          <button class="angle-btn btn-open" onclick="sendAngle('G', 240)">👐 Open (240°)</button>
+          <button class="angle-btn btn-grab" onclick="sendAngle('G', 90)">✊ Clamp (90°)</button>
+          <button class="angle-btn" onclick="sendAngle('G', 180)">✋ Mid (180°)</button>
+          <button class="angle-btn btn-open" onclick="sendAngle('G', 270)">👐 Open (270°)</button>
         </div>
       </div>
     </div>
-    <div id="armStatusText" class="status-text">Status: Ready | Safe Neutral: B:0 S:0 A:0 G:180</div>
+    <div id="armStatusText" class="status-text">Status: Ready | Safe Home: B:0 S:0 A:0 G:90</div>
   </div>
 
   <!-- Touch D-Pad -->
