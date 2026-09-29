@@ -43,7 +43,7 @@ try:
 except ImportError:
     HAS_ROS2 = False
 
-PI_IP = "192.168.0.135"
+PI_IP = sys.argv[1] if len(sys.argv) > 1 else "192.168.0.135"
 PI_MOTOR_PORT = 9000
 PI_ARM_PORT = 9001
 WEB_PORT = 5050
@@ -1597,10 +1597,20 @@ class ThreadedHTTPServer(ThreadingMixIn, HTTPServer):
 
 def main():
     server = ThreadedHTTPServer(('0.0.0.0', WEB_PORT), TeleopHandler)
+    local_ip = "localhost"
+    try:
+        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        s.connect(('192.168.0.1', 80))
+        local_ip = s.getsockname()[0]
+        s.close()
+    except Exception:
+        local_ip = "127.0.0.1"
+
     print("=" * 65)
-    print("   📱 SOCCER BOT MOBILE WEB TELEOP & AUTOPILOT ACTIVE")
-    print(f"   Open on your phone browser: http://192.168.0.122:{WEB_PORT}")
-    print(f"   Listening on: http://0.0.0.0:{WEB_PORT}")
+    print("   [+] SOCCER BOT MOBILE WEB TELEOP & AUTOPILOT ACTIVE")
+    print(f"   Open in Laptop Browser: http://localhost:{WEB_PORT}")
+    print(f"   Open on Phone Browser:  http://{local_ip}:{WEB_PORT}")
+    print(f"   Connected to Robot Pi:  {PI_IP}")
     print("=" * 65, flush=True)
     try:
         server.serve_forever()
