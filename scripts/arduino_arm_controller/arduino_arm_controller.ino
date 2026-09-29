@@ -1,8 +1,7 @@
 #include <Servo.h>
 
 // =====================================================
-// SOCCER BOT - 4 DOF ROBOTIC ARM CONTROLLER
-// Controlled via Serial from Raspberry Pi (115200 Baud)
+// ROBOT ARM - USER CONFIGURATION ARCHITECTURE
 // =====================================================
 
 Servo baseServo;
@@ -11,16 +10,18 @@ Servo alboServo;
 Servo gripperServo;
 
 // =====================================================
-// PINS
+// PINS (Per user configuration)
 // =====================================================
+
 const byte BASE_PIN     = 9;
 const byte SHOULDER_PIN = 10;
 const byte ALBO_PIN     = 11;
 const byte GRIPPER_PIN  = 12;
 
 // =====================================================
-// SERVO RANGES & PULSE LIMITS
+// BASE / SHOULDER / ALBO RANGE (Per user configuration)
 // =====================================================
+
 const int BASE_MIN      = 0;
 const int BASE_MAX      = 180;
 
@@ -30,282 +31,326 @@ const int SHOULDER_MAX  = 180;
 const int ALBO_MIN      = 0;
 const int ALBO_MAX      = 180;
 
-const int GRIPPER_MIN   = 90;
-const int GRIPPER_MAX   = 270;
+// =====================================================
+// GRIPPER RANGE (Per user configuration)
+// =====================================================
+
+const int GRIPPER_MIN    = 90;
+const int GRIPPER_MAX    = 270;
 const int GRIPPER_MIN_US = 1000;
 const int GRIPPER_MAX_US = 2000;
 
-// Default speed (ms delay per degree)
-int moveDelay = 15;
+// =====================================================
+// SPEED (Per user configuration)
+// =====================================================
 
-// Current joint positions
+const int MOVE_DELAY = 40;
+
+// Current angles tracking
 int curBase     = 0;
 int curShoulder = 0;
 int curAlbo     = 0;
 int curGripper  = 90;
 
 // =====================================================
-// GRIPPER LOW-LEVEL PULSE
+// GRIPPER FUNCTION (Per user configuration)
 // =====================================================
-void setGripperPulse(int angle)
+
+void moveGripper(int angle)
 {
   angle = constrain(angle, GRIPPER_MIN, GRIPPER_MAX);
-  int pulse = map(angle, GRIPPER_MIN, GRIPPER_MAX, GRIPPER_MIN_US, GRIPPER_MAX_US);
+
+  if (!gripperServo.attached())
+  {
+    gripperServo.attach(GRIPPER_PIN, GRIPPER_MIN_US, GRIPPER_MAX_US);
+    delay(50);
+  }
+
+  int pulse = map(
+    angle,
+    GRIPPER_MIN,
+    GRIPPER_MAX,
+    GRIPPER_MIN_US,
+    GRIPPER_MAX_US
+  );
+
   gripperServo.writeMicroseconds(pulse);
   curGripper = angle;
+
+  Serial.print(F("Gripper = "));
+  Serial.print(angle);
+  Serial.print(F(" deg   Pulse = "));
+  Serial.println(pulse);
 }
 
 // =====================================================
-// COORDINATED MULTI-JOINT SMOOTH MOTION
-// Updates all active joints concurrently step-by-step
+// MOVE BASE (Per user configuration)
 // =====================================================
-void moveTo(int tB, int tS, int tA, int tG)
-{
-  tB = constrain(tB, BASE_MIN, BASE_MAX);
-  tS = constrain(tS, SHOULDER_MIN, SHOULDER_MAX);
-  tA = constrain(tA, ALBO_MIN, ALBO_MAX);
-  tG = constrain(tG, GRIPPER_MIN, GRIPPER_MAX);
 
-  while (curBase != tB || curShoulder != tS || curAlbo != tA || curGripper != tG)
+void moveBase(int fromAngle, int toAngle)
+{
+  toAngle = constrain(toAngle, BASE_MIN, BASE_MAX);
+
+  if (!baseServo.attached())
   {
-    if (curBase < tB) curBase++;
-    else if (curBase > tB) curBase--;
-
-    if (curShoulder < tS) curShoulder++;
-    else if (curShoulder > tS) curShoulder--;
-
-    if (curAlbo < tA) curAlbo++;
-    else if (curAlbo > tA) curAlbo--;
-
-    if (curGripper < tG) curGripper++;
-    else if (curGripper > tG) curGripper--;
-
-    baseServo.write(curBase);
-    shoulderServo.write(curShoulder);
-    alboServo.write(curAlbo);
-    setGripperPulse(curGripper);
-
-    delay(moveDelay);
+    baseServo.attach(BASE_PIN);
+    delay(50);
   }
-}
 
-void moveBase(int targetAngle)
-{
-  moveTo(targetAngle, curShoulder, curAlbo, curGripper);
-}
-
-void moveShoulder(int targetAngle)
-{
-  moveTo(curBase, targetAngle, curAlbo, curGripper);
-}
-
-void moveAlbo(int targetAngle)
-{
-  moveTo(curBase, curShoulder, targetAngle, curGripper);
-}
-
-void moveGripper(int targetAngle)
-{
-  moveTo(curBase, curShoulder, curAlbo, targetAngle);
+  if (fromAngle < toAngle)
+  {
+    for (int angle = fromAngle; angle <= toAngle; angle++)
+    {
+      baseServo.write(angle);
+      delay(MOVE_DELAY);
+    }
+  }
+  else
+  {
+    for (int angle = fromAngle; angle >= toAngle; angle--)
+    {
+      baseServo.write(angle);
+      delay(MOVE_DELAY);
+    }
+  }
+  curBase = toAngle;
+  Serial.print(F("Base = "));
+  Serial.println(curBase);
 }
 
 // =====================================================
-// PRESET ACTIONS
+// MOVE SHOULDER (Per user configuration)
 // =====================================================
-void goHome()
+
+void moveShoulder(int fromAngle, int toAngle)
 {
-  // Retract arm safely to folded home
-  moveTo(0, 0, 0, 90);
-  Serial.println(F("OK HOME"));
+  toAngle = constrain(toAngle, SHOULDER_MIN, SHOULDER_MAX);
+
+  if (!shoulderServo.attached())
+  {
+    shoulderServo.attach(SHOULDER_PIN);
+    delay(50);
+  }
+
+  if (fromAngle < toAngle)
+  {
+    for (int angle = fromAngle; angle <= toAngle; angle++)
+    {
+      shoulderServo.write(angle);
+      delay(MOVE_DELAY);
+    }
+  }
+  else
+  {
+    for (int angle = fromAngle; angle >= toAngle; angle--)
+    {
+      shoulderServo.write(angle);
+      delay(MOVE_DELAY);
+    }
+  }
+  curShoulder = toAngle;
+  Serial.print(F("Shoulder = "));
+  Serial.println(curShoulder);
 }
 
-void goReady()
+// =====================================================
+// MOVE ALBO (Per user configuration)
+// =====================================================
+
+void moveAlbo(int fromAngle, int toAngle)
 {
-  // Ready to grab ball in front: Base centered, arm extended forward, gripper open
-  moveTo(90, 70, 80, 240);
-  Serial.println(F("OK READY"));
+  toAngle = constrain(toAngle, ALBO_MIN, ALBO_MAX);
+
+  if (!alboServo.attached())
+  {
+    alboServo.attach(ALBO_PIN);
+    delay(50);
+  }
+
+  if (fromAngle < toAngle)
+  {
+    for (int angle = fromAngle; angle <= toAngle; angle++)
+    {
+      alboServo.write(angle);
+      delay(MOVE_DELAY);
+    }
+  }
+  else
+  {
+    for (int angle = fromAngle; angle >= toAngle; angle--)
+    {
+      alboServo.write(angle);
+      delay(MOVE_DELAY);
+    }
+  }
+  curAlbo = toAngle;
+  Serial.print(F("ALBO = "));
+  Serial.println(curAlbo);
 }
 
-void doGrab()
+// =====================================================
+// FULL TEST SEQUENCE (Per user configuration)
+// =====================================================
+
+void runTestSequence()
 {
-  // Close gripper to grip the ball
-  moveGripper(90);
-  Serial.println(F("OK GRAB"));
+  Serial.println();
+  Serial.println(F("******** STEP 1: BASE ********"));
+  moveBase(curBase, 180);
+  delay(1000);
+
+  Serial.println();
+  Serial.println(F("******** STEP 2: SHOULDER ********"));
+  moveShoulder(curShoulder, 180);
+  delay(1000);
+
+  Serial.println();
+  Serial.println(F("******** STEP 3: ALBO ********"));
+  moveAlbo(curAlbo, 180);
+  delay(1000);
+
+  Serial.println();
+  Serial.println(F("******** STEP 4: GRIPPER OPEN ********"));
+  for (int angle = 90; angle <= 270; angle++)
+  {
+    moveGripper(angle);
+    delay(MOVE_DELAY);
+  }
+  delay(1500);
+
+  Serial.println();
+  Serial.println(F("******** STEP 5: GRIPPER CLOSE ********"));
+  for (int angle = 270; angle >= 90; angle--)
+  {
+    moveGripper(angle);
+    delay(MOVE_DELAY);
+  }
+  delay(1000);
+
+  Serial.println();
+  Serial.println(F("******** STEP 6: ALBO RETURN ********"));
+  moveAlbo(curAlbo, 0);
+  delay(1000);
+
+  Serial.println();
+  Serial.println(F("******** STEP 7: SHOULDER RETURN ********"));
+  moveShoulder(curShoulder, 0);
+  delay(1000);
+
+  Serial.println();
+  Serial.println(F("******** STEP 8: BASE RETURN ********"));
+  moveBase(curBase, 0);
+  delay(2000);
+
+  Serial.println();
+  Serial.println(F("========================================"));
+  Serial.println(F("       SEQUENCE COMPLETE"));
+  Serial.println(F("       ALL SERVOS HOME"));
+  Serial.println(F("========================================"));
 }
 
-void doOpen()
-{
-  // Open gripper
-  moveGripper(240);
-  Serial.println(F("OK OPEN"));
-}
+// =====================================================
+// SERIAL COMMAND PROCESSOR
+// =====================================================
 
 void printStatus()
 {
-  Serial.print(F("ARM_STATUS B:"));
-  Serial.print(curBase);
-  Serial.print(F(" S:"));
-  Serial.print(curShoulder);
-  Serial.print(F(" A:"));
-  Serial.print(curAlbo);
-  Serial.print(F(" G:"));
-  Serial.println(curGripper);
+  char buf[48];
+  snprintf(buf, sizeof(buf), "ARM_STATUS B:%d S:%d A:%d G:%d", curBase, curShoulder, curAlbo, curGripper);
+  Serial.println(buf);
 }
 
-void runSelfTest()
+void processCommand(char* cmd)
 {
-  Serial.println(F("START_TEST"));
-  moveBase(180);
-  delay(500);
-  moveShoulder(180);
-  delay(500);
-  moveAlbo(180);
-  delay(500);
-  moveGripper(270);
-  delay(1000);
-  moveGripper(90);
-  delay(500);
-  moveAlbo(0);
-  delay(500);
-  moveShoulder(0);
-  delay(500);
-  moveBase(0);
-  delay(500);
-  Serial.println(F("OK TEST"));
-}
+  while (*cmd == ' ' || *cmd == '\t') cmd++;
+  if (*cmd == '\0') return;
 
-// =====================================================
-// COMMAND PROCESSOR
-// =====================================================
-void processCommand(String cmd)
-{
-  cmd.trim();
-  if (cmd.length() == 0) return;
+  for (char* p = cmd; *p; p++) *p = toupper((unsigned char)*p);
 
-  cmd.toUpperCase();
-
-  if (cmd.startsWith("B "))
+  if (strncmp(cmd, "B ", 2) == 0)
   {
-    int val = cmd.substring(2).toInt();
-    moveBase(val);
+    int val = atoi(cmd + 2);
+    moveBase(curBase, val);
     Serial.print(F("OK B:"));
     Serial.println(curBase);
   }
-  else if (cmd.startsWith("S "))
+  else if (strncmp(cmd, "S ", 2) == 0)
   {
-    int val = cmd.substring(2).toInt();
-    moveShoulder(val);
+    int val = atoi(cmd + 2);
+    moveShoulder(curShoulder, val);
     Serial.print(F("OK S:"));
     Serial.println(curShoulder);
   }
-  else if (cmd.startsWith("A ") || cmd.startsWith("E "))
+  else if (strncmp(cmd, "A ", 2) == 0 || strncmp(cmd, "E ", 2) == 0)
   {
-    int val = cmd.substring(2).toInt();
-    moveAlbo(val);
+    int val = atoi(cmd + 2);
+    moveAlbo(curAlbo, val);
     Serial.print(F("OK A:"));
     Serial.println(curAlbo);
   }
-  else if (cmd.startsWith("G "))
+  else if (strncmp(cmd, "G ", 2) == 0)
   {
-    int val = cmd.substring(2).toInt();
+    int val = atoi(cmd + 2);
     moveGripper(val);
     Serial.print(F("OK G:"));
     Serial.println(curGripper);
   }
-  else if (cmd.startsWith("SET "))
+  else if (strcmp(cmd, "TEST") == 0)
   {
-    // Format: SET <base> <shoulder> <albo> <gripper>
-    int b = 0, s = 0, a = 0, g = 90;
-    int parsed = sscanf(cmd.c_str(), "SET %d %d %d %d", &b, &s, &a, &g);
-    if (parsed == 4)
-    {
-      moveBase(b);
-      moveShoulder(s);
-      moveAlbo(a);
-      moveGripper(g);
-      printStatus();
-    }
-    else
-    {
-      Serial.println(F("ERR INVALID_SET_SYNTAX"));
-    }
+    runTestSequence();
+    Serial.println(F("OK TEST"));
   }
-  else if (cmd.startsWith("SPEED "))
+  else if (strcmp(cmd, "HOME") == 0)
   {
-    int val = cmd.substring(6).toInt();
-    if (val >= 5 && val <= 100)
-    {
-      moveDelay = val;
-      Serial.print(F("OK SPEED:"));
-      Serial.println(moveDelay);
-    }
-    else
-    {
-      Serial.println(F("ERR SPEED_RANGE_5_100"));
-    }
+    moveGripper(90);
+    moveAlbo(curAlbo, 0);
+    moveShoulder(curShoulder, 0);
+    moveBase(curBase, 0);
+    Serial.println(F("OK HOME"));
   }
-  else if (cmd == "HOME")
+  else if (strcmp(cmd, "READY") == 0)
   {
-    goHome();
+    moveBase(curBase, 90);
+    moveShoulder(curShoulder, 70);
+    moveAlbo(curAlbo, 80);
+    moveGripper(240);
+    Serial.println(F("OK READY"));
   }
-  else if (cmd == "READY")
-  {
-    goReady();
-  }
-  else if (cmd == "GRAB")
-  {
-    doGrab();
-  }
-  else if (cmd == "OPEN")
-  {
-    doOpen();
-  }
-  else if (cmd == "TEST")
-  {
-    runSelfTest();
-  }
-  else if (cmd == "STATUS" || cmd == "?")
+  else if (strcmp(cmd, "STATUS") == 0 || strcmp(cmd, "?") == 0)
   {
     printStatus();
   }
   else
   {
-    Serial.print(F("ERR UNKNOWN_CMD:"));
+    Serial.print(F("ERR:"));
     Serial.println(cmd);
   }
 }
 
 // =====================================================
-// SETUP
+// SETUP (Safe on-demand attachment)
 // =====================================================
+
 void setup()
 {
-  Serial.begin(115200);
+  Serial.begin(9600);
+  delay(100);
 
-  // Attach servos
-  baseServo.attach(BASE_PIN);
-  shoulderServo.attach(SHOULDER_PIN);
-  alboServo.attach(ALBO_PIN);
-  gripperServo.attach(GRIPPER_PIN, GRIPPER_MIN_US, GRIPPER_MAX_US);
-
-  // Initial home position
-  baseServo.write(0);
-  shoulderServo.write(0);
-  alboServo.write(0);
-  setGripperPulse(90);
-
-  curBase = 0;
-  curShoulder = 0;
-  curAlbo = 0;
-  curGripper = 90;
-
+  Serial.println();
+  Serial.println(F("========================================"));
+  Serial.println(F("        ROBOT ARM READY"));
+  Serial.println(F("========================================"));
+  Serial.println(F("BASE       : PIN 9   : 0 - 180"));
+  Serial.println(F("SHOULDER   : PIN 10  : 0 - 180"));
+  Serial.println(F("ALBO       : PIN 11  : 0 - 180"));
+  Serial.println(F("GRIPPER    : PIN 12  : 90 - 270"));
+  Serial.println(F("========================================"));
   Serial.println(F("ARM_READY"));
+  printStatus();
 }
 
-// =====================================================
-// MAIN LOOP - NON-BLOCKING SERIAL LISTENER
-// =====================================================
-String inputBuffer = "";
+char rxBuf[48];
+byte rxIdx = 0;
 
 void loop()
 {
@@ -314,17 +359,18 @@ void loop()
     char c = (char)Serial.read();
     if (c == '\n' || c == '\r')
     {
-      if (inputBuffer.length() > 0)
+      if (rxIdx > 0)
       {
-        processCommand(inputBuffer);
-        inputBuffer = "";
+        rxBuf[rxIdx] = '\0';
+        processCommand(rxBuf);
+        rxIdx = 0;
       }
     }
     else
     {
-      if (inputBuffer.length() < 64)
+      if (rxIdx < sizeof(rxBuf) - 1)
       {
-        inputBuffer += c;
+        rxBuf[rxIdx++] = c;
       }
     }
   }

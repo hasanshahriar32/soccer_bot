@@ -74,6 +74,7 @@ class RobotState:
 
         # LiDAR & SLAM State
         self.laser_time = 0.0
+        self.latest_scan = None
         self.raw_map = None
         self.map_time = 0.0
         self.robot_x = 0.0
@@ -85,7 +86,7 @@ class RobotState:
         self.arm_base = 0
         self.arm_shoulder = 0
         self.arm_albo = 0
-        self.arm_gripper = 90
+        self.arm_gripper = 180
         self.arm_status_msg = "READY"
         self.arm_last_update = 0.0
 
@@ -96,7 +97,7 @@ state = RobotState()
 # ====================================================================
 arm_cmd_lock = threading.Lock()
 
-def send_arm_command(cmd_dict, timeout=5.0):
+def send_arm_command(cmd_dict, timeout=10.0):
     try:
         with arm_cmd_lock:
             sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -137,6 +138,16 @@ def arm_status_poller():
         time.sleep(2.0)
 
 threading.Thread(target=arm_status_poller, daemon=True).start()
+
+def run_base_sweep_test():
+    def _worker():
+        print("[ARM] Starting Base Servo Sweep Test (0 -> 45 -> 90 -> 135 -> 90 -> 45 -> 0)...", flush=True)
+        for angle in [0, 45, 90, 135, 90, 45, 0]:
+            send_arm_command({"action": "joint", "joint": "B", "angle": angle}, timeout=6.0)
+            time.sleep(0.5)
+        print("[ARM] Base Servo Sweep Test Completed!", flush=True)
+    t = threading.Thread(target=_worker, daemon=True)
+    t.start()
 
 # ====================================================================
 # MOTOR TCP CLIENT (Communicates with Pi Port 9000)
@@ -291,6 +302,7 @@ def ros2_subscriber_worker():
         def scan_cb(msg: LaserScan):
             with state.lock:
                 state.laser_time = time.time()
+                state.latest_scan = msg
 
         map_qos = QoSProfile(
             depth=1,
@@ -376,22 +388,51 @@ def get_current_camera_frame():
 def render_slam_map_frame():
     with state.lock:
         map_msg = state.raw_map
+        scan_msg = state.latest_scan
         rx = state.robot_x
         ry = state.robot_y
         ryaw = state.robot_yaw
         bx = state.ball_x
         by = state.ball_y
         b_tracked = state.ball_tracked
-        lidar_fresh = (time.time() - state.laser_time) < 2.0
+        lidar_fresh = (time.time() - state.laser_time) < 2.5
 
     OUT_W, OUT_H = 480, 240
     if map_msg is None:
         frame = np.zeros((OUT_H, OUT_W, 3), dtype=np.uint8)
         frame[:] = (10, 14, 23)
-        lidar_str = "LiDAR: 🟢 360° STREAMING" if lidar_fresh else "LiDAR: 🟡 CONNECTING..."
-        cv2.putText(frame, lidar_str, (OUT_W//2 - 120, OUT_H//2 - 25), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 229, 255) if lidar_fresh else (255, 214, 0), 2)
-        cv2.putText(frame, "BUILDING INITIAL SLAM MAP...", (OUT_W//2 - 130, OUT_H//2 + 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 1)
-        cv2.putText(frame, "Drive the robot to expand map coverage", (OUT_W//2 - 145, OUT_H//2 + 35), cv2.FONT_HERSHEY_SIMPLEX, 0.4, (139, 148, 158), 1)
+        cx, cy = OUT_W // 2, OUT_H // 2
+
+        if scan_msg is not None and lidar_fresh:
+            scale = 45.0 # pixels per meter (~2.5m range)
+            for r_m in [0.5, 1.0, 1.5, 2.0]:
+                r_px = int(r_m * scale)
+                cv2.circle(frame, (cx, cy), r_px, (25, 38, 55), 1)
+                cv2.putText(frame, f"{r_m}m", (cx + r_px + 2, cy - 2), cv2.FONT_HERSHEY_SIMPLEX, 0.35, (70, 95, 120), 1)
+
+            cv2.line(frame, (cx, 15), (cx, OUT_H - 15), (25, 38, 55), 1)
+            cv2.line(frame, (cx - 120, cy), (cx + 120, cy), (25, 38, 55), 1)
+            cv2.putText(frame, "FWD", (cx - 12, 12), cv2.FONT_HERSHEY_SIMPLEX, 0.35, (0, 229, 255), 1)
+
+            angle = scan_msg.angle_min
+            for r in scan_msg.ranges:
+                if scan_msg.range_min <= r <= scan_msg.range_max and r < 3.0:
+                    px = int(cx - (r * math.sin(angle)) * scale)
+                    py = int(cy - (r * math.cos(angle)) * scale)
+                    if 0 <= px < OUT_W and 0 <= py < OUT_H:
+                        frame[py, px] = (0, 240, 255)
+                angle += scan_msg.angle_increment
+
+            pts = np.array([[cx, cy - 8], [cx - 6, cy + 6], [cx + 6, cy + 6]], np.int32)
+            cv2.fillPoly(frame, [pts], (0, 229, 255))
+            cv2.putText(frame, "RADAR: 360 DEG ACTIVE", (12, 22), cv2.FONT_HERSHEY_SIMPLEX, 0.45, (0, 255, 180), 1)
+            cv2.putText(frame, "SLAM: Building Grid...", (12, 38), cv2.FONT_HERSHEY_SIMPLEX, 0.38, (255, 200, 0), 1)
+        else:
+            lidar_str = "LiDAR: 🟢 360° STREAMING" if lidar_fresh else "LiDAR: 🟡 CONNECTING..."
+            cv2.putText(frame, lidar_str, (OUT_W//2 - 120, OUT_H//2 - 25), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 229, 255) if lidar_fresh else (255, 214, 0), 2)
+            cv2.putText(frame, "BUILDING INITIAL SLAM MAP...", (OUT_W//2 - 130, OUT_H//2 + 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 1)
+            cv2.putText(frame, "Drive the robot to expand map coverage", (OUT_W//2 - 145, OUT_H//2 + 35), cv2.FONT_HERSHEY_SIMPLEX, 0.4, (139, 148, 158), 1)
+
         ret, buf = cv2.imencode('.jpg', frame, [cv2.IMWRITE_JPEG_QUALITY, 70])
         return buf.tobytes() if ret else b''
 
@@ -904,6 +945,35 @@ HTML_PAGE = """<!DOCTYPE html>
       cursor: pointer;
       box-shadow: 0 0 6px rgba(0, 229, 255, 0.6);
     }
+    .quick-angles {
+      display: flex;
+      gap: 6px;
+      margin-top: 6px;
+      flex-wrap: wrap;
+    }
+    .angle-btn {
+      padding: 5px 9px;
+      background: #181d27;
+      border: 1px solid #2a3346;
+      border-radius: 6px;
+      color: #00e5ff;
+      font-size: 11px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.15s;
+      white-space: nowrap;
+    }
+    .angle-btn:active {
+      background: #00e5ff;
+      color: #000;
+      transform: scale(0.95);
+    }
+    .btn-sweep {
+      background: #292414 !important;
+      border-color: #55441a !important;
+      color: #ffd600 !important;
+      font-weight: 700;
+    }
   </style>
 </head>
 <body>
@@ -948,20 +1018,102 @@ HTML_PAGE = """<!DOCTYPE html>
     </div>
   </div>
 
-  <!-- Autopilot Card -->
-  <div class="autopilot-card">
-    <button id="autopilotBtn" class="btn-autopilot" onclick="toggleAutopilot()">
-      <span>⚽</span> <span>START BALL AUTOPILOT</span>
-    </button>
-    <div id="autopilotStatus" class="status-text">IDLE (Manual Mode)</div>
-  </div>
+  <!-- 4-SERVO ROBOTIC ARM CONTROLLER -->
+  <div class="arm-card">
+    <div class="arm-card-header">
+      <span>🦾 4-SERVO ROBOTIC ARM CONTROLLER</span>
+      <span id="armConnBadge" class="mini-badge badge-active">LINKED (9001)</span>
+    </div>
 
-  <!-- Speed Selector -->
-  <div class="speed-bar">
-    <div class="speed-pill" onclick="setSpeed(85, this)">SLOW (85)</div>
-    <div class="speed-pill active" onclick="setSpeed(120, this)">CRUISE (120)</div>
-    <div class="speed-pill" onclick="setSpeed(160, this)">FAST (160)</div>
-    <div class="speed-pill" onclick="setSpeed(210, this)">SPORT (210)</div>
+    <!-- Quick Action Presets -->
+    <div class="arm-presets-bar">
+      <button class="arm-preset-btn" onclick="sendArmPreset('home')">🏠 Home</button>
+      <button class="arm-preset-btn" onclick="sendArmPreset('ready')">🎯 Ready</button>
+      <button class="arm-preset-btn btn-grab" onclick="sendArmPreset('grab')">✊ Clamp</button>
+      <button class="arm-preset-btn btn-open" onclick="sendArmPreset('open')">✋ Open</button>
+      <button class="arm-preset-btn btn-test" onclick="testBaseSweep()">⚡ Base Sweep Test</button>
+    </div>
+
+    <!-- Joint Controls -->
+    <div class="arm-joints">
+      <!-- Base Joint -->
+      <div class="joint-row">
+        <div class="joint-info">
+          <span class="joint-label">🔷 BASE SERVO (Arduino Pin 9)</span>
+          <span id="valBase" class="joint-val">0°</span>
+        </div>
+        <div class="joint-slider-wrap">
+          <button class="jog-btn" onclick="jogJoint('B', -5)">-</button>
+          <input type="range" id="sliderBase" min="0" max="180" value="0" class="arm-slider" oninput="updateJointLabel('B', this.value)" onchange="onJointChange('B', this.value)">
+          <button class="jog-btn" onclick="jogJoint('B', +5)">+</button>
+        </div>
+        <div class="quick-angles">
+          <button class="angle-btn" onclick="sendAngle('B', 0)">0° Left</button>
+          <button class="angle-btn" onclick="sendAngle('B', 45)">45°</button>
+          <button class="angle-btn" onclick="sendAngle('B', 90)">90° Center</button>
+          <button class="angle-btn" onclick="sendAngle('B', 135)">135°</button>
+          <button class="angle-btn" onclick="sendAngle('B', 180)">180° Right</button>
+          <button class="angle-btn btn-sweep" onclick="testBaseSweep()">⚡ Test Sweep</button>
+        </div>
+      </div>
+
+      <!-- Shoulder Joint -->
+      <div class="joint-row">
+        <div class="joint-info">
+          <span class="joint-label">🔷 SHOULDER SERVO (Arduino Pin 10)</span>
+          <span id="valShoulder" class="joint-val">0°</span>
+        </div>
+        <div class="joint-slider-wrap">
+          <button class="jog-btn" onclick="jogJoint('S', -5)">-</button>
+          <input type="range" id="sliderShoulder" min="0" max="180" value="0" class="arm-slider" oninput="updateJointLabel('S', this.value)" onchange="onJointChange('S', this.value)">
+          <button class="jog-btn" onclick="jogJoint('S', +5)">+</button>
+        </div>
+        <div class="quick-angles">
+          <button class="angle-btn" onclick="sendAngle('S', 0)">0° Flat</button>
+          <button class="angle-btn" onclick="sendAngle('S', 30)">30° Low</button>
+          <button class="angle-btn" onclick="sendAngle('S', 60)">60° Mid</button>
+          <button class="angle-btn" onclick="sendAngle('S', 90)">90° Up</button>
+        </div>
+      </div>
+
+      <!-- Elbow / Albo Joint -->
+      <div class="joint-row">
+        <div class="joint-info">
+          <span class="joint-label">🔷 ELBOW / ALBO SERVO (Arduino Pin 11)</span>
+          <span id="valAlbo" class="joint-val">0°</span>
+        </div>
+        <div class="joint-slider-wrap">
+          <button class="jog-btn" onclick="jogJoint('A', -5)">-</button>
+          <input type="range" id="sliderAlbo" min="0" max="180" value="0" class="arm-slider" oninput="updateJointLabel('A', this.value)" onchange="onJointChange('A', this.value)">
+          <button class="jog-btn" onclick="jogJoint('A', +5)">+</button>
+        </div>
+        <div class="quick-angles">
+          <button class="angle-btn" onclick="sendAngle('A', 0)">0° Fold</button>
+          <button class="angle-btn" onclick="sendAngle('A', 30)">30° Reach</button>
+          <button class="angle-btn" onclick="sendAngle('A', 60)">60° Extend</button>
+          <button class="angle-btn" onclick="sendAngle('A', 90)">90° Up</button>
+        </div>
+      </div>
+
+      <!-- Gripper Joint -->
+      <div class="joint-row">
+        <div class="joint-info">
+          <span class="joint-label">🔷 GRIPPER CLAW (Arduino Pin 12)</span>
+          <span id="valGripper" class="joint-val">180° (Neutral)</span>
+        </div>
+        <div class="joint-slider-wrap">
+          <button class="jog-btn" onclick="jogJoint('G', -10)">-</button>
+          <input type="range" id="sliderGripper" min="115" max="270" value="180" class="arm-slider" oninput="updateJointLabel('G', this.value)" onchange="onJointChange('G', this.value)">
+          <button class="jog-btn" onclick="jogJoint('G', +10)">+</button>
+        </div>
+        <div class="quick-angles">
+          <button class="angle-btn btn-grab" onclick="sendAngle('G', 125)">✊ Clamp (125°)</button>
+          <button class="angle-btn" onclick="sendAngle('G', 180)">✋ Neutral (180°)</button>
+          <button class="angle-btn btn-open" onclick="sendAngle('G', 240)">👐 Open (240°)</button>
+        </div>
+      </div>
+    </div>
+    <div id="armStatusText" class="status-text">Status: Ready | Safe Neutral: B:0 S:0 A:0 G:180</div>
   </div>
 
   <!-- Touch D-Pad -->
@@ -981,77 +1133,20 @@ HTML_PAGE = """<!DOCTYPE html>
     </div>
   </div>
 
-  <!-- 4-DOF Robotic Arm Control Card -->
-  <div class="arm-card">
-    <div class="arm-card-header">
-      <span>🦾 4-DOF ROBOTIC ARM</span>
-      <span id="armConnBadge" class="mini-badge badge-active">LINKED (9001)</span>
-    </div>
+  <!-- Speed Selector -->
+  <div class="speed-bar">
+    <div class="speed-pill" onclick="setSpeed(85, this)">SLOW (85)</div>
+    <div class="speed-pill active" onclick="setSpeed(120, this)">CRUISE (120)</div>
+    <div class="speed-pill" onclick="setSpeed(160, this)">FAST (160)</div>
+    <div class="speed-pill" onclick="setSpeed(210, this)">SPORT (210)</div>
+  </div>
 
-    <!-- Quick Action Presets -->
-    <div class="arm-presets-bar">
-      <button class="arm-preset-btn" onclick="sendArmPreset('home')">🏠 Home</button>
-      <button class="arm-preset-btn" onclick="sendArmPreset('ready')">🎯 Ready</button>
-      <button class="arm-preset-btn btn-grab" onclick="sendArmPreset('grab')">✊ Grab</button>
-      <button class="arm-preset-btn btn-open" onclick="sendArmPreset('open')">✋ Open</button>
-      <button class="arm-preset-btn btn-test" onclick="sendArmPreset('test')">🔄 Test</button>
-    </div>
-
-    <!-- Joint Controls -->
-    <div class="arm-joints">
-      <!-- Base Joint -->
-      <div class="joint-row">
-        <div class="joint-info">
-          <span class="joint-label">Base Joint (Pin 9)</span>
-          <span id="valBase" class="joint-val">0°</span>
-        </div>
-        <div class="joint-slider-wrap">
-          <button class="jog-btn" onclick="jogJoint('B', -5)">-</button>
-          <input type="range" id="sliderBase" min="0" max="180" value="0" class="arm-slider" oninput="onJointInput('B', this.value)" onchange="onJointChange('B', this.value)">
-          <button class="jog-btn" onclick="jogJoint('B', +5)">+</button>
-        </div>
-      </div>
-
-      <!-- Shoulder Joint -->
-      <div class="joint-row">
-        <div class="joint-info">
-          <span class="joint-label">Shoulder Joint (Pin 10)</span>
-          <span id="valShoulder" class="joint-val">0°</span>
-        </div>
-        <div class="joint-slider-wrap">
-          <button class="jog-btn" onclick="jogJoint('S', -5)">-</button>
-          <input type="range" id="sliderShoulder" min="0" max="180" value="0" class="arm-slider" oninput="onJointInput('S', this.value)" onchange="onJointChange('S', this.value)">
-          <button class="jog-btn" onclick="jogJoint('S', +5)">+</button>
-        </div>
-      </div>
-
-      <!-- Elbow / Albo Joint -->
-      <div class="joint-row">
-        <div class="joint-info">
-          <span class="joint-label">Elbow / Albo (Pin 11)</span>
-          <span id="valAlbo" class="joint-val">0°</span>
-        </div>
-        <div class="joint-slider-wrap">
-          <button class="jog-btn" onclick="jogJoint('A', -5)">-</button>
-          <input type="range" id="sliderAlbo" min="0" max="180" value="0" class="arm-slider" oninput="onJointInput('A', this.value)" onchange="onJointChange('A', this.value)">
-          <button class="jog-btn" onclick="jogJoint('A', +5)">+</button>
-        </div>
-      </div>
-
-      <!-- Gripper Joint -->
-      <div class="joint-row">
-        <div class="joint-info">
-          <span class="joint-label">Gripper (Pin 12)</span>
-          <span id="valGripper" class="joint-val">90° (Closed)</span>
-        </div>
-        <div class="joint-slider-wrap">
-          <button class="jog-btn" onclick="jogJoint('G', -10)">-</button>
-          <input type="range" id="sliderGripper" min="90" max="270" value="90" class="arm-slider" oninput="onJointInput('G', this.value)" onchange="onJointChange('G', this.value)">
-          <button class="jog-btn" onclick="jogJoint('G', +10)">+</button>
-        </div>
-      </div>
-    </div>
-    <div id="armStatusText" class="status-text">Status: Ready | Safe Home: B:0 S:0 A:0 G:90</div>
+  <!-- Autopilot Card -->
+  <div class="autopilot-card">
+    <button id="autopilotBtn" class="btn-autopilot" onclick="toggleAutopilot()">
+      <span>⚽</span> <span>START BALL AUTOPILOT</span>
+    </button>
+    <div id="autopilotStatus" class="status-text">IDLE (Manual Mode)</div>
   </div>
 
   <script>
@@ -1249,15 +1344,32 @@ HTML_PAGE = """<!DOCTYPE html>
     function onJointInput(joint, val) {
       armDragging = true;
       updateJointLabel(joint, val);
-      clearTimeout(armDebounceTimer);
-      armDebounceTimer = setTimeout(() => {
-        sendJointCmd(joint, val);
-      }, 70);
     }
 
     function onJointChange(joint, val) {
       armDragging = false;
       sendJointCmd(joint, val);
+    }
+
+    function sendAngle(joint, angle) {
+      let sliderId = (joint === 'B') ? 'sliderBase' : (joint === 'S') ? 'sliderShoulder' : (joint === 'A') ? 'sliderAlbo' : 'sliderGripper';
+      let slider = document.getElementById(sliderId);
+      if (slider) slider.value = angle;
+      updateJointLabel(joint, angle);
+      sendJointCmd(joint, angle);
+    }
+
+    function testBaseSweep() {
+      const st = document.getElementById('armStatusText');
+      if (st) st.innerText = 'Status: 🔄 Running Base Sweep Test (0° -> 135° -> 0°)...';
+      fetch('/api/arm/test_base', {method: 'POST'})
+        .then(res => res.json())
+        .then(data => {
+          if (st) st.innerText = 'Status: Base sweep test in progress...';
+        })
+        .catch(() => {
+          if (st) st.innerText = 'Status: Sweep test request failed';
+        });
     }
 
     function jogJoint(joint, delta) {
@@ -1271,6 +1383,8 @@ HTML_PAGE = """<!DOCTYPE html>
     }
 
     function sendJointCmd(joint, angle) {
+      const st = document.getElementById('armStatusText');
+      if (st) st.innerText = `Status: Moving joint ${joint} to ${angle}°...`;
       fetch('/api/arm', {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
@@ -1280,9 +1394,14 @@ HTML_PAGE = """<!DOCTYPE html>
       .then(data => {
         if (data.status === 'OK') {
           updateArmUI(data);
+          if (st) st.innerText = `Status: OK | Joint ${joint} at ${angle}°`;
+        } else {
+          if (st) st.innerText = `Status: Error - ${data.msg || 'Failed'}`;
         }
       })
-      .catch(() => {});
+      .catch(() => {
+        if (st) st.innerText = `Status: Network Error`;
+      });
     }
 
     function updateJointLabel(joint, val) {
@@ -1290,7 +1409,7 @@ HTML_PAGE = """<!DOCTYPE html>
       if (joint === 'B') document.getElementById('valBase').innerText = val + '°';
       else if (joint === 'S') document.getElementById('valShoulder').innerText = val + '°';
       else if (joint === 'A') document.getElementById('valAlbo').innerText = val + '°';
-      else if (joint === 'G') document.getElementById('valGripper').innerText = val + '° ' + (val <= 110 ? '(Closed)' : val >= 220 ? '(Open)' : '(Grip)');
+      else if (joint === 'G') document.getElementById('valGripper').innerText = val + '° ' + (val <= 130 ? '(Grip)' : val >= 220 ? '(Open)' : '(Neutral)');
     }
 
     function updateArmUI(data) {
@@ -1462,6 +1581,13 @@ class TeleopHandler(BaseHTTPRequestHandler):
             self.send_header('Access-Control-Allow-Origin', '*')
             self.end_headers()
             self.wfile.write(json.dumps(res).encode('utf-8'))
+        elif self.path == '/api/arm/test_base':
+            run_base_sweep_test()
+            self.send_response(200)
+            self.send_header('Content-Type', 'application/json')
+            self.send_header('Access-Control-Allow-Origin', '*')
+            self.end_headers()
+            self.wfile.write(b'{"status":"ok","msg":"Base sweep test started"}')
         else:
             self.send_response(404)
             self.end_headers()

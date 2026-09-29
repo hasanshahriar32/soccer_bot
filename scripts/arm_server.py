@@ -3,19 +3,7 @@
 ====================================================================
   SOCCER BOT - 4-DOF ROBOTIC ARM TCP SERVER (PORT 9001)
 ====================================================================
-Runs on Raspberry Pi. Connects to Arduino Uno on /dev/ttyUSB1.
-Listens on TCP port 9001 for robotic arm control commands.
-
-Supports both JSON and line-delimited commands:
-  - {"action": "home"}
-  - {"action": "ready"}
-  - {"action": "grab"}
-  - {"action": "open"}
-  - {"action": "test"}
-  - {"action": "status"}
-  - {"action": "set", "base": 90, "shoulder": 45, "albo": 60, "gripper": 180}
-  - {"action": "joint", "joint": "B|S|A|G", "angle": 90}
-  - Text: HOME, READY, GRAB, OPEN, TEST, STATUS, B 90, S 45, A 60, G 180
+Listens on TCP port 9001. Connects to Arduino Uno/Nano on /dev/ttyUSB1.
 ====================================================================
 """
 
@@ -28,7 +16,7 @@ import json
 import serial
 
 ARM_PORT = "/dev/ttyUSB1"
-ARM_BAUD = 115200
+ARM_BAUD = 9600
 TCP_PORT = 9001
 
 class ArmController:
@@ -36,9 +24,8 @@ class ArmController:
         self.port = port
         self.baud = baud
         self.ser = None
-        self.lock = threading.Lock()
+        self.lock = threading.RLock()
         
-        # Joint state cache
         self.base = 0
         self.shoulder = 0
         self.albo = 0
@@ -56,49 +43,60 @@ class ArmController:
                 except Exception:
                     pass
             self.connected = False
-            try:
-                print(f"[ARM] Opening serial port {self.port} @ {self.baud} baud...", flush=True)
-                self.ser = serial.Serial(self.port, self.baud, timeout=1.0)
-                # Allow Arduino bootloader to initialize (DTR reset delay)
-                time.sleep(2.5)
-                # Flush boot banners
-                if self.ser.in_waiting:
-                    self.ser.reset_input_buffer()
-                self.connected = True
-                print(f"[ARM] Connected to Arduino Arm Controller on {self.port}!", flush=True)
-                
-                # Fetch initial status
-                self._send_raw("STATUS\n")
-                lines = self._read_lines(timeout=1.0)
-                for l in lines:
-                    self._parse_status_line(l)
-            except Exception as e:
-                print(f"[ARM ERROR] Serial connection failed: {e}", flush=True)
-                self.ser = None
-                self.connected = False
+            for attempt in range(2):
+                try:
+                    print(f"[ARM] Opening serial port {self.port} @ {self.baud} baud (attempt {attempt+1})...", flush=True)
+                    self.ser = serial.Serial(self.port, self.baud, timeout=0.2)
+                    time.sleep(2.2)
+                    # Drain startup boot messages safely without calling reset_input_buffer
+                    while self.ser.in_waiting:
+                        self.ser.read(self.ser.in_waiting)
+                        time.sleep(0.05)
+                        
+                    self.connected = True
+                    print(f"[ARM] Connected to Arduino Arm Controller on {self.port}!", flush=True)
+                    
+                    self._send_raw("STATUS\n")
+                    lines = self._read_lines(timeout=2.0)
+                    for l in lines:
+                        self._parse_status_line(l)
+                    break
+                except Exception as e:
+                    print(f"[ARM ERROR] Serial connection failed: {e}", flush=True)
+                    self.ser = None
+                    self.connected = False
+                    time.sleep(1.0)
 
     def _send_raw(self, cmd_str):
         if not cmd_str.endswith('\n'):
             cmd_str += '\n'
+        print(f"[ARM RAW SEND] {cmd_str.strip()}", flush=True)
         self.ser.write(cmd_str.encode('utf-8'))
         self.ser.flush()
 
-    def _read_lines(self, timeout=1.5):
+    def _read_lines(self, timeout=6.0):
         lines = []
         t0 = time.time()
         while time.time() - t0 < timeout:
-            if self.ser.in_waiting:
-                line = self.ser.readline().decode('utf-8', errors='ignore').strip()
-                if line:
-                    lines.append(line)
-                    if line.startswith("OK") or line.startswith("ERR") or line.startswith("ARM_STATUS"):
-                        break
+            if self.ser and self.ser.is_open:
+                try:
+                    if self.ser.in_waiting:
+                        line = self.ser.readline().decode('utf-8', errors='ignore').strip()
+                        if line:
+                            print(f"[ARM RAW RECV] {line}", flush=True)
+                            lines.append(line)
+                            if line.startswith("OK") or line.startswith("ERR") or line.startswith("ARM_STATUS"):
+                                break
+                    else:
+                        time.sleep(0.02)
+                except Exception as e:
+                    print(f"[ARM ERROR] Readline error: {e}", flush=True)
+                    break
             else:
-                time.sleep(0.02)
+                break
         return lines
 
     def _parse_status_line(self, line):
-        # Format: ARM_STATUS B:0 S:0 A:0 G:90
         if "B:" in line and "S:" in line and "A:" in line and "G:" in line:
             try:
                 parts = line.split()
@@ -123,13 +121,8 @@ class ArmController:
                     return {"status": "ERR", "msg": "Serial disconnected"}
 
             try:
-                # Flush any stale unread data before sending new command
-                if self.ser.in_waiting:
-                    self.ser.reset_input_buffer()
-
                 self._send_raw(cmd_str)
-                # Coordinated moves take at most ~3.5s (180 deg * 15ms = 2.7s), TEST takes ~10s
-                timeout = 12.0 if "TEST" in cmd_str.upper() else 5.0
+                timeout = 15.0 if "TEST" in cmd_str.upper() else 6.0
                 lines = self._read_lines(timeout=timeout)
                 resp_text = " ".join(lines) if lines else "OK"
                 
@@ -143,19 +136,19 @@ class ArmController:
                         self.albo = int(l.split(":")[1])
                     elif l.startswith("OK G:"):
                         self.gripper = int(l.split(":")[1])
-                    elif l == "OK HOME":
+                    elif "HOME" in l:
                         self.base = 0
                         self.shoulder = 0
                         self.albo = 0
-                        self.gripper = 90
-                    elif l == "OK READY":
+                        self.gripper = 180
+                    elif "READY" in l:
                         self.base = 90
                         self.shoulder = 70
                         self.albo = 80
                         self.gripper = 240
-                    elif l == "OK GRAB":
-                        self.gripper = 90
-                    elif l == "OK OPEN":
+                    elif "GRAB" in l:
+                        self.gripper = 125
+                    elif "OPEN" in l:
                         self.gripper = 240
 
                 return {
@@ -170,6 +163,12 @@ class ArmController:
             except Exception as e:
                 print(f"[ARM ERROR] Execution error: {e}", flush=True)
                 self.connected = False
+                try:
+                    if self.ser:
+                        self.ser.close()
+                except Exception:
+                    pass
+                self.ser = None
                 return {"status": "ERR", "msg": str(e)}
 
     def get_status(self):
@@ -187,7 +186,6 @@ class ArmController:
 arm = ArmController()
 
 def handle_client(conn, addr):
-    print(f"[TCP] Client connected from {addr}", flush=True)
     conn.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1)
     buffer = ""
     try:
@@ -203,7 +201,6 @@ def handle_client(conn, addr):
                     continue
 
                 resp = None
-                # Check if JSON
                 if line.startswith('{') and line.endswith('}'):
                     try:
                         req = json.loads(line)
@@ -220,12 +217,6 @@ def handle_client(conn, addr):
                             resp = arm.send_command("OPEN")
                         elif act == "test":
                             resp = arm.send_command("TEST")
-                        elif act == "set":
-                            b = req.get("base", arm.base)
-                            s = req.get("shoulder", arm.shoulder)
-                            a = req.get("albo", arm.albo)
-                            g = req.get("gripper", arm.gripper)
-                            resp = arm.send_command(f"SET {b} {s} {a} {g}")
                         elif act == "joint":
                             joint = req.get("joint", "").upper()
                             ang = int(req.get("angle", 0))
@@ -235,7 +226,6 @@ def handle_client(conn, addr):
                     except Exception as e:
                         resp = {"status": "ERR", "msg": f"JSON parse error: {e}"}
                 else:
-                    # Plain text command
                     cmd = line.upper()
                     if cmd == "STATUS" or cmd == "?":
                         resp = arm.get_status()
@@ -244,8 +234,8 @@ def handle_client(conn, addr):
 
                 out_str = json.dumps(resp) + "\n"
                 conn.sendall(out_str.encode('utf-8'))
-    except Exception as e:
-        print(f"[TCP] Connection closed with {addr}: {e}", flush=True)
+    except Exception:
+        pass
     finally:
         try:
             conn.close()
