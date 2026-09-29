@@ -40,18 +40,42 @@ KEY_FILE = '/home/sharmin/Desktop/iot/soccer_bot/certs/key.pem'
 
 
 def get_local_ip():
-    """Detect local LAN / Hotspot IP address."""
-    for target in [('192.168.0.135', 80), ('8.8.8.8', 80), ('10.255.255.255', 1)]:
+    """Detect local Wi-Fi IP address, strictly avoiding loopback and docker0."""
+    import subprocess
+    # 1. Try wlp2s0 direct check
+    try:
+        out = subprocess.check_output(["ip", "-4", "addr", "show", "wlp2s0"], text=True, timeout=1)
+        for line in out.splitlines():
+            line = line.strip()
+            if line.startswith("inet "):
+                ip = line.split()[1].split('/')[0]
+                if ip and not ip.startswith('127.') and not ip.startswith('172.17.'):
+                    return ip
+    except Exception:
+        pass
+
+    # 2. Check hostname -I for 192.168.x or 10.x
+    try:
+        out = subprocess.check_output(["hostname", "-I"], text=True, timeout=1)
+        for ip in out.split():
+            if (ip.startswith('192.168.') or ip.startswith('10.')) and not ip.startswith('172.17.'):
+                return ip
+    except Exception:
+        pass
+
+    # 3. Socket probe
+    for target in [('192.168.0.135', 80), ('8.8.8.8', 80)]:
         try:
             s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+            s.settimeout(0.5)
             s.connect(target)
             ip = s.getsockname()[0]
             s.close()
-            if ip and not ip.startswith('127.'):
+            if ip and not ip.startswith('127.') and not ip.startswith('172.17.'):
                 return ip
         except Exception:
             pass
-    return '127.0.0.1'
+    return '192.168.0.122'
 
 
 def quaternion_from_euler(roll, pitch, yaw):

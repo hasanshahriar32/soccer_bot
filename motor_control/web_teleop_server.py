@@ -74,23 +74,37 @@ state = RobotState()
 # ====================================================================
 def motor_client_worker():
     while True:
-        if state.sock is None:
+        with state.lock:
+            s = state.sock
+        if s is None:
             try:
-                s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-                s.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1)
-                s.settimeout(2.5)
-                s.connect((PI_IP, PI_MOTOR_PORT))
+                sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+                sock.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1)
+                sock.settimeout(2.0)
+                sock.connect((PI_IP, PI_MOTOR_PORT))
                 with state.lock:
-                    state.sock = s
+                    state.sock = sock
                     state.wifi_connected = True
                 print(f"[MOTOR CLIENT] Connected to Pi Motor Server at {PI_IP}:{PI_MOTOR_PORT}!", flush=True)
             except Exception:
                 with state.lock:
                     state.sock = None
                     state.wifi_connected = False
-                time.sleep(2.0)
+                time.sleep(1.5)
         else:
-            time.sleep(1.0)
+            # Active liveness check
+            try:
+                s.sendall(b'\n')
+                time.sleep(1.0)
+            except Exception:
+                with state.lock:
+                    try:
+                        s.close()
+                    except Exception:
+                        pass
+                    state.sock = None
+                    state.wifi_connected = False
+                time.sleep(1.0)
 
 threading.Thread(target=motor_client_worker, daemon=True).start()
 
@@ -102,17 +116,10 @@ def send_motor_command(action, speed=None):
         state.current_action = action
         sock = state.sock
 
-    turn_spd = max(85, int(speed * 0.85))
-    if action == 'F':
-        pkt = f"SET:{speed},{speed}\n"
-    elif action == 'B':
-        pkt = f"SET:{-speed},{-speed}\n"
-    elif action == 'L':
-        pkt = f"SET:{-turn_spd},{turn_spd}\n"
-    elif action == 'R':
-        pkt = f"SET:{turn_spd},{-turn_spd}\n"
+    if action in ['F', 'B', 'L', 'R', 'S']:
+        pkt = f"{action}\n"
     else:
-        pkt = "SET:0,0\n"
+        pkt = "S\n"
 
     if sock:
         try:

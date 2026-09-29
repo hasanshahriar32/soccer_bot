@@ -98,7 +98,7 @@ EOF
         # Deploy and launch Pi Screen HUD on Pi's 480x320 LCD screen
         echo "[INFO] Updating and launching SLAM HUD on Raspberry Pi Screen..."
         sshpass -p "grammarpro" scp -o StrictHostKeyChecking=no -o ConnectTimeout=5 /home/sharmin/Desktop/iot/soccer_bot/scripts/pi_screen_hud.py hasan@"$PI_IP":/home/hasan/pi_screen_hud.py 2>/dev/null || true
-        sshpass -p "grammarpro" ssh -o StrictHostKeyChecking=no -o ConnectTimeout=5 hasan@"$PI_IP" 'pkill -f pi_screen_hud.py 2>/dev/null || true; DISPLAY=:0.0 nohup python3 /home/hasan/pi_screen_hud.py </dev/null >/tmp/pi_hud.log 2>&1 & disown' || true
+        sshpass -p "grammarpro" ssh -o StrictHostKeyChecking=no -o ConnectTimeout=5 hasan@"$PI_IP" 'pkill -f pi_screen_hud.py 2>/dev/null || true; DISPLAY=:0.0 XAUTHORITY=/home/hasan/.Xauthority nohup python3 -u /home/hasan/pi_screen_hud.py </dev/null >/tmp/pi_hud.log 2>&1 & disown' || true
         echo "[SUCCESS] Raspberry Pi Screen HUD running!"
 
         # Wait for LiDAR TCP port 5000
@@ -137,6 +137,11 @@ fi
 # Source ROS 2 environment
 source /opt/ros/jazzy/setup.bash
 source /home/sharmin/Desktop/iot/soccer_bot/install/setup.bash
+
+# CycloneDDS Configuration (Bound strictly to wlp2s0 Wi-Fi interface, never docker0 or loopback)
+export RMW_IMPLEMENTATION=rmw_cyclonedds_cpp
+export CYCLONEDDS_URI=/home/sharmin/Desktop/iot/soccer_bot/scripts/cyclonedds.xml
+export ROS_DOMAIN_ID=0
 
 echo "[INFO] Launching SLAM Toolbox, LiDAR Driver, TF, Phone Gyro & RViz2..."
 ros2 launch soccer_slam soccer_slam_launch.py || true
