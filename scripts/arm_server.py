@@ -26,10 +26,24 @@ def get_arm_port():
         name = os.path.basename(p).lower()
         if "1a86" in name or "ch340" in name:
             return p
-    for candidate in ["/dev/ttyUSB2", "/dev/ttyUSB0"]:
+
+    # Find and exclude LiDAR port (CP2102)
+    lidar_target = None
+    for p in glob.glob("/dev/serial/by-id/*cp210*"):
+        try:
+            lidar_target = os.path.realpath(p)
+        except Exception:
+            pass
+
+    for candidate in ["/dev/ttyUSB1", "/dev/ttyUSB2", "/dev/ttyUSB3"]:
         if os.path.exists(candidate):
+            try:
+                if lidar_target and os.path.realpath(candidate) == lidar_target:
+                    continue
+            except Exception:
+                pass
             return candidate
-    return "/dev/ttyUSB0"
+    return None
 
 ARM_BAUD = 9600
 TCP_PORT = 9001
@@ -59,6 +73,9 @@ class ArmController:
                 except Exception:
                     pass
             self.connected = False
+            if not self.port:
+                print("[ARM] No Hand Arduino serial port detected (CH340). Waiting for connection...", flush=True)
+                return
             for attempt in range(2):
                 try:
                     print(f"[ARM] Opening serial port {self.port} @ {self.baud} baud (attempt {attempt+1})...", flush=True)

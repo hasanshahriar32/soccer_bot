@@ -25,7 +25,7 @@ os.environ["SDL_AUDIODRIVER"] = "dummy"
 import pygame
 
 # Configuration
-LAPTOP_IP = "192.168.0.122"
+LAPTOP_IP = "192.168.0.116"
 LAPTOP_PORT = 8765
 SCREEN_W = 480
 SCREEN_H = 320
