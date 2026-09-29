@@ -68,6 +68,8 @@ else
         sshpass -p "grammarpro" ssh -o StrictHostKeyChecking=no -o ConnectTimeout=6 hasan@"$PI_IP" bash -s << 'EOF'
             # 1. LiDAR socat bridge on port 5000
             if ! pgrep -f "TCP-LISTEN:5000" >/dev/null; then
+                echo "[PI] Initializing YDLidar motor power & DTR line..."
+                python3 -c "import serial, time; s=serial.Serial('/dev/ttyUSB0', 115200, timeout=0.2); s.setDTR(True); s.setRTS(True); s.write(b'\xa5\x65'); time.sleep(0.5); s.close()" 2>/dev/null || true
                 echo "[PI] Starting YDLidar TCP bridge on port 5000..."
                 nohup /usr/bin/socat -d -d TCP-LISTEN:5000,reuseaddr,max-children=1,fork FILE:/dev/ttyUSB0,b115200,raw,echo=0 >/tmp/socat.log 2>&1 &
             fi
