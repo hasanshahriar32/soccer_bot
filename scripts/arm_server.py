@@ -45,8 +45,16 @@ def get_arm_port():
             return candidate
     return None
 
-ARM_BAUD = 9600
+ARM_BAUD = 115200
 TCP_PORT = 9001
+
+def recover_ch340_usb():
+    try:
+        print("[ARM] Recovering CH340 on USB 1-1.5...", flush=True)
+        os.system("echo grammarpro | sudo -S sh -c 'echo 1-1.5 > /sys/bus/usb/drivers/usb/unbind; sleep 0.5; echo 1-1.5 > /sys/bus/usb/drivers/usb/bind' > /dev/null 2>&1")
+        time.sleep(1.5)
+    except Exception as e:
+        print(f"[ARM] USB recovery error: {e}", flush=True)
 
 class ArmController:
     def __init__(self, port=None, baud=ARM_BAUD):
@@ -74,8 +82,11 @@ class ArmController:
                     pass
             self.connected = False
             if not self.port:
-                print("[ARM] No Hand Arduino serial port detected (CH340). Waiting for connection...", flush=True)
-                return
+                print("[ARM] No Hand Arduino serial port detected (CH340). Attempting recovery...", flush=True)
+                recover_ch340_usb()
+                self.port = get_arm_port()
+                if not self.port:
+                    return
             for attempt in range(2):
                 try:
                     print(f"[ARM] Opening serial port {self.port} @ {self.baud} baud (attempt {attempt+1})...", flush=True)
@@ -98,6 +109,9 @@ class ArmController:
                     print(f"[ARM ERROR] Serial connection failed: {e}", flush=True)
                     self.ser = None
                     self.connected = False
+                    if attempt == 0:
+                        recover_ch340_usb()
+                        self.port = get_arm_port()
                     time.sleep(1.0)
 
     def _send_raw(self, cmd_str):
@@ -112,19 +126,19 @@ class ArmController:
         self.ser.write(cmd_str.encode('utf-8'))
         self.ser.flush()
 
-    def _read_lines(self, timeout=3.5):
+    def _read_lines(self, timeout=10.0):
         lines = []
         t0 = time.time()
         while time.time() - t0 < timeout:
             if self.ser and self.ser.is_open:
                 try:
                     if self.ser.in_waiting:
-                        line = self.ser.readline().decode('utf-8', errors='ignore').strip()
+                        raw_bytes = self.ser.readline()
+                        line = "".join(chr(b) for b in raw_bytes if 32 <= b <= 126).strip()
                         if line:
                             print(f"[ARM RAW RECV] {line}", flush=True)
                             lines.append(line)
-                            if ("OK" in line or "ERR" in line or "ARM_STATUS" in line or 
-                                "Pulse =" in line or "deg" in line or line.startswith("::")):
+                            if ("OK" in line or "ERR" in line or "ARM_STATUS" in line or line.startswith("::")):
                                 break
                     else:
                         time.sleep(0.02)
@@ -180,7 +194,7 @@ class ArmController:
                         pass
 
                 self._send_raw(cmd_str)
-                timeout = 15.0 if "TEST" in cmd_str.upper() else 3.5
+                timeout = 35.0 if any(k in cmd_str.upper() for k in ["TEST", "HOME", "READY", "PICKUP"]) else 10.0
                 lines = self._read_lines(timeout=timeout)
                 resp_text = " ".join(lines) if lines else "OK"
                 

@@ -98,8 +98,11 @@ state = RobotState()
 # ====================================================================
 arm_cmd_lock = threading.Lock()
 
-def send_arm_command(cmd_dict, timeout=10.0):
+def send_arm_command(cmd_dict, timeout=12.0):
     try:
+        act = str(cmd_dict.get("action", "")).lower()
+        if act in ["home", "ready", "test", "pickup"]:
+            timeout = 35.0
         with arm_cmd_lock:
             sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             sock.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1)
@@ -144,7 +147,7 @@ def run_base_sweep_test():
     def _worker():
         print("[ARM] Starting Base Servo Sweep Test (0 -> 45 -> 90 -> 135 -> 90 -> 45 -> 0)...", flush=True)
         for angle in [0, 45, 90, 135, 90, 45, 0]:
-            send_arm_command({"action": "joint", "joint": "B", "angle": angle}, timeout=6.0)
+            send_arm_command({"action": "joint", "joint": "B", "angle": angle}, timeout=10.0)
             time.sleep(0.5)
         print("[ARM] Base Servo Sweep Test Completed!", flush=True)
     t = threading.Thread(target=_worker, daemon=True)

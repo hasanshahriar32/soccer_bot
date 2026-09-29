@@ -56,9 +56,9 @@ int curGripper  = 90;
 // GRIPPER FUNCTION (Per user configuration)
 // =====================================================
 
-void moveGripper(int angle)
+void moveGripper(int toAngle)
 {
-  angle = constrain(angle, GRIPPER_MIN, GRIPPER_MAX);
+  toAngle = constrain(toAngle, GRIPPER_MIN, GRIPPER_MAX);
 
   if (!gripperServo.attached())
   {
@@ -66,8 +66,19 @@ void moveGripper(int angle)
     delay(50);
   }
 
+  if (curGripper != toAngle)
+  {
+    int step = (curGripper < toAngle) ? 1 : -1;
+    for (int angle = curGripper; angle != toAngle; angle += step)
+    {
+      int pulse = map(angle, GRIPPER_MIN, GRIPPER_MAX, GRIPPER_MIN_US, GRIPPER_MAX_US);
+      gripperServo.writeMicroseconds(pulse);
+      delay(15);
+    }
+  }
+
   int pulse = map(
-    angle,
+    toAngle,
     GRIPPER_MIN,
     GRIPPER_MAX,
     GRIPPER_MIN_US,
@@ -75,10 +86,11 @@ void moveGripper(int angle)
   );
 
   gripperServo.writeMicroseconds(pulse);
-  curGripper = angle;
+  curGripper = toAngle;
+  delay(50);
 
   Serial.print(F("Gripper = "));
-  Serial.print(angle);
+  Serial.print(toAngle);
   Serial.print(F(" deg   Pulse = "));
   Serial.println(pulse);
 }
@@ -114,6 +126,7 @@ void moveBase(int fromAngle, int toAngle)
     }
   }
   curBase = toAngle;
+  delay(50);
   Serial.print(F("Base = "));
   Serial.println(curBase);
 }
@@ -149,6 +162,7 @@ void moveShoulder(int fromAngle, int toAngle)
     }
   }
   curShoulder = toAngle;
+  delay(50);
   Serial.print(F("Shoulder = "));
   Serial.println(curShoulder);
 }
@@ -184,6 +198,7 @@ void moveAlbo(int fromAngle, int toAngle)
     }
   }
   curAlbo = toAngle;
+  delay(50);
   Serial.print(F("ALBO = "));
   Serial.println(curAlbo);
 }
@@ -333,7 +348,7 @@ void processCommand(char* cmd)
 
 void setup()
 {
-  Serial.begin(9600);
+  Serial.begin(115200);
   delay(100);
 
   Serial.println();
