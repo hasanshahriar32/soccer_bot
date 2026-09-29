@@ -16,8 +16,9 @@ cleanup() {
     # 1. Stop local web teleop & autopilot
     pkill -f "web_teleop_server.py" 2>/dev/null || true
 
-    # 2. Stop robot motors immediately for safety
+    # 2. Stop robot motors & safely retract robotic arm
     curl -s -X POST -H "Content-Type: application/json" -d '{"action":"S"}' http://127.0.0.1:5050/api/drive 2>/dev/null || true
+    curl -s -X POST -H "Content-Type: application/json" -d '{"action":"home"}' http://127.0.0.1:5050/api/arm 2>/dev/null || true
 
     # 3. Stop wireless LiDAR serial bridge
     if [ -n "$SOCAT_PID" ]; then
@@ -80,13 +81,19 @@ else
                 nohup /usr/bin/python3 -u /home/hasan/motor_server.py </dev/null >/tmp/motor_server.log 2>&1 & disown
             fi
 
-            # 2. Camera & Live Ball Detector on port 8000
+            # 2. Robotic Arm Server on port 9001
+            if ! pgrep -f "arm_server.py" >/dev/null; then
+                echo "[PI] Starting Robotic Arm Server on port 9001..."
+                nohup /usr/bin/python3 -u /home/hasan/arm_server.py </dev/null >/tmp/arm_server.log 2>&1 & disown
+            fi
+
+            # 3. Camera & Live Ball Detector on port 8000
             if ! pgrep -f "detect_live_picamera2.py" >/dev/null; then
                 echo "[PI] Starting Camera Server on port 8000..."
                 nohup /home/hasan/ball_detector_pi/pi_inference/venv/bin/python3 -u /home/hasan/ball_detector_pi/pi_inference/detect_live_picamera2.py </dev/null >/tmp/camera.log 2>&1 & disown
             fi
 
-            # 3. YDLidar DTR-Powered TCP Bridge on port 5000
+            # 4. YDLidar DTR-Powered TCP Bridge on port 5000
             echo "[PI] Ensuring YDLidar DTR Bridge on port 5000..."
             pkill -f "socat.*5000" 2>/dev/null || true
             if ! pgrep -f "lidar_bridge.py" >/dev/null; then

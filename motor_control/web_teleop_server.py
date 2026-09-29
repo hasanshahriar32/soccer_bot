@@ -45,6 +45,7 @@ except ImportError:
 
 PI_IP = "192.168.0.135"
 PI_MOTOR_PORT = 9000
+PI_ARM_PORT = 9001
 WEB_PORT = 5050
 
 # Global Robot State
@@ -79,7 +80,63 @@ class RobotState:
         self.robot_y = 0.0
         self.robot_yaw = 0.0
 
+        # 4-DOF Robotic Arm State (Port 9001)
+        self.arm_connected = False
+        self.arm_base = 0
+        self.arm_shoulder = 0
+        self.arm_albo = 0
+        self.arm_gripper = 90
+        self.arm_status_msg = "READY"
+        self.arm_last_update = 0.0
+
 state = RobotState()
+
+# ====================================================================
+# ROBOTIC ARM TCP CLIENT (Communicates with Pi Port 9001)
+# ====================================================================
+arm_cmd_lock = threading.Lock()
+
+def send_arm_command(cmd_dict, timeout=5.0):
+    try:
+        with arm_cmd_lock:
+            sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            sock.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1)
+            sock.settimeout(timeout)
+            sock.connect((PI_IP, PI_ARM_PORT))
+            payload = json.dumps(cmd_dict) + "\n"
+            sock.sendall(payload.encode('utf-8'))
+            resp_data = sock.recv(2048).decode('utf-8')
+            sock.close()
+            resp = json.loads(resp_data.strip())
+            with state.lock:
+                state.arm_connected = resp.get("connected", True)
+                if "base" in resp:
+                    state.arm_base = resp["base"]
+                if "shoulder" in resp:
+                    state.arm_shoulder = resp["shoulder"]
+                if "albo" in resp:
+                    state.arm_albo = resp["albo"]
+                if "gripper" in resp:
+                    state.arm_gripper = resp["gripper"]
+                state.arm_status_msg = resp.get("response", resp.get("status", "OK"))
+                state.arm_last_update = time.time()
+            return resp
+    except Exception as e:
+        with state.lock:
+            state.arm_connected = False
+            state.arm_status_msg = f"ERR: {e}"
+        return {"status": "ERR", "msg": str(e), "connected": False}
+
+def arm_status_poller():
+    time.sleep(1.0)
+    while True:
+        try:
+            send_arm_command({"action": "status"}, timeout=2.0)
+        except Exception:
+            pass
+        time.sleep(2.0)
+
+threading.Thread(target=arm_status_poller, daemon=True).start()
 
 # ====================================================================
 # MOTOR TCP CLIENT (Communicates with Pi Port 9000)
@@ -717,6 +774,136 @@ HTML_PAGE = """<!DOCTYPE html>
       border-color: #ff5252;
       box-shadow: 0 0 16px rgba(255, 82, 82, 0.6);
     }
+
+    /* Robotic Arm Card */
+    .arm-card {
+      width: 100%;
+      max-width: 480px;
+      background: #141720;
+      border-radius: 12px;
+      padding: 10px;
+      border: 1px solid #232936;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.4);
+      margin-top: 8px;
+      margin-bottom: 12px;
+    }
+    .arm-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-bottom: 8px;
+      border-bottom: 1px solid #232936;
+      font-size: 12px;
+      font-weight: 700;
+      color: #00e5ff;
+    }
+    .arm-presets-bar {
+      display: flex;
+      gap: 6px;
+      margin: 8px 0;
+      overflow-x: auto;
+    }
+    .arm-preset-btn {
+      flex: 1;
+      padding: 8px 4px;
+      background: #1c2230;
+      border: 1px solid #2a3346;
+      border-radius: 8px;
+      color: #e0e0e0;
+      font-size: 11px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+    .arm-preset-btn:active {
+      transform: scale(0.95);
+      border-color: #00e5ff;
+    }
+    .btn-grab {
+      background: #2a1b1b;
+      border-color: #552525;
+      color: #ff5252;
+    }
+    .btn-open {
+      background: #12331c;
+      border-color: #1e5c2e;
+      color: #00e676;
+    }
+    .btn-test {
+      background: #292414;
+      border-color: #55441a;
+      color: #ffd600;
+    }
+    .arm-joints {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-top: 6px;
+    }
+    .joint-row {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      background: #0f121a;
+      padding: 6px 8px;
+      border-radius: 8px;
+      border: 1px solid #1f2533;
+    }
+    .joint-info {
+      display: flex;
+      justify-content: space-between;
+      font-size: 11px;
+      font-weight: 600;
+      color: #8b949e;
+    }
+    .joint-val {
+      font-family: monospace;
+      color: #00e5ff;
+      font-weight: 700;
+    }
+    .joint-slider-wrap {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 4px;
+    }
+    .jog-btn {
+      width: 28px;
+      height: 28px;
+      background: #1c2230;
+      border: 1px solid #2a3346;
+      border-radius: 6px;
+      color: #fff;
+      font-size: 14px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      touch-action: manipulation;
+    }
+    .jog-btn:active {
+      background: #00e5ff;
+      color: #000;
+    }
+    .arm-slider {
+      flex: 1;
+      height: 6px;
+      border-radius: 3px;
+      background: #232936;
+      outline: none;
+      -webkit-appearance: none;
+    }
+    .arm-slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: #00e5ff;
+      cursor: pointer;
+      box-shadow: 0 0 6px rgba(0, 229, 255, 0.6);
+    }
   </style>
 </head>
 <body>
@@ -792,6 +979,79 @@ HTML_PAGE = """<!DOCTYPE html>
       <button class="dpad-btn" data-action="B">▼</button>
       <div></div>
     </div>
+  </div>
+
+  <!-- 4-DOF Robotic Arm Control Card -->
+  <div class="arm-card">
+    <div class="arm-card-header">
+      <span>🦾 4-DOF ROBOTIC ARM</span>
+      <span id="armConnBadge" class="mini-badge badge-active">LINKED (9001)</span>
+    </div>
+
+    <!-- Quick Action Presets -->
+    <div class="arm-presets-bar">
+      <button class="arm-preset-btn" onclick="sendArmPreset('home')">🏠 Home</button>
+      <button class="arm-preset-btn" onclick="sendArmPreset('ready')">🎯 Ready</button>
+      <button class="arm-preset-btn btn-grab" onclick="sendArmPreset('grab')">✊ Grab</button>
+      <button class="arm-preset-btn btn-open" onclick="sendArmPreset('open')">✋ Open</button>
+      <button class="arm-preset-btn btn-test" onclick="sendArmPreset('test')">🔄 Test</button>
+    </div>
+
+    <!-- Joint Controls -->
+    <div class="arm-joints">
+      <!-- Base Joint -->
+      <div class="joint-row">
+        <div class="joint-info">
+          <span class="joint-label">Base Joint (Pin 9)</span>
+          <span id="valBase" class="joint-val">0°</span>
+        </div>
+        <div class="joint-slider-wrap">
+          <button class="jog-btn" onclick="jogJoint('B', -5)">-</button>
+          <input type="range" id="sliderBase" min="0" max="180" value="0" class="arm-slider" oninput="onJointInput('B', this.value)" onchange="onJointChange('B', this.value)">
+          <button class="jog-btn" onclick="jogJoint('B', +5)">+</button>
+        </div>
+      </div>
+
+      <!-- Shoulder Joint -->
+      <div class="joint-row">
+        <div class="joint-info">
+          <span class="joint-label">Shoulder Joint (Pin 10)</span>
+          <span id="valShoulder" class="joint-val">0°</span>
+        </div>
+        <div class="joint-slider-wrap">
+          <button class="jog-btn" onclick="jogJoint('S', -5)">-</button>
+          <input type="range" id="sliderShoulder" min="0" max="180" value="0" class="arm-slider" oninput="onJointInput('S', this.value)" onchange="onJointChange('S', this.value)">
+          <button class="jog-btn" onclick="jogJoint('S', +5)">+</button>
+        </div>
+      </div>
+
+      <!-- Elbow / Albo Joint -->
+      <div class="joint-row">
+        <div class="joint-info">
+          <span class="joint-label">Elbow / Albo (Pin 11)</span>
+          <span id="valAlbo" class="joint-val">0°</span>
+        </div>
+        <div class="joint-slider-wrap">
+          <button class="jog-btn" onclick="jogJoint('A', -5)">-</button>
+          <input type="range" id="sliderAlbo" min="0" max="180" value="0" class="arm-slider" oninput="onJointInput('A', this.value)" onchange="onJointChange('A', this.value)">
+          <button class="jog-btn" onclick="jogJoint('A', +5)">+</button>
+        </div>
+      </div>
+
+      <!-- Gripper Joint -->
+      <div class="joint-row">
+        <div class="joint-info">
+          <span class="joint-label">Gripper (Pin 12)</span>
+          <span id="valGripper" class="joint-val">90° (Closed)</span>
+        </div>
+        <div class="joint-slider-wrap">
+          <button class="jog-btn" onclick="jogJoint('G', -10)">-</button>
+          <input type="range" id="sliderGripper" min="90" max="270" value="90" class="arm-slider" oninput="onJointInput('G', this.value)" onchange="onJointChange('G', this.value)">
+          <button class="jog-btn" onclick="jogJoint('G', +10)">+</button>
+        </div>
+      </div>
+    </div>
+    <div id="armStatusText" class="status-text">Status: Ready | Safe Home: B:0 S:0 A:0 G:90</div>
   </div>
 
   <script>
@@ -949,9 +1209,121 @@ HTML_PAGE = """<!DOCTYPE html>
 
           // Autopilot Status
           document.getElementById('autopilotStatus').innerText = data.autopilot_status;
+
+          // Robotic Arm Telemetry
+          if (data.arm_base !== undefined) {
+            updateArmUI(data);
+          }
         })
         .catch(() => {});
     }, 250);
+
+    // ====================================================
+    // ROBOTIC ARM JAVASCRIPT CONTROLLERS
+    // ====================================================
+    let armDragging = false;
+    let armDebounceTimer = null;
+
+    function sendArmPreset(preset) {
+      const st = document.getElementById('armStatusText');
+      if (st) st.innerText = `Status: Executing ${preset.toUpperCase()}...`;
+      fetch('/api/arm', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({action: preset})
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.status === 'OK') {
+          updateArmUI(data);
+          if (st) st.innerText = `Status: ${data.response || 'OK'}`;
+        } else {
+          if (st) st.innerText = `Status: Error - ${data.msg || 'Failed'}`;
+        }
+      })
+      .catch(err => {
+        if (st) st.innerText = `Status: Network Error`;
+      });
+    }
+
+    function onJointInput(joint, val) {
+      armDragging = true;
+      updateJointLabel(joint, val);
+      clearTimeout(armDebounceTimer);
+      armDebounceTimer = setTimeout(() => {
+        sendJointCmd(joint, val);
+      }, 70);
+    }
+
+    function onJointChange(joint, val) {
+      armDragging = false;
+      sendJointCmd(joint, val);
+    }
+
+    function jogJoint(joint, delta) {
+      let sliderId = (joint === 'B') ? 'sliderBase' : (joint === 'S') ? 'sliderShoulder' : (joint === 'A') ? 'sliderAlbo' : 'sliderGripper';
+      let slider = document.getElementById(sliderId);
+      if (!slider) return;
+      let newVal = Math.max(parseInt(slider.min), Math.min(parseInt(slider.max), parseInt(slider.value) + delta));
+      slider.value = newVal;
+      updateJointLabel(joint, newVal);
+      sendJointCmd(joint, newVal);
+    }
+
+    function sendJointCmd(joint, angle) {
+      fetch('/api/arm', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({action: 'joint', joint: joint, angle: parseInt(angle)})
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.status === 'OK') {
+          updateArmUI(data);
+        }
+      })
+      .catch(() => {});
+    }
+
+    function updateJointLabel(joint, val) {
+      val = parseInt(val);
+      if (joint === 'B') document.getElementById('valBase').innerText = val + '°';
+      else if (joint === 'S') document.getElementById('valShoulder').innerText = val + '°';
+      else if (joint === 'A') document.getElementById('valAlbo').innerText = val + '°';
+      else if (joint === 'G') document.getElementById('valGripper').innerText = val + '° ' + (val <= 110 ? '(Closed)' : val >= 220 ? '(Open)' : '(Grip)');
+    }
+
+    function updateArmUI(data) {
+      if (!armDragging) {
+        if (data.arm_base !== undefined || data.base !== undefined) {
+          const b = data.base !== undefined ? data.base : data.arm_base;
+          const s = data.shoulder !== undefined ? data.shoulder : data.arm_shoulder;
+          const a = data.albo !== undefined ? data.albo : data.arm_albo;
+          const g = data.gripper !== undefined ? data.gripper : data.arm_gripper;
+
+          const sb = document.getElementById('sliderBase');
+          const ss = document.getElementById('sliderShoulder');
+          const sa = document.getElementById('sliderAlbo');
+          const sg = document.getElementById('sliderGripper');
+
+          if (sb && sb.value != b) { sb.value = b; updateJointLabel('B', b); }
+          if (ss && ss.value != s) { ss.value = s; updateJointLabel('S', s); }
+          if (sa && sa.value != a) { sa.value = a; updateJointLabel('A', a); }
+          if (sg && sg.value != g) { sg.value = g; updateJointLabel('G', g); }
+        }
+      }
+      const badge = document.getElementById('armConnBadge');
+      if (badge) {
+        const isConn = data.arm_connected !== undefined ? data.arm_connected : data.connected;
+        if (isConn) {
+          badge.className = 'mini-badge badge-active';
+          badge.innerText = 'LINKED (9001)';
+        } else {
+          badge.className = 'mini-badge badge-searching';
+          badge.innerText = 'OFFLINE';
+        }
+      }
+    }
   </script>
 </body>
 </html>
@@ -1034,7 +1406,13 @@ class TeleopHandler(BaseHTTPRequestHandler):
                     "slam_active": state.raw_map is not None,
                     "robot_x": float(state.robot_x),
                     "robot_y": float(state.robot_y),
-                    "robot_yaw": float(state.robot_yaw)
+                    "robot_yaw": float(state.robot_yaw),
+                    "arm_connected": state.arm_connected,
+                    "arm_base": state.arm_base,
+                    "arm_shoulder": state.arm_shoulder,
+                    "arm_albo": state.arm_albo,
+                    "arm_gripper": state.arm_gripper,
+                    "arm_status": state.arm_status_msg
                 }
             self.wfile.write(json.dumps(resp).encode('utf-8'))
         else:
@@ -1077,6 +1455,13 @@ class TeleopHandler(BaseHTTPRequestHandler):
             self.send_header('Content-Type', 'application/json')
             self.end_headers()
             self.wfile.write(b'{"status":"ok"}')
+        elif self.path == '/api/arm':
+            res = send_arm_command(data)
+            self.send_response(200)
+            self.send_header('Content-Type', 'application/json')
+            self.send_header('Access-Control-Allow-Origin', '*')
+            self.end_headers()
+            self.wfile.write(json.dumps(res).encode('utf-8'))
         else:
             self.send_response(404)
             self.end_headers()
