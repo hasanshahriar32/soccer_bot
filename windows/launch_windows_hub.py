@@ -1,11 +1,24 @@
 #!/usr/bin/env python3
 """
 ====================================================================
-           SOCCER BOT - ROBUST AUTO-HEALING MASTER LAUNCHER
+           SOCCER BOT - UNIFIED MASTER SYSTEM LAUNCHER
 ====================================================================
-Description:
-    Master launcher for Windows & WSL setup on user PC (taufi).
-    Features multi-subnet auto-discovery for Raspberry Pi IP.
+Launches ALL components with a single command / double-click:
+  1. VcXsrv Windows X11 Server (:0)
+  2. Raspberry Pi Hardware Daemons:
+     - LiDAR Socket Bridge (Port 5000)
+     - Camera Fast JPEG Streamer (Port 8000)
+     - Motor Wheel Controller (Port 9000)
+     - 4-DOF Robotic Arm Handling Server (Port 9001)
+     - Physical Pi 480x320 LCD Screen Live SLAM Map HUD
+  3. WSL2 (Ubuntu-22.04) ROS 2 Nodes:
+     - LiDAR LaserScan Publisher
+     - Camera Hub & Vision Tracker
+     - 2D Fast Occupancy Grid SLAM Mapper (/map)
+     - Pi Screen Map Streamer (Port 8765)
+     - RViz2 3D Robot Visualizer Viewport
+  4. Windows Native Motor & Arm Teleoperation Controller GUI
+====================================================================
 """
 
 import time
@@ -14,6 +27,7 @@ import os
 import sys
 import socket
 import concurrent.futures
+import webbrowser
 
 try:
     import paramiko
@@ -25,18 +39,47 @@ DEFAULT_PI_IP = '192.168.0.135'
 PI_USER = 'hasan'
 PI_PASS = 'grammarpro'
 
-WSL_BASE = "/mnt/c/Users/taufi/Desktop/soccer_bot"
-RVIZ_CONFIG = f"{WSL_BASE}/scripts/soccer_bot.rviz"
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+REPO_DIR = os.path.abspath(os.path.join(SCRIPT_DIR, ".."))
+
+drive = REPO_DIR[0].lower()
+rest = REPO_DIR[2:].replace("\\", "/")
+WSL_BASE = f"/mnt/{drive}{rest}"
+
 IS_WINDOWS = sys.platform == 'win32'
 
 def log(msg, symbol="*"):
     print(f"[{symbol}] {msg}", flush=True)
 
+def get_local_ip():
+    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    try:
+        s.connect(('192.168.0.1', 80))
+        ip = s.getsockname()[0]
+    except Exception:
+        ip = '192.168.0.116'
+    finally:
+        s.close()
+    return ip
+
+def get_wsl_distro():
+    try:
+        out = subprocess.check_output("wsl -l -q", shell=True).decode("utf-16", errors="ignore")
+        for line in out.splitlines():
+            line = line.strip()
+            if "Ubuntu-22.04" in line:
+                return "Ubuntu-22.04"
+            if "Ubuntu" in line:
+                return "Ubuntu"
+    except Exception:
+        pass
+    return "Ubuntu-22.04"
+
 def is_vcxsrv_running():
     try:
         out = subprocess.check_output('tasklist /FI "IMAGENAME eq vcxsrv.exe"', shell=True).decode('utf-8', errors='ignore')
         return 'vcxsrv.exe' in out.lower()
-    except:
+    except Exception:
         return False
 
 def check_and_start_vcxsrv():
@@ -65,7 +108,7 @@ def test_ssh_ip(ip):
         s.close()
         if res == 0:
             return ip
-    except:
+    except Exception:
         pass
     return None
 
@@ -73,10 +116,10 @@ def find_pi_ip():
     if test_ssh_ip(DEFAULT_PI_IP):
         return DEFAULT_PI_IP
         
-    subnets = ['10.72.30', '10.127.69', '10.73.75', '192.168.0', '192.168.1', '192.168.43', '172.20.10', '192.168.137']
-    log("Scanning local networks (Wi-Fi / Hotspot) for Raspberry Pi...", symbol="SEARCH")
+    subnets = ['192.168.0', '10.61.32', '10.72.30', '10.127.69', '192.168.1', '192.168.43', '172.20.10']
+    log("Scanning local networks for Raspberry Pi...", symbol="SEARCH")
     
-    targets = [f"{sub}.{i}" for i in range(1, 255)]
+    targets = [f"{sub}.{i}" for sub in subnets for i in range(1, 255)]
     with concurrent.futures.ThreadPoolExecutor(max_workers=100) as ex:
         results = ex.map(test_ssh_ip, targets)
         for ip in results:
@@ -85,48 +128,76 @@ def find_pi_ip():
                 return ip
     return None
 
-import webbrowser
-
-def launch_pi_sensors(pi_ip):
-    log(f"Connecting to Raspberry Pi at {pi_ip}...", symbol="1/3")
+def launch_pi_hardware(pi_ip):
+    laptop_ip = get_local_ip()
+    log(f"Connecting to Raspberry Pi at {pi_ip} (Laptop: {laptop_ip})...", symbol="1/4")
     if HAS_PARAMIKO:
         try:
             ssh = paramiko.SSHClient()
             ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-            ssh.connect(pi_ip, username=PI_USER, password=PI_PASS, timeout=5)
+            ssh.connect(pi_ip, username=PI_USER, password=PI_PASS, timeout=8)
             
-            # Stop conflicting Pipewire, Wireplumber, and old streaming services on Pi
-            ssh.exec_command("systemctl --user stop wireplumber pipewire live_inference 2>/dev/null")
-            ssh.exec_command("echo grammarpro | sudo -S systemctl stop soccer_camera soccer_lidar 2>/dev/null ; echo grammarpro | sudo -S chmod 666 /dev/ttyACM* /dev/ttyUSB* 2>/dev/null ; pkill -9 -f rpicam ; pkill -9 -f fast_camera_server ; pkill -9 -f python_socat ; pkill -9 -f motor_server ; pkill -9 -f detect_live_picamera2")
+            # 1. Clean up old conflicting streaming processes
+            ssh.exec_command(
+                "echo grammarpro | sudo -S systemctl stop soccer_camera soccer_lidar soccer_motor 2>/dev/null ; "
+                "echo grammarpro | sudo -S chmod 666 /dev/ttyACM* /dev/ttyUSB* 2>/dev/null ; "
+                "pkill -9 -f rpicam 2>/dev/null ; "
+                "pkill -9 -f fast_camera_server 2>/dev/null ; "
+                "pkill -9 -f python_socat 2>/dev/null ; "
+                "pkill -9 -f lidar_bridge 2>/dev/null ; "
+                "pkill -9 -f motor_server 2>/dev/null ; "
+                "pkill -9 -f arm_server 2>/dev/null ; "
+                "pkill -9 -f pi_screen_hud 2>/dev/null"
+            )
             time.sleep(1.0)
             
-            # Start LiDAR (5000), AI INT8 Ball Detector (8000), and Motor Server (9000)
-            ssh.exec_command("nohup python3 /home/hasan/python_socat.py > ~/socat.log 2>&1 &")
-            ssh.exec_command("systemd-run --user --unit=live_inference /home/hasan/ball_detector_pi/pi_inference/venv/bin/python3 -u /home/hasan/ball_detector_pi/pi_inference/detect_live_picamera2.py 2>/dev/null || nohup /home/hasan/ball_detector_pi/pi_inference/venv/bin/python3 -u /home/hasan/ball_detector_pi/pi_inference/detect_live_picamera2.py > ~/inference.log 2>&1 &")
-            ssh.exec_command("nohup python3 /home/hasan/motor_server.py > ~/motor.log 2>&1 &")
-            time.sleep(2.0)
+            # 2. Launch LiDAR wireless bridge (Port 5000)
+            ssh.exec_command("nohup python3 /home/hasan/lidar_bridge.py > ~/socat.log 2>&1 &")
             
-            log(f"Pi LiDAR (5000), AI Ball Detector (8000) & Motors (9000) active at {pi_ip}!", symbol="OK")
+            # 3. Launch Camera Fast JPEG stream (Port 8000)
+            ssh.exec_command("nohup python3 /home/hasan/fast_camera_server.py > ~/cam.log 2>&1 &")
+            
+            # 4. Launch Motor Wheel Controller (Port 9000)
+            ssh.exec_command("nohup python3 /home/hasan/motor_server.py > ~/motor.log 2>&1 &")
+            
+            # 5. Launch 4-DOF Robotic Arm Handling Server (Port 9001)
+            ssh.exec_command("nohup python3 /home/hasan/arm_server.py > ~/arm.log 2>&1 &")
+            
+            # 6. Launch Raspberry Pi LCD Screen Live SLAM Navigation HUD
+            ssh.exec_command(f"export DISPLAY=:0 ; nohup python3 /home/hasan/pi_screen_hud.py {laptop_ip} > ~/hud.log 2>&1 &")
+            
+            time.sleep(1.5)
+            log("Pi Hardware Initialized: LiDAR(5000), Camera(8000), Motors(9000), Arm(9001) & LCD Map HUD!", symbol="OK")
             ssh.close()
             return True
         except Exception as err:
-            log(f"Pi SSH connection error: {err}", symbol="!")
+            log(f"Pi SSH launch error: {err}", symbol="!")
             return False
     return False
 
 def launch_wsl_system():
-    log("Launching ROS 2 Sensor Hubs, Ball Tracker & RViz2 GUI in WSL...", symbol="2/3")
+    distro = get_wsl_distro()
+    log(f"Launching ROS 2 Sensor Hubs, Occupancy SLAM Mapper & RViz2 in WSL ({distro})...", symbol="2/4")
     
     rviz_cmd = f"bash {WSL_BASE}/scripts/launch_rviz.sh"
     if IS_WINDOWS:
-        subprocess.Popen(f'wsl -d Ubuntu -- bash -c "{rviz_cmd}"', shell=True)
+        subprocess.Popen(f'wsl -d {distro} -- bash -c "{rviz_cmd}"', shell=True)
     else:
         subprocess.Popen(f'bash -c "{rviz_cmd}"', shell=True)
 
+def launch_motor_controller():
+    log("Opening Manual Wheel & Robotic Arm Remote Controller GUI...", symbol="3/4")
+    gui_script = os.path.join(REPO_DIR, "motor_control", "gui_teleop.py")
+    py_exe = sys.executable
+    try:
+        subprocess.Popen([py_exe, gui_script], cwd=REPO_DIR)
+    except Exception as e:
+        log(f"Could not open GUI: {e}", symbol="!")
+
 def main():
-    print("=" * 65)
-    print("         SOCCER BOT - MASTER SYSTEM LAUNCHER         ")
-    print("=" * 65)
+    print("=" * 68)
+    print("        ⚽ SOCCER BOT - UNIFIED FULL SYSTEM MASTER LAUNCHER       ")
+    print("=" * 68)
     
     check_and_start_vcxsrv()
     
@@ -135,27 +206,28 @@ def main():
     
     pi_ready = False
     if pi_ip:
-        pi_ready = launch_pi_sensors(pi_ip)
+        pi_ready = launch_pi_hardware(pi_ip)
     else:
-        log("Raspberry Pi (192.168.0.135) is currently OFFLINE or unreachable.", symbol="!")
-        log("--> Check: 1. Power on Pi. 2. Verify Wi-Fi / Hotspot connection.", symbol="!")
+        log("Raspberry Pi (192.168.0.135) is currently unreachable.", symbol="!")
+        log("--> Ensure Pi is powered ON with 5V/3A and connected to Wi-Fi.", symbol="!")
         
     launch_wsl_system()
+    launch_motor_controller()
     
     if pi_ready and pi_ip:
-        time.sleep(1.5)
-        log(f"Opening AI Object Detection Stream: http://{pi_ip}:8000", symbol="WEB")
+        time.sleep(2.0)
+        log(f"Opening Camera Stream: http://{pi_ip}:8000", symbol="4/4")
         try:
             webbrowser.open(f"http://{pi_ip}:8000")
-        except:
+        except Exception:
             pass
     
-    print("\n" + "=" * 65)
+    print("\n" + "=" * 68)
     if pi_ready:
-        log(f"ALL SYSTEMS ONLINE! Live RViz2 + AI Camera Stream is running.", symbol="SUCCESS")
+        log("ALL SYSTEMS ONLINE! RViz2 + Motors + Arm + Camera + Pi LCD HUD Active!", symbol="SUCCESS")
     else:
-        log("LOCAL VISUALIZER OPEN! (Turn on Pi & connect to Wi-Fi to stream live data).", symbol="READY")
-    print("=" * 65 + "\n")
+        log("LOCAL VISUALIZERS LAUNCHED! (Awaiting Pi network connection).", symbol="READY")
+    print("=" * 68 + "\n")
 
 if __name__ == '__main__':
     main()
