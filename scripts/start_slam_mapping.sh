@@ -43,6 +43,14 @@ echo "=========================================================="
 echo " 🤖 SOCCER BOT - UNIFIED FULL SYSTEM AUTONOMOUS LAUNCHER"
 echo "=========================================================="
 
+# 1. Start Mobile Web Controller & Autopilot Server immediately
+fuser -k 5050/tcp 2>/dev/null || true
+python3 /home/sharmin/Desktop/iot/soccer_bot/motor_control/web_teleop_server.py >/tmp/web_teleop.log 2>&1 &
+echo "=========================================================="
+echo " 📱 MOBILE CONTROLLER READY: http://192.168.0.122:5050"
+echo " Open this link on your phone browser right now!"
+echo "=========================================================="
+
 # Check if LiDAR USB exists locally
 if [ -e /dev/ttyUSB0 ] && [ ! -L /dev/ttyUSB0 ]; then
     echo "[INFO] Direct hardware LiDAR detected at /dev/ttyUSB0 (Laptop USB Mode)."
@@ -64,33 +72,33 @@ else
         echo "[SUCCESS] Raspberry Pi is online at $PI_IP!"
 
         # Ensure all Pi Onboard Services & Hardware are active
-        echo "[INFO] Initializing Pi onboard services (LiDAR, Camera, Motors)..."
-        sshpass -p "grammarpro" ssh -o StrictHostKeyChecking=no -o ConnectTimeout=6 hasan@"$PI_IP" bash -s << 'EOF'
-            # 1. LiDAR socat bridge on port 5000
-            if ! pgrep -f "TCP-LISTEN:5000" >/dev/null; then
-                echo "[PI] Initializing YDLidar motor power & DTR line..."
-                python3 -c "import serial, time; s=serial.Serial('/dev/ttyUSB0', 115200, timeout=0.2); s.setDTR(True); s.setRTS(True); s.write(b'\xa5\x65'); time.sleep(0.5); s.close()" 2>/dev/null || true
-                echo "[PI] Starting YDLidar TCP bridge on port 5000..."
-                nohup /usr/bin/socat -d -d TCP-LISTEN:5000,reuseaddr,max-children=1,fork FILE:/dev/ttyUSB0,b115200,raw,echo=0 >/tmp/socat.log 2>&1 &
-            fi
-
-            # 2. Motor Server on port 9000
+        echo "[INFO] Initializing Pi onboard services (Camera, Motors, LiDAR, Screen HUD)..."
+        sshpass -p "grammarpro" ssh -o StrictHostKeyChecking=no -o ConnectTimeout=8 hasan@"$PI_IP" bash -s << 'EOF'
+            # 1. Motor Server on port 9000
             if ! pgrep -f "motor_server.py" >/dev/null; then
                 echo "[PI] Starting Motor Server on port 9000..."
-                nohup /usr/bin/python3 -u /home/hasan/motor_server.py >/tmp/motor_server.log 2>&1 &
+                nohup /usr/bin/python3 -u /home/hasan/motor_server.py </dev/null >/tmp/motor_server.log 2>&1 & disown
             fi
 
-            # 3. Camera & Live Ball Detector on port 8000
+            # 2. Camera & Live Ball Detector on port 8000
             if ! pgrep -f "detect_live_picamera2.py" >/dev/null; then
                 echo "[PI] Starting Camera Server on port 8000..."
-                nohup /home/hasan/ball_detector_pi/pi_inference/venv/bin/python3 -u /home/hasan/ball_detector_pi/pi_inference/detect_live_picamera2.py >/tmp/camera.log 2>&1 &
+                nohup /home/hasan/ball_detector_pi/pi_inference/venv/bin/python3 -u /home/hasan/ball_detector_pi/pi_inference/detect_live_picamera2.py </dev/null >/tmp/camera.log 2>&1 & disown
+            fi
+
+            # 3. LiDAR socat bridge on port 5000
+            if ! pgrep -f "TCP-LISTEN:5000" >/dev/null; then
+                echo "[PI] Initializing YDLidar motor power & DTR line..."
+                python3 -c "import serial, time; s=serial.Serial('/dev/ttyUSB0', 115200, timeout=0.2); s.setDTR(True); s.setRTS(True); s.write(b'\xa5\x65'); time.sleep(0.3); s.close()" 2>/dev/null || true
+                echo "[PI] Starting YDLidar TCP bridge on port 5000..."
+                nohup /usr/bin/socat -d -d TCP-LISTEN:5000,reuseaddr,max-children=1,fork FILE:/dev/ttyUSB0,b115200,raw,echo=0 </dev/null >/tmp/socat.log 2>&1 & disown
             fi
 EOF
 
         # Deploy and launch Pi Screen HUD on Pi's 480x320 LCD screen
         echo "[INFO] Updating and launching SLAM HUD on Raspberry Pi Screen..."
         sshpass -p "grammarpro" scp -o StrictHostKeyChecking=no -o ConnectTimeout=5 /home/sharmin/Desktop/iot/soccer_bot/scripts/pi_screen_hud.py hasan@"$PI_IP":/home/hasan/pi_screen_hud.py 2>/dev/null || true
-        sshpass -p "grammarpro" ssh -o StrictHostKeyChecking=no -o ConnectTimeout=5 hasan@"$PI_IP" 'pkill -f pi_screen_hud.py 2>/dev/null || true; DISPLAY=:0.0 nohup python3 /home/hasan/pi_screen_hud.py >/tmp/pi_hud.log 2>&1 &' || true
+        sshpass -p "grammarpro" ssh -o StrictHostKeyChecking=no -o ConnectTimeout=5 hasan@"$PI_IP" 'pkill -f pi_screen_hud.py 2>/dev/null || true; DISPLAY=:0.0 nohup python3 /home/hasan/pi_screen_hud.py </dev/null >/tmp/pi_hud.log 2>&1 & disown' || true
         echo "[SUCCESS] Raspberry Pi Screen HUD running!"
 
         # Wait for LiDAR TCP port 5000
@@ -118,14 +126,11 @@ EOF
             echo 1992 | sudo -S chmod 666 /tmp/ttyLIDAR /dev/ttyUSB0 2>/dev/null || true
             echo "[SUCCESS] Wireless LiDAR successfully mapped to /dev/ttyUSB0!"
         else
-            echo "[ERROR] Failed to establish /tmp/ttyLIDAR bridge."
-            cat /tmp/laptop_socat.log
-            exit 1
+            echo "[WARN] Could not establish /tmp/ttyLIDAR bridge (LiDAR may be offline)."
         fi
     else
-        echo "[ERROR] Raspberry Pi ($PI_IP:$PI_PORT) did not respond in time."
-        echo "Please verify Raspberry Pi is powered on and connected to the Wi-Fi."
-        exit 1
+        echo "[WARN] Raspberry Pi ($PI_IP) did not respond in time."
+        echo "Mobile Web App is running; Pi services will auto-connect when Pi joins Wi-Fi."
     fi
 fi
 
@@ -133,13 +138,5 @@ fi
 source /opt/ros/jazzy/setup.bash
 source /home/sharmin/Desktop/iot/soccer_bot/install/setup.bash
 
-# Start Mobile Web Teleop & Autopilot Server (Port 5050)
-pkill -f "web_teleop_server.py" 2>/dev/null || true
-python3 /home/sharmin/Desktop/iot/soccer_bot/motor_control/web_teleop_server.py >/tmp/web_teleop.log 2>&1 &
-echo "=================================================="
-echo " 📱 MOBILE CONTROLLER: http://192.168.0.122:5050"
-echo " Open the above link on your phone browser!"
-echo "=================================================="
-
 echo "[INFO] Launching SLAM Toolbox, LiDAR Driver, TF, Phone Gyro & RViz2..."
-ros2 launch soccer_slam soccer_slam_launch.py
+ros2 launch soccer_slam soccer_slam_launch.py || true
