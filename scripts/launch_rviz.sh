@@ -12,7 +12,7 @@ else
     WSL_BASE="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." 2>/dev/null && pwd)"
 fi
 
-# Clean exit handler
+# Clean exit handler (DO NOT exit inside cleanup)
 cleanup() {
     pkill -P $$ 2>/dev/null || true
     pkill -9 -f lidar_hub_node 2>/dev/null || true
@@ -24,16 +24,14 @@ cleanup() {
     pkill -9 -f pi_screen_streamer 2>/dev/null || true
     pkill -9 -f path_publisher 2>/dev/null || true
     pkill -9 -f rviz2 2>/dev/null || true
-    exit 0
 }
 trap cleanup EXIT INT TERM
 
 # 1. Clean up old background processes
-cleanup 2>/dev/null || true
+cleanup
 
-# 2. X11 Display & Glibc Priority Fixes for WSL2
-HOST_IP=$(ip route show default | awk '{print $3}')
-export DISPLAY="${HOST_IP}:0"
+# 2. X11 Display Settings for VcXsrv
+export DISPLAY="127.0.0.1:0"
 export QT_QPA_PLATFORM=xcb
 export QT_X11_NO_MITSHM=1
 export LIBGL_ALWAYS_SOFTWARE=1
@@ -54,13 +52,13 @@ echo "   Workspace: $WSL_BASE"
 echo "==========================================================="
 
 # 4. Start ROS 2 Sensor, Model, Mapping & Vision Tracking Nodes
-python3 "${WSL_BASE}/scripts/raw_lidar_publisher.py" &
-python3 "${WSL_BASE}/src/soccer_vision/soccer_vision/camera_hub_node.py" 2>/dev/null &
-python3 "${WSL_BASE}/src/soccer_vision/soccer_vision/ball_tracker_node.py" 2>/dev/null &
-python3 "${WSL_BASE}/scripts/robot_model_publisher.py" &
-python3 "${WSL_BASE}/scripts/path_publisher.py" 2>/dev/null &
-python3 "${WSL_BASE}/scripts/fast_occupancy_mapper.py" &
-python3 "${WSL_BASE}/src/soccer_slam/soccer_slam/pi_screen_streamer.py" 2>/dev/null &
+python3 "${WSL_BASE}/scripts/raw_lidar_publisher.py" > /tmp/soccer_bot_lidar.log 2>&1 &
+python3 "${WSL_BASE}/src/soccer_vision/soccer_vision/camera_hub_node.py" > /tmp/soccer_bot_camera.log 2>&1 &
+python3 "${WSL_BASE}/src/soccer_vision/soccer_vision/ball_tracker_node.py" > /tmp/soccer_bot_tracker.log 2>&1 &
+python3 "${WSL_BASE}/scripts/robot_model_publisher.py" > /tmp/soccer_bot_model.log 2>&1 &
+python3 "${WSL_BASE}/scripts/path_publisher.py" > /tmp/soccer_bot_path.log 2>&1 &
+python3 "${WSL_BASE}/scripts/fast_occupancy_mapper.py" > /tmp/soccer_bot_mapper.log 2>&1 &
+python3 "${WSL_BASE}/src/soccer_slam/soccer_slam/pi_screen_streamer.py" > /tmp/soccer_bot_streamer.log 2>&1 &
 
 sleep 2
 

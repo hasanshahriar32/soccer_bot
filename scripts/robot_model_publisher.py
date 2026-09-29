@@ -27,7 +27,8 @@ from rclpy.qos import QoSProfile, DurabilityPolicy
 import tf2_ros
 import os
 
-URDF_PATH = "/mnt/c/Users/taufi/Desktop/soccer_bot/scripts/robot.urdf"
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+URDF_PATH = os.path.join(SCRIPT_DIR, "robot.urdf")
 
 class RobotModelPublisher(Node):
     def __init__(self):

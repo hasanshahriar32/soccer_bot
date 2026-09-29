@@ -63,16 +63,43 @@ class PiScreenStreamerNode(Node):
         self.latest_map_packet = None
         self.has_new_map = False
 
+        self.declare_parameter('pi_ip', '192.168.0.135')
+        self.pi_ip = self.get_parameter('pi_ip').get_parameter_value().string_value
+
         self.tcp_clients = []
         self.tcp_clients_lock = threading.Lock()
 
-        # Start TCP Server thread
+        # Start TCP Server & Outbound Client threads
         threading.Thread(target=self.run_tcp_server, daemon=True).start()
+        threading.Thread(target=self.run_outbound_client, daemon=True).start()
 
         # 10 Hz broadcast timer for pose and telemetry
         self.timer = self.create_timer(0.1, self.broadcast_telemetry)
 
-        self.get_logger().info(f"📺 [PI SCREEN STREAMER] Listening for Pi LCD client on port {self.port}...")
+        self.get_logger().info(f"📺 [PI SCREEN STREAMER] Active! (Listen on :{self.port} & Pushing to {self.pi_ip}:{self.port})")
+
+    def run_outbound_client(self):
+        while rclpy.ok():
+            try:
+                with self.tcp_clients_lock:
+                    has_outbound = any(getattr(c[0], '_is_outbound', False) for c in self.tcp_clients)
+                if not has_outbound:
+                    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+                    s.settimeout(2.5)
+                    s.connect((self.pi_ip, self.port))
+                    s.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1)
+                    s._is_outbound = True
+                    client_item = (s, threading.Lock())
+                    self.get_logger().info(f"📺 [CONNECTED OUTBOUND] Connected to Pi Screen HUD at {self.pi_ip}:{self.port}!")
+                    with self.tcp_clients_lock:
+                        self.tcp_clients.append(client_item)
+                    with self.lock:
+                        map_pkt = self.latest_map_packet
+                    if map_pkt:
+                        self.send_packet_to_client(client_item, map_pkt)
+            except Exception:
+                pass
+            time.sleep(2.0)
 
     def map_callback(self, msg: OccupancyGrid):
         try:

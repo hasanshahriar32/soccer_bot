@@ -14,11 +14,14 @@ import json
 import math
 import socket
 import struct
+import os
 import sys
 import threading
 import time
 import zlib
 import numpy as np
+
+os.environ["SDL_AUDIODRIVER"] = "dummy"
 import pygame
 
 # Configuration
@@ -69,20 +72,56 @@ class PiScreenHUD:
         self.map_oy = 0.0
         self.zoom = 28.0  # Pixels per meter
 
-        # Start network listener thread
-        threading.Thread(target=self.network_loop, daemon=True).start()
+        # Start network listener and client threads
+        threading.Thread(target=self.server_loop, daemon=True).start()
+        threading.Thread(target=self.client_loop, daemon=True).start()
 
-    def network_loop(self):
+    def server_loop(self):
+        """Allows laptop (pi_screen_streamer) to connect directly to the Pi without Windows firewall issues."""
+        try:
+            srv = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            srv.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+            srv.bind(('0.0.0.0', self.port))
+            srv.listen(2)
+            while self.running:
+                try:
+                    conn, addr = srv.accept()
+                    self.connected = True
+                    while self.running:
+                        raw_len = self.recv_all(conn, 4)
+                        if not raw_len:
+                            break
+                        msg_len = struct.unpack('!I', raw_len)[0]
+                        raw_data = self.recv_all(conn, msg_len)
+                        if not raw_data:
+                            break
+                        packet = json.loads(raw_data.decode('utf-8'))
+                        self.process_packet(packet)
+                except Exception:
+                    pass
+                finally:
+                    self.connected = False
+                    try:
+                        conn.close()
+                    except Exception:
+                        pass
+        except Exception:
+            pass
+
+    def client_loop(self):
+        """Allows connecting outbound to laptop if accessible."""
         while self.running:
+            if self.connected:
+                time.sleep(1.0)
+                continue
             try:
                 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-                s.settimeout(4.0)
+                s.settimeout(3.0)
                 s.connect((self.host, self.port))
                 s.settimeout(None)
                 self.connected = True
 
                 while self.running:
-                    # Read 4-byte big-endian length prefix
                     raw_len = self.recv_all(s, 4)
                     if not raw_len:
                         break
@@ -101,7 +140,7 @@ class PiScreenHUD:
                     s.close()
                 except Exception:
                     pass
-                time.sleep(1.5)
+                time.sleep(2.0)
 
     def recv_all(self, sock, n):
         data = bytearray()

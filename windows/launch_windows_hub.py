@@ -143,6 +143,7 @@ def launch_pi_hardware(pi_ip):
                 "echo grammarpro | sudo -S chmod 666 /dev/ttyACM* /dev/ttyUSB* 2>/dev/null ; "
                 "pkill -9 -f rpicam 2>/dev/null ; "
                 "pkill -9 -f fast_camera_server 2>/dev/null ; "
+                "pkill -9 -f detect_live_picamera2 2>/dev/null ; "
                 "pkill -9 -f python_socat 2>/dev/null ; "
                 "pkill -9 -f lidar_bridge 2>/dev/null ; "
                 "pkill -9 -f motor_server 2>/dev/null ; "
@@ -164,7 +165,7 @@ def launch_pi_hardware(pi_ip):
             ssh.exec_command("nohup python3 /home/hasan/arm_server.py > ~/arm.log 2>&1 &")
             
             # 6. Launch Raspberry Pi LCD Screen Live SLAM Navigation HUD
-            ssh.exec_command(f"export DISPLAY=:0 ; nohup python3 /home/hasan/pi_screen_hud.py {laptop_ip} > ~/hud.log 2>&1 &")
+            ssh.exec_command(f"export DISPLAY=:0 ; export XAUTHORITY=/home/hasan/.Xauthority ; nohup python3 /home/hasan/pi_screen_hud.py {laptop_ip} > ~/hud.log 2>&1 &")
             
             time.sleep(1.5)
             log("Pi Hardware Initialized: LiDAR(5000), Camera(8000), Motors(9000), Arm(9001) & LCD Map HUD!", symbol="OK")
@@ -186,13 +187,26 @@ def launch_wsl_system():
         subprocess.Popen(f'bash -c "{rviz_cmd}"', shell=True)
 
 def launch_motor_controller():
-    log("Opening Manual Wheel & Robotic Arm Remote Controller GUI...", symbol="3/4")
+    log("Opening Desktop Motor & Robotic Arm Controller GUI...", symbol="3/5")
     gui_script = os.path.join(REPO_DIR, "motor_control", "gui_teleop.py")
     py_exe = sys.executable
     try:
         subprocess.Popen([py_exe, gui_script], cwd=REPO_DIR)
     except Exception as e:
         log(f"Could not open GUI: {e}", symbol="!")
+
+def launch_web_teleop(pi_ip):
+    log("Starting Live Web Teleop & Camera Controller (Port 5050)...", symbol="4/5")
+    web_script = os.path.join(REPO_DIR, "motor_control", "web_teleop_server.py")
+    py_exe = sys.executable
+    try:
+        subprocess.Popen([py_exe, web_script, pi_ip or DEFAULT_PI_IP], cwd=REPO_DIR)
+        time.sleep(1.5)
+        local_ip = get_local_ip()
+        log(f"Web Controller Ready! Open http://localhost:5050 or http://{local_ip}:5050", symbol="BROWSER")
+        webbrowser.open("http://localhost:5050")
+    except Exception as e:
+        log(f"Could not open Web Teleop: {e}", symbol="!")
 
 def main():
     print("=" * 68)
@@ -213,18 +227,11 @@ def main():
         
     launch_wsl_system()
     launch_motor_controller()
-    
-    if pi_ready and pi_ip:
-        time.sleep(2.0)
-        log(f"Opening Camera Stream: http://{pi_ip}:8000", symbol="4/4")
-        try:
-            webbrowser.open(f"http://{pi_ip}:8000")
-        except Exception:
-            pass
+    launch_web_teleop(pi_ip)
     
     print("\n" + "=" * 68)
     if pi_ready:
-        log("ALL SYSTEMS ONLINE! RViz2 + Motors + Arm + Camera + Pi LCD HUD Active!", symbol="SUCCESS")
+        log("ALL SYSTEMS ONLINE! RViz2 + Web Controller + Motors + Arm + Camera + Pi LCD HUD Active!", symbol="SUCCESS")
     else:
         log("LOCAL VISUALIZERS LAUNCHED! (Awaiting Pi network connection).", symbol="READY")
     print("=" * 68 + "\n")

@@ -25,6 +25,7 @@ import math
 import socket
 import threading
 import json
+import struct
 from http.server import HTTPServer, BaseHTTPRequestHandler
 from socketserver import ThreadingMixIn
 import cv2
@@ -339,38 +340,89 @@ def ros2_subscriber_worker():
 
 threading.Thread(target=ros2_subscriber_worker, daemon=True).start()
 
-# Direct HTTP Camera Stream Worker (Pulls from Pi port 8000 when ROS 2 topic is idle)
-def http_camera_worker():
-    import urllib.request
-    stream_url = f"http://{PI_IP}:8000/video"
+# Universal Camera Stream Worker (Supports both HTTP MJPEG from detect_live_picamera2 and TCP socket from fast_camera_server)
+def universal_camera_worker():
+    payload_size = struct.calcsize(">L")
     while True:
+        # Check if ROS2 is already providing fresher frames
+        with state.lock:
+            ros2_fresh = (time.time() - state.last_frame_time) < 0.5 and getattr(state, 'ros2_has_camera', False)
+        if ros2_fresh:
+            time.sleep(0.3)
+            continue
+
+        # Strategy A: HTTP MJPEG Stream (detect_live_picamera2.py on /video or /)
+        http_success = False
         try:
-            req = urllib.request.Request(stream_url)
-            stream = urllib.request.urlopen(req, timeout=5)
-            bytes_buf = b''
+            req = urllib.request.Request(f"http://{PI_IP}:8000/video")
+            with urllib.request.urlopen(req, timeout=3.0) as resp:
+                stream_bytes = b""
+                while True:
+                    with state.lock:
+                        if (time.time() - state.last_frame_time) < 0.5 and getattr(state, 'ros2_has_camera', False):
+                            break
+                    chunk = resp.read(16384)
+                    if not chunk:
+                        break
+                    stream_bytes += chunk
+                    a = stream_bytes.find(b'\xff\xd8')
+                    b = stream_bytes.find(b'\xff\xd9', a + 2) if a != -1 else -1
+                    if a != -1 and b != -1:
+                        jpg = stream_bytes[a:b+2]
+                        stream_bytes = stream_bytes[b+2:]
+                        with state.lock:
+                            state.latest_jpeg = jpg
+                            state.last_frame_time = time.time()
+                        http_success = True
+        except Exception:
+            pass
+
+        if http_success:
+            continue
+
+        # Strategy B: Raw TCP size-prefixed socket (fast_camera_server.py)
+        try:
+            s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            s.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1)
+            s.settimeout(3.0)
+            s.connect((PI_IP, 8000))
+            data = b""
             while True:
                 with state.lock:
-                    ros2_fresh = (time.time() - state.last_frame_time) < 0.5
-                if ros2_fresh:
-                    time.sleep(0.3)
-                    continue
+                    if (time.time() - state.last_frame_time) < 0.5 and getattr(state, 'ros2_has_camera', False):
+                        break
 
-                chunk = stream.read(4096)
-                if not chunk:
+                while len(data) < payload_size:
+                    packet = s.recv(4096)
+                    if not packet:
+                        break
+                    data += packet
+                if len(data) < payload_size:
                     break
-                bytes_buf += chunk
-                a = bytes_buf.find(b'\xff\xd8')
-                b = bytes_buf.find(b'\xff\xd9')
-                if a != -1 and b != -1:
-                    jpg = bytes_buf[a:b+2]
-                    bytes_buf = bytes_buf[b+2:]
-                    with state.lock:
-                        state.latest_jpeg = jpg
-                        state.last_frame_time = time.time()
-        except Exception:
-            time.sleep(2.0)
 
-threading.Thread(target=http_camera_worker, daemon=True).start()
+                packed_msg_size = data[:payload_size]
+                data = data[payload_size:]
+                msg_size = struct.unpack(">L", packed_msg_size)[0]
+
+                while len(data) < msg_size:
+                    packet = s.recv(65536)
+                    if not packet:
+                        break
+                    data += packet
+                if len(data) < msg_size:
+                    break
+
+                frame_data = bytes(data[:msg_size])
+                data = data[msg_size:]
+
+                with state.lock:
+                    state.latest_jpeg = frame_data
+                    state.last_frame_time = time.time()
+            s.close()
+        except Exception:
+            time.sleep(1.0)
+
+threading.Thread(target=universal_camera_worker, daemon=True).start()
 
 def get_current_camera_frame():
     with state.lock:
