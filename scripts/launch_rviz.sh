@@ -30,10 +30,12 @@ trap cleanup EXIT INT TERM
 # 1. Clean up old background processes
 cleanup
 
-# 2. X11 Display Settings for VcXsrv / WSLg (Native D3D12 Hardware Acceleration)
-export DISPLAY="${DISPLAY:-:0}"
+# 2. X11 Display Settings for VcXsrv
+export DISPLAY="127.0.0.1:0"
 export QT_QPA_PLATFORM=xcb
 export QT_X11_NO_MITSHM=1
+export LIBGL_ALWAYS_SOFTWARE=1
+export MESA_GL_VERSION_OVERRIDE=3.3
 export OMP_NUM_THREADS=2
 export RMW_FASTRTPS_USE_QOS_FROM_XML=0
 
