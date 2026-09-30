@@ -98,7 +98,7 @@ state = RobotState()
 # ====================================================================
 arm_cmd_lock = threading.Lock()
 
-def send_arm_command(cmd_dict, timeout=8.0):
+def send_arm_command(cmd_dict, timeout=15.0):
     try:
         act = str(cmd_dict.get("action", "")).lower()
         if act in ["home", "ready", "test", "pickup"]:
@@ -145,9 +145,9 @@ threading.Thread(target=arm_status_poller, daemon=True).start()
 
 def run_base_sweep_test():
     def _worker():
-        print("[ARM] Starting Base Servo Sweep Test (0 -> 45 -> 90 -> 135 -> 90 -> 45 -> 0)...", flush=True)
-        for angle in [0, 45, 90, 135, 90, 45, 0]:
-            send_arm_command({"action": "joint", "joint": "B", "angle": angle}, timeout=10.0)
+        print("[ARM] Starting Base Servo Sweep Test (0 -> 45 -> 90 -> 135 -> 180 -> 135 -> 90 -> 45 -> 0)...", flush=True)
+        for angle in [0, 45, 90, 135, 180, 135, 90, 45, 0]:
+            send_arm_command({"action": "joint", "joint": "B", "angle": angle}, timeout=15.0)
             time.sleep(0.5)
         print("[ARM] Base Servo Sweep Test Completed!", flush=True)
     t = threading.Thread(target=_worker, daemon=True)
@@ -1416,7 +1416,7 @@ HTML_PAGE = """<!DOCTYPE html>
 
     function testBaseSweep() {
       const st = document.getElementById('armStatusText');
-      if (st) st.innerText = 'Status: 🔄 Running Base Sweep Test (0° -> 135° -> 0°)...';
+      if (st) st.innerText = 'Status: 🔄 Running Base Sweep Test (0° -> 180° -> 0°)...';
       fetch('/api/arm/test_base', {method: 'POST'})
         .then(res => res.json())
         .then(data => {
