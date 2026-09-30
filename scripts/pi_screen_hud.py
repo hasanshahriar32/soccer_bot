@@ -25,7 +25,7 @@ os.environ["SDL_AUDIODRIVER"] = "dummy"
 import pygame
 
 # Configuration
-LAPTOP_IP = "192.168.0.116"
+LAPTOP_IP = "10.127.69.5"
 LAPTOP_PORT = 8765
 SCREEN_W = 480
 SCREEN_H = 320
@@ -352,7 +352,7 @@ class PiScreenHUD:
                 conn_lbl = font_small.render("○ LINK: CONNECTING...", True, COLOR_DISCONNECTED)
             screen.blit(conn_lbl, (MAP_VIEW_W + 10, y_off))
             y_off += 13
-            screen.blit(font_small.render(f"PI: 192.168.0.135", True, TEXT_MUTED), (MAP_VIEW_W + 10, y_off))
+            screen.blit(font_small.render(f"PI: 10.127.69.146", True, TEXT_MUTED), (MAP_VIEW_W + 10, y_off))
 
             pygame.display.flip()
             clock.tick(30)

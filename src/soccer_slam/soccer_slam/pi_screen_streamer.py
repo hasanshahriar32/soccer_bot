@@ -63,7 +63,7 @@ class PiScreenStreamerNode(Node):
         self.latest_map_packet = None
         self.has_new_map = False
 
-        self.declare_parameter('pi_ip', '192.168.0.135')
+        self.declare_parameter('pi_ip', '10.127.69.146')
         self.pi_ip = self.get_parameter('pi_ip').get_parameter_value().string_value
 
         self.tcp_clients = []

@@ -21,7 +21,7 @@ import socket
 import time
 import sys
 
-PI_IP = "192.168.0.135"
+PI_IP = "10.127.69.146"
 PI_PORT = 9000
 
 def test_motor_navigation():

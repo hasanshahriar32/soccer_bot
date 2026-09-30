@@ -44,7 +44,7 @@ try:
 except ImportError:
     HAS_ROS2 = False
 
-PI_IP = sys.argv[1] if len(sys.argv) > 1 else "192.168.0.135"
+PI_IP = sys.argv[1] if len(sys.argv) > 1 else "10.127.69.146"
 PI_MOTOR_PORT = 9000
 PI_ARM_PORT = 9001
 WEB_PORT = 5050
