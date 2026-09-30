@@ -1,0 +1,2 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<XLaunch WindowMode="MultiWindow" ClientMode="NoClient" LocalClient="False" Display="0" TrueColor="-1" Depth="-1" XDMCPHost="" XDMCPBroadcast="False" XDMCPIndirect="False" Clipboard="True" ClipboardPrimary="True" ExtraParams="-ac -listen tcp" Wgl="True" DisableAC="True" XDMCPTerminate="False"/>

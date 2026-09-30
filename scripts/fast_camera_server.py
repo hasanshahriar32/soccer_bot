@@ -37,6 +37,8 @@ def main():
     while True:
         try:
             frame = picam2.capture_array()
+            # Physical camera is mounted upside down: flip vertically
+            frame = cv2.flip(frame, 0)
             ret, buffer = cv2.imencode('.jpg', cv2.cvtColor(frame, cv2.COLOR_RGB2BGR), [cv2.IMWRITE_JPEG_QUALITY, 75])
             if ret:
                 data = buffer.tobytes()

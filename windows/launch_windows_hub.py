@@ -35,7 +35,7 @@ try:
 except ImportError:
     HAS_PARAMIKO = False
 
-DEFAULT_PI_IP = '192.168.0.135'
+DEFAULT_PI_IP = '10.127.69.146'
 PI_USER = 'hasan'
 PI_PASS = 'grammarpro'
 
@@ -54,10 +54,10 @@ def log(msg, symbol="*"):
 def get_local_ip():
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     try:
-        s.connect(('192.168.0.1', 80))
+        s.connect(('10.127.69.1', 80))
         ip = s.getsockname()[0]
     except Exception:
-        ip = '192.168.0.116'
+        ip = '10.127.69.5'
     finally:
         s.close()
     return ip
@@ -222,7 +222,7 @@ def main():
     if pi_ip:
         pi_ready = launch_pi_hardware(pi_ip)
     else:
-        log("Raspberry Pi (192.168.0.135) is currently unreachable.", symbol="!")
+        log("Raspberry Pi (10.127.69.146) is currently unreachable.", symbol="!")
         log("--> Ensure Pi is powered ON with 5V/3A and connected to Wi-Fi.", symbol="!")
         
     launch_wsl_system()
