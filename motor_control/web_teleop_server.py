@@ -343,89 +343,79 @@ def ros2_subscriber_worker():
 
 threading.Thread(target=ros2_subscriber_worker, daemon=True).start()
 
-# Universal Camera Stream Worker (Supports both HTTP MJPEG from detect_live_picamera2 and TCP socket from fast_camera_server)
+# Universal Camera Stream Worker (High-performance TCP socket streaming)
 def universal_camera_worker():
-    payload_size = struct.calcsize(">L")
     while True:
-        # Check if ROS2 is already providing fresher frames
         with state.lock:
             ros2_fresh = (time.time() - state.last_frame_time) < 0.5 and getattr(state, 'ros2_has_camera', False)
         if ros2_fresh:
             time.sleep(0.3)
             continue
 
-        # Strategy A: HTTP MJPEG Stream (detect_live_picamera2.py on /video or /)
-        http_success = False
         try:
-            req = urllib.request.Request(f"http://{PI_IP}:8000/video")
-            with urllib.request.urlopen(req, timeout=3.0) as resp:
-                stream_bytes = b""
-                while True:
-                    with state.lock:
-                        if (time.time() - state.last_frame_time) < 0.5 and getattr(state, 'ros2_has_camera', False):
-                            break
-                    chunk = resp.read(16384)
-                    if not chunk:
-                        break
-                    stream_bytes += chunk
-                    a = stream_bytes.find(b'\xff\xd8')
-                    b = stream_bytes.find(b'\xff\xd9', a + 2) if a != -1 else -1
-                    if a != -1 and b != -1:
-                        jpg = stream_bytes[a:b+2]
-                        stream_bytes = stream_bytes[b+2:]
-                        with state.lock:
-                            state.latest_jpeg = jpg
-                            state.last_frame_time = time.time()
-                        http_success = True
-        except Exception:
-            pass
+            sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            sock.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1)
+            sock.settimeout(4.0)
+            sock.connect((PI_IP, 8000))
+            req = f"GET /video HTTP/1.0\r\nHost: {PI_IP}:8000\r\n\r\n".encode('utf-8')
+            sock.sendall(req)
 
-        if http_success:
-            continue
-
-        # Strategy B: Raw TCP size-prefixed socket (fast_camera_server.py)
-        try:
-            s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            s.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1)
-            s.settimeout(3.0)
-            s.connect((PI_IP, 8000))
-            data = b""
+            buf = b""
             while True:
                 with state.lock:
                     if (time.time() - state.last_frame_time) < 0.5 and getattr(state, 'ros2_has_camera', False):
                         break
 
-                while len(data) < payload_size:
-                    packet = s.recv(4096)
-                    if not packet:
-                        break
-                    data += packet
-                if len(data) < payload_size:
+                chunk = sock.recv(16384)
+                if not chunk:
                     break
+                buf += chunk
 
-                packed_msg_size = data[:payload_size]
-                data = data[payload_size:]
-                msg_size = struct.unpack(">L", packed_msg_size)[0]
-
-                while len(data) < msg_size:
-                    packet = s.recv(65536)
-                    if not packet:
-                        break
-                    data += packet
-                if len(data) < msg_size:
-                    break
-
-                frame_data = bytes(data[:msg_size])
-                data = data[msg_size:]
-
-                with state.lock:
-                    state.latest_jpeg = frame_data
-                    state.last_frame_time = time.time()
-            s.close()
+                start = buf.find(b'\xff\xd8')
+                if start != -1:
+                    end = buf.find(b'\xff\xd9', start + 2)
+                    if end != -1:
+                        jpg = buf[start:end+2]
+                        buf = buf[end+2:]
+                        with state.lock:
+                            state.latest_jpeg = jpg
+                            state.last_frame_time = time.time()
+                elif len(buf) > 131072:
+                    buf = buf[-32768:]
+            sock.close()
         except Exception:
             time.sleep(1.0)
 
 threading.Thread(target=universal_camera_worker, daemon=True).start()
+
+# Ball Position TCP Bridge Worker (Port 8001)
+def ball_bridge_worker():
+    while True:
+        try:
+            sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            sock.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1)
+            sock.settimeout(5.0)
+            sock.connect((PI_IP, 8001))
+            f = sock.makefile('r', encoding='utf-8', errors='ignore')
+            for line in f:
+                line = line.strip()
+                if not line:
+                    continue
+                try:
+                    data = json.loads(line)
+                    if data.get('type') == 'ball':
+                        with state.lock:
+                            state.ball_dist = float(data.get('x', 0.0))
+                            state.ball_y = float(data.get('y', 0.0))
+                            state.ball_x = float(data.get('x', 0.0))
+                            state.ball_time = time.time()
+                except Exception:
+                    pass
+            sock.close()
+        except Exception:
+            time.sleep(2.0)
+
+threading.Thread(target=ball_bridge_worker, daemon=True).start()
 
 def get_current_camera_frame():
     with state.lock:
@@ -1527,7 +1517,7 @@ class TeleopHandler(BaseHTTPRequestHandler):
             self.wfile.write(HTML_PAGE.encode('utf-8'))
         elif self.path == '/stream.mjpg':
             self.send_response(200)
-            self.send_header('Content-Type', 'multipart/x-mixed-replace; boundary=--frame')
+            self.send_header('Content-Type', 'multipart/x-mixed-replace; boundary=frame')
             self.send_header('Cache-Control', 'no-cache, private')
             self.send_header('Pragma', 'no-cache')
             self.end_headers()
@@ -1544,7 +1534,7 @@ class TeleopHandler(BaseHTTPRequestHandler):
                 pass
         elif self.path == '/map_stream.mjpg':
             self.send_response(200)
-            self.send_header('Content-Type', 'multipart/x-mixed-replace; boundary=--frame')
+            self.send_header('Content-Type', 'multipart/x-mixed-replace; boundary=frame')
             self.send_header('Cache-Control', 'no-cache, private')
             self.send_header('Pragma', 'no-cache')
             self.end_headers()
