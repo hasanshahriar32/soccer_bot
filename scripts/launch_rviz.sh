@@ -30,8 +30,8 @@ trap cleanup EXIT INT TERM
 # 1. Clean up old background processes
 cleanup
 
-# 2. X11 Display Settings for VcXsrv
-export DISPLAY="127.0.0.1:0"
+# 2. X11 Display Settings for VcXsrv / WSLg
+export DISPLAY="${DISPLAY:-:0}"
 export QT_QPA_PLATFORM=xcb
 export QT_X11_NO_MITSHM=1
 export LIBGL_ALWAYS_SOFTWARE=1
