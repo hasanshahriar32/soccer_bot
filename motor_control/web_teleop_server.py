@@ -98,11 +98,11 @@ state = RobotState()
 # ====================================================================
 arm_cmd_lock = threading.Lock()
 
-def send_arm_command(cmd_dict, timeout=12.0):
+def send_arm_command(cmd_dict, timeout=8.0):
     try:
         act = str(cmd_dict.get("action", "")).lower()
         if act in ["home", "ready", "test", "pickup"]:
-            timeout = 35.0
+            timeout = 25.0
         with arm_cmd_lock:
             sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             sock.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1)

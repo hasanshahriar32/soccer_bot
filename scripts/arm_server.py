@@ -68,6 +68,7 @@ class ArmController:
         self.albo = 0
         self.gripper = 90
         self.last_update = 0.0
+        self.busy_until = 0.0
         self.connected = False
         
         self.connect()
@@ -126,7 +127,7 @@ class ArmController:
         self.ser.write(cmd_str.encode('utf-8'))
         self.ser.flush()
 
-    def _read_lines(self, timeout=10.0):
+    def _read_lines(self, timeout=3.0):
         lines = []
         t0 = time.time()
         while time.time() - t0 < timeout:
@@ -141,7 +142,7 @@ class ArmController:
                             if ("OK" in line or "ERR" in line or "ARM_STATUS" in line or line.startswith("::")):
                                 break
                     else:
-                        time.sleep(0.02)
+                        time.sleep(0.01)
                 except Exception as e:
                     print(f"[ARM ERROR] Readline error: {e}", flush=True)
                     break
@@ -168,6 +169,13 @@ class ArmController:
 
     def send_command(self, cmd_str):
         with self.lock:
+            # Wait for any prior physical movement to settle before writing new command
+            now = time.time()
+            if now < self.busy_until:
+                wait_sec = self.busy_until - now
+                print(f"[ARM] Waiting {wait_sec:.2f}s for physical arm motion to settle...", flush=True)
+                time.sleep(wait_sec)
+
             if not self.connected or not self.ser or not self.ser.is_open:
                 self.connect()
                 if not self.connected:
@@ -179,6 +187,24 @@ class ArmController:
                     cmd_str = "G 90"
                 elif cmd_upper == "OPEN":
                     cmd_str = "G 270"
+
+                # Calculate estimated move duration
+                move_dur = 0.2
+                if any(x in cmd_upper for x in ["HOME", "READY", "PICKUP"]):
+                    move_dur = 12.0
+                elif any(x in cmd_upper for x in ["TEST"]):
+                    move_dur = 25.0
+                else:
+                    parts = cmd_str.strip().split()
+                    if len(parts) >= 2:
+                        try:
+                            j = parts[0].upper()
+                            val = int(parts[1])
+                            cur = self.base if j == "B" else self.shoulder if j == "S" else self.albo if j in ("A", "E") else self.gripper
+                            delta = abs(val - cur)
+                            move_dur = (delta * 0.040) + 0.2 if j != "G" else (delta * 0.015) + 0.2
+                        except Exception:
+                            move_dur = 0.5
 
                 # Keep local state in sync with requested position
                 parts = cmd_str.strip().split()
@@ -194,8 +220,12 @@ class ArmController:
                         pass
 
                 self._send_raw(cmd_str)
-                timeout = 35.0 if any(k in cmd_str.upper() for k in ["TEST", "HOME", "READY", "PICKUP"]) else 10.0
-                lines = self._read_lines(timeout=timeout)
+                self.busy_until = time.time() + move_dur
+                lines = self._read_lines(timeout=2.5)
+                if not lines:
+                    print("[ARM WARN] No response from Arduino. Triggering USB recovery...", flush=True)
+                    recover_ch340_usb()
+                    self.connect()
                 resp_text = " ".join(lines) if lines else "OK"
                 
                 for l in lines:

@@ -87,12 +87,7 @@ void moveGripper(int toAngle)
 
   gripperServo.writeMicroseconds(pulse);
   curGripper = toAngle;
-  delay(50);
-
-  Serial.print(F("Gripper = "));
-  Serial.print(toAngle);
-  Serial.print(F(" deg   Pulse = "));
-  Serial.println(pulse);
+  delay(30);
 }
 
 // =====================================================
@@ -126,9 +121,7 @@ void moveBase(int fromAngle, int toAngle)
     }
   }
   curBase = toAngle;
-  delay(50);
-  Serial.print(F("Base = "));
-  Serial.println(curBase);
+  delay(30);
 }
 
 // =====================================================
@@ -162,9 +155,7 @@ void moveShoulder(int fromAngle, int toAngle)
     }
   }
   curShoulder = toAngle;
-  delay(50);
-  Serial.print(F("Shoulder = "));
-  Serial.println(curShoulder);
+  delay(30);
 }
 
 // =====================================================
@@ -198,9 +189,7 @@ void moveAlbo(int fromAngle, int toAngle)
     }
   }
   curAlbo = toAngle;
-  delay(50);
-  Serial.print(F("ALBO = "));
-  Serial.println(curAlbo);
+  delay(30);
 }
 
 // =====================================================
@@ -285,60 +274,73 @@ void processCommand(char* cmd)
   if (strncmp(cmd, "B ", 2) == 0)
   {
     int val = atoi(cmd + 2);
-    moveBase(curBase, val);
+    val = constrain(val, BASE_MIN, BASE_MAX);
     Serial.print(F("OK B:"));
-    Serial.println(curBase);
+    Serial.println(val);
+    Serial.flush();
+    moveBase(curBase, val);
   }
   else if (strncmp(cmd, "S ", 2) == 0)
   {
     int val = atoi(cmd + 2);
-    moveShoulder(curShoulder, val);
+    val = constrain(val, SHOULDER_MIN, SHOULDER_MAX);
     Serial.print(F("OK S:"));
-    Serial.println(curShoulder);
+    Serial.println(val);
+    Serial.flush();
+    moveShoulder(curShoulder, val);
   }
   else if (strncmp(cmd, "A ", 2) == 0 || strncmp(cmd, "E ", 2) == 0)
   {
     int val = atoi(cmd + 2);
-    moveAlbo(curAlbo, val);
+    val = constrain(val, ALBO_MIN, ALBO_MAX);
     Serial.print(F("OK A:"));
-    Serial.println(curAlbo);
+    Serial.println(val);
+    Serial.flush();
+    moveAlbo(curAlbo, val);
   }
   else if (strncmp(cmd, "G ", 2) == 0)
   {
     int val = atoi(cmd + 2);
-    moveGripper(val);
+    val = constrain(val, GRIPPER_MIN, GRIPPER_MAX);
     Serial.print(F("OK G:"));
-    Serial.println(curGripper);
+    Serial.println(val);
+    Serial.flush();
+    moveGripper(val);
   }
   else if (strcmp(cmd, "TEST") == 0)
   {
-    runTestSequence();
     Serial.println(F("OK TEST"));
+    Serial.flush();
+    runTestSequence();
   }
   else if (strcmp(cmd, "HOME") == 0)
   {
+    Serial.println(F("OK HOME"));
+    Serial.flush();
     moveGripper(90);
     moveAlbo(curAlbo, 0);
     moveShoulder(curShoulder, 0);
     moveBase(curBase, 0);
-    Serial.println(F("OK HOME"));
   }
   else if (strcmp(cmd, "READY") == 0)
   {
+    Serial.println(F("OK READY"));
+    Serial.flush();
     moveBase(curBase, 90);
     moveShoulder(curShoulder, 70);
     moveAlbo(curAlbo, 80);
     moveGripper(240);
-    Serial.println(F("OK READY"));
   }
   else if (strcmp(cmd, "STATUS") == 0 || strcmp(cmd, "?") == 0)
   {
     printStatus();
+    Serial.flush();
   }
   else
   {
     Serial.print(F("ERR:"));
     Serial.println(cmd);
+    Serial.flush();
   }
 }
 
