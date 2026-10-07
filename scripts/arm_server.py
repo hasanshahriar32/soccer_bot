@@ -56,6 +56,29 @@ def recover_ch340_usb():
     except Exception as e:
         print(f"[ARM] USB recovery error: {e}", flush=True)
 
+def to_hw_angle(joint, logical_angle):
+    """
+    Translates logical angles (0° to 180°) into physical servo angles.
+    Shoulder (Pin 10) and Elbow (Pin 11) servos are mounted in reverse mechanical orientation:
+    Hardware Angle = 180 - Logical Angle.
+    """
+    j = str(joint).upper()
+    val = int(logical_angle)
+    if j in ("S", "A", "E"):
+        return max(0, min(180, 180 - val))
+    elif j == "B":
+        return max(0, min(180, val))
+    elif j == "G":
+        return max(90, min(270, val))
+    return val
+
+def to_logical_angle(joint, hw_angle):
+    j = str(joint).upper()
+    val = int(hw_angle)
+    if j in ("S", "A", "E"):
+        return max(0, min(180, 180 - val))
+    return val
+
 class ArmController:
     def __init__(self, port=None, baud=ARM_BAUD):
         self.port = port or get_arm_port()
@@ -158,9 +181,11 @@ class ArmController:
                     if p.startswith("B:"):
                         self.base = int(p.split(":")[1])
                     elif p.startswith("S:"):
-                        self.shoulder = int(p.split(":")[1])
+                        hw_s = int(p.split(":")[1])
+                        self.shoulder = to_logical_angle("S", hw_s)
                     elif p.startswith("A:"):
-                        self.albo = int(p.split(":")[1])
+                        hw_a = int(p.split(":")[1])
+                        self.albo = to_logical_angle("A", hw_a)
                     elif p.startswith("G:"):
                         self.gripper = int(p.split(":")[1])
                 self.last_update = time.time()
@@ -185,14 +210,64 @@ class ArmController:
                 cmd_upper = cmd_str.upper().strip()
                 if cmd_upper in ["GRAB", "CLOSE"]:
                     cmd_str = "G 90"
+                    self.gripper = 90
                 elif cmd_upper == "OPEN":
                     cmd_str = "G 270"
+                    self.gripper = 270
+                elif cmd_upper == "HOME":
+                    # Logical HOME: Base 0, Shoulder 0, Elbow 0, Gripper 90
+                    # Hardware: Base 0, Shoulder 180, Elbow 180, Gripper 90
+                    self.gripper = 90
+                    self.albo = 0
+                    self.shoulder = 0
+                    self.base = 0
+                    self._send_raw("G 90\n")
+                    time.sleep(0.3)
+                    self._send_raw(f"A {to_hw_angle('A', 0)}\n")
+                    time.sleep(0.4)
+                    self._send_raw(f"S {to_hw_angle('S', 0)}\n")
+                    time.sleep(0.4)
+                    self._send_raw("B 0\n")
+                    self.busy_until = time.time() + 3.0
+                    self.last_update = time.time()
+                    return {
+                        "status": "OK",
+                        "response": "OK HOME",
+                        "base": 0,
+                        "shoulder": 0,
+                        "albo": 0,
+                        "gripper": 90,
+                        "connected": self.connected
+                    }
+                elif cmd_upper == "READY":
+                    # Logical READY: Base 90, Shoulder 70, Elbow 80, Gripper 240
+                    # Hardware: Base 90, Shoulder 110, Elbow 100, Gripper 240
+                    self.base = 90
+                    self.shoulder = 70
+                    self.albo = 80
+                    self.gripper = 240
+                    self._send_raw("B 90\n")
+                    time.sleep(0.3)
+                    self._send_raw(f"S {to_hw_angle('S', 70)}\n")
+                    time.sleep(0.4)
+                    self._send_raw(f"A {to_hw_angle('A', 80)}\n")
+                    time.sleep(0.4)
+                    self._send_raw("G 240\n")
+                    self.busy_until = time.time() + 3.0
+                    self.last_update = time.time()
+                    return {
+                        "status": "OK",
+                        "response": "OK READY",
+                        "base": 90,
+                        "shoulder": 70,
+                        "albo": 80,
+                        "gripper": 240,
+                        "connected": self.connected
+                    }
 
                 # Calculate estimated move duration
                 move_dur = 0.2
-                if any(x in cmd_upper for x in ["HOME", "READY", "PICKUP"]):
-                    move_dur = 12.0
-                elif any(x in cmd_upper for x in ["TEST"]):
+                if any(x in cmd_upper for x in ["TEST"]):
                     move_dur = 25.0
                 else:
                     parts = cmd_str.strip().split()
@@ -206,55 +281,50 @@ class ArmController:
                         except Exception:
                             move_dur = 0.5
 
-                # Keep local state in sync with requested position
+                # Translate joint commands to hardware angles
                 parts = cmd_str.strip().split()
+                hw_cmd_str = cmd_str
+                logical_val = None
+                logical_j = None
                 if len(parts) >= 2:
                     try:
-                        j_prefix = parts[0].upper()
-                        val = int(parts[1])
-                        if j_prefix == "B": self.base = val
-                        elif j_prefix == "S": self.shoulder = val
-                        elif j_prefix in ("A", "E"): self.albo = val
-                        elif j_prefix == "G": self.gripper = val
+                        logical_j = parts[0].upper()
+                        logical_val = int(parts[1])
+                        hw_val = to_hw_angle(logical_j, logical_val)
+                        hw_cmd_str = f"{logical_j} {hw_val}"
+                        if logical_j == "B": self.base = logical_val
+                        elif logical_j == "S": self.shoulder = logical_val
+                        elif logical_j in ("A", "E"): self.albo = logical_val
+                        elif logical_j == "G": self.gripper = logical_val
                     except Exception:
                         pass
 
-                self._send_raw(cmd_str)
+                self._send_raw(hw_cmd_str)
                 self.busy_until = time.time() + move_dur
                 lines = self._read_lines(timeout=2.5)
                 if not lines:
                     print("[ARM WARN] No response from Arduino. Triggering USB recovery...", flush=True)
                     recover_ch340_usb()
                     self.connect()
-                resp_text = " ".join(lines) if lines else "OK"
-                
+
+                # Build response text with logical angles
+                if logical_j and logical_val is not None:
+                    resp_text = f"OK {logical_j}:{logical_val}"
+                else:
+                    resp_text = " ".join(lines) if lines else "OK"
+
                 for l in lines:
                     self._parse_status_line(l)
                     m = re.search(r'B:(\d+)', l)
                     if m: self.base = int(m.group(1))
                     m = re.search(r'S:(\d+)', l)
-                    if m: self.shoulder = int(m.group(1))
+                    if m: self.shoulder = to_logical_angle("S", int(m.group(1)))
                     m = re.search(r'A:(\d+)', l)
-                    if m: self.albo = int(m.group(1))
+                    if m: self.albo = to_logical_angle("A", int(m.group(1)))
                     m = re.search(r'G:(\d+)', l)
                     if m: self.gripper = int(m.group(1))
                     m = re.search(r'Gripper\s*=\s*(\d+)', l)
                     if m: self.gripper = int(m.group(1))
-                    
-                    if "HOME" in l:
-                        self.base = 0
-                        self.shoulder = 0
-                        self.albo = 0
-                        self.gripper = 90
-                    elif "READY" in l:
-                        self.base = 90
-                        self.shoulder = 70
-                        self.albo = 80
-                        self.gripper = 240
-                    elif "GRAB" in l or "CLOSE" in l:
-                        self.gripper = 90
-                    elif "OPEN" in l:
-                        self.gripper = 270
 
                 self.last_update = time.time()
                 return {
