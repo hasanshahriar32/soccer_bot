@@ -1092,6 +1092,7 @@ HTML_PAGE = """<!DOCTYPE html>
       <button class="arm-preset-btn" onclick="sendArmPreset('ready')">🎯 Ready</button>
       <button class="arm-preset-btn btn-grab" onclick="sendArmPreset('grab')">✊ Clamp</button>
       <button class="arm-preset-btn btn-open" onclick="sendArmPreset('open')">✋ Open</button>
+      <button class="arm-preset-btn" style="background:#1b382b !important; border-color:#2e7d32 !important; color:#00e676 !important;" onclick="sendArmPreset('pickup')">⚽ Pickup Ball</button>
       <button class="arm-preset-btn btn-test" onclick="testBaseSweep()">⚡ Base Sweep Test</button>
     </div>
 
