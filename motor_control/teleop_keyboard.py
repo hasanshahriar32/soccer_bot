@@ -2,7 +2,21 @@ import socket
 import time
 import sys
 
-PI_IP = '10.127.69.146'
+def discover_pi_ip():
+    if len(sys.argv) > 1: return sys.argv[1]
+    for ip in ["192.168.0.135", "10.127.69.146"]:
+        try:
+            s = socket.socket()
+            s.settimeout(0.25)
+            if s.connect_ex((ip, 22)) == 0 or s.connect_ex((ip, 9000)) == 0:
+                s.close()
+                return ip
+            s.close()
+        except Exception:
+            pass
+    return "192.168.0.135"
+
+PI_IP = discover_pi_ip()
 MOTOR_PORT = 9000
 
 def main():

@@ -1,7 +1,24 @@
 import paramiko
 import time
 
-PI_IP = '10.127.69.146'
+import socket
+import sys
+
+def discover_pi_ip():
+    if len(sys.argv) > 1: return sys.argv[1]
+    for ip in ["192.168.0.135", "10.127.69.146"]:
+        try:
+            s = socket.socket()
+            s.settimeout(0.25)
+            if s.connect_ex((ip, 22)) == 0:
+                s.close()
+                return ip
+            s.close()
+        except Exception:
+            pass
+    return "192.168.0.135"
+
+PI_IP = discover_pi_ip()
 PI_USER = 'hasan'
 PI_PASS = 'grammarpro'
 

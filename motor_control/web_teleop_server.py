@@ -44,7 +44,23 @@ try:
 except ImportError:
     HAS_ROS2 = False
 
-PI_IP = sys.argv[1] if len(sys.argv) > 1 else "10.127.69.146"
+def discover_pi_ip():
+    if len(sys.argv) > 1:
+        return sys.argv[1]
+    candidates = ["192.168.0.135", "10.127.69.146", "10.61.32.146", "10.72.30.146"]
+    for ip in candidates:
+        try:
+            s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            s.settimeout(0.25)
+            if s.connect_ex((ip, 22)) == 0 or s.connect_ex((ip, 8000)) == 0:
+                s.close()
+                return ip
+            s.close()
+        except Exception:
+            pass
+    return "192.168.0.135"
+
+PI_IP = discover_pi_ip()
 PI_MOTOR_PORT = 9000
 PI_ARM_PORT = 9001
 WEB_PORT = 5050
