@@ -8,6 +8,7 @@
   <!--   - Drive Wheels: Radius 3.3 cm, Width 4.0 cm (Rear Position: -11.5cm)-->
   <!--   - YDLidar X4:   Radius 3.5 cm, Height 4.0 cm (Top Center: -1.9cm Y) -->
   <!--   - Pi Camera V2: 1.0cm x 3.0cm x 3.0cm (Front Edge: +16.5cm X)        -->
+  <!--   - 4-DOF Arm:    Base Turret, Shoulder (10cm), Elbow (10cm), Gripper -->
   <!-- ==================================================================== -->
 
   <!-- 1. Color Palette Definitions -->
@@ -25,6 +26,22 @@
 
   <material name="camera_green">
     <color rgba="0.10 0.80 0.10 1.00"/>
+  </material>
+
+  <material name="arm_dark">
+    <color rgba="0.20 0.20 0.22 1.00"/>
+  </material>
+
+  <material name="arm_metallic">
+    <color rgba="0.75 0.78 0.82 1.00"/>
+  </material>
+
+  <material name="arm_servo_blue">
+    <color rgba="0.05 0.45 0.90 1.00"/>
+  </material>
+
+  <material name="gripper_orange">
+    <color rgba="0.95 0.50 0.05 1.00"/>
   </material>
 
   <!-- 2. Base Link (Reference frame on ground) -->
@@ -118,6 +135,140 @@
     <child link="camera_link"/>
     <!-- Front edge (+0.165m X offset), +2.0cm Y offset, 4.5cm height -->
     <origin xyz="0.165 0.02 0.045" rpy="-1.5708 0 -1.5708"/>
+  </joint>
+
+  <!-- ==================================================================== -->
+  <!--                 4-DOF ROBOTIC ARM SIMULATION RIG                     -->
+  <!-- ==================================================================== -->
+
+  <!-- 8. Arm Mounting Pedestal (Top Front of Chassis) -->
+  <link name="arm_mount">
+    <visual>
+      <origin xyz="0 0 0.0075" rpy="0 0 0"/>
+      <geometry>
+        <cylinder radius="0.04" length="0.015"/>
+      </geometry>
+      <material name="arm_dark"/>
+    </visual>
+  </link>
+
+  <joint name="chassis_to_arm_mount" type="fixed">
+    <parent link="chassis"/>
+    <child link="arm_mount"/>
+    <!-- Mounted on front deck of robot chassis: X = +0.10m, Z = 0.11m -->
+    <origin xyz="0.10 0.0 0.11" rpy="0 0 0"/>
+  </joint>
+
+  <!-- 9. Base Rotation Turret (Joint 1: Base Yaw 0°-180°) -->
+  <link name="arm_base_link">
+    <visual>
+      <origin xyz="0 0 0.015" rpy="0 0 0"/>
+      <geometry>
+        <cylinder radius="0.032" length="0.03"/>
+      </geometry>
+      <material name="arm_servo_blue"/>
+    </visual>
+  </link>
+
+  <joint name="base_joint" type="revolute">
+    <parent link="arm_mount"/>
+    <child link="arm_base_link"/>
+    <origin xyz="0 0 0.015" rpy="0 0 0"/>
+    <axis xyz="0 0 1"/>
+    <limit lower="-1.5708" upper="1.5708" effort="10.0" velocity="3.0"/>
+  </joint>
+
+  <!-- 10. Shoulder Spar / Bicep (Joint 2: Shoulder Pitch 0°-180°) -->
+  <link name="arm_shoulder_link">
+    <visual>
+      <origin xyz="0 0 0.05" rpy="0 0 0"/>
+      <geometry>
+        <cylinder radius="0.012" length="0.10"/>
+      </geometry>
+      <material name="arm_metallic"/>
+    </visual>
+  </link>
+
+  <joint name="shoulder_joint" type="revolute">
+    <parent link="arm_base_link"/>
+    <child link="arm_shoulder_link"/>
+    <origin xyz="0 0 0.03" rpy="0 0 0"/>
+    <axis xyz="0 1 0"/>
+    <limit lower="-0.5" upper="2.6179" effort="10.0" velocity="3.0"/>
+  </joint>
+
+  <!-- 11. Elbow Spar / Forearm (Joint 3: Elbow Pitch 0°-180°) -->
+  <link name="arm_elbow_link">
+    <visual>
+      <origin xyz="0.05 0 0" rpy="0 1.5708 0"/>
+      <geometry>
+        <cylinder radius="0.011" length="0.10"/>
+      </geometry>
+      <material name="arm_metallic"/>
+    </visual>
+  </link>
+
+  <joint name="elbow_joint" type="revolute">
+    <parent link="arm_shoulder_link"/>
+    <child link="arm_elbow_link"/>
+    <origin xyz="0 0 0.10" rpy="0 0 0"/>
+    <axis xyz="0 1 0"/>
+    <limit lower="-1.5708" upper="2.6179" effort="10.0" velocity="3.0"/>
+  </joint>
+
+  <!-- 12. Gripper Wrist Bracket -->
+  <link name="arm_wrist_link">
+    <visual>
+      <origin xyz="0.015 0 0" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.03 0.04 0.025"/>
+      </geometry>
+      <material name="arm_dark"/>
+    </visual>
+  </link>
+
+  <joint name="wrist_joint" type="fixed">
+    <parent link="arm_elbow_link"/>
+    <child link="arm_wrist_link"/>
+    <origin xyz="0.10 0 0" rpy="0 0 0"/>
+  </joint>
+
+  <!-- 13. Left Gripper Claw Finger -->
+  <link name="arm_left_claw">
+    <visual>
+      <origin xyz="0.03 0.005 0" rpy="0 0 0.2"/>
+      <geometry>
+        <box size="0.06 0.008 0.02"/>
+      </geometry>
+      <material name="gripper_orange"/>
+    </visual>
+  </link>
+
+  <joint name="gripper_left_joint" type="revolute">
+    <parent link="arm_wrist_link"/>
+    <child link="arm_left_claw"/>
+    <origin xyz="0.025 0.015 0" rpy="0 0 0"/>
+    <axis xyz="0 0 1"/>
+    <limit lower="0.0" upper="0.8" effort="5.0" velocity="3.0"/>
+  </joint>
+
+  <!-- 14. Right Gripper Claw Finger -->
+  <link name="arm_right_claw">
+    <visual>
+      <origin xyz="0.03 -0.005 0" rpy="0 0 -0.2"/>
+      <geometry>
+        <box size="0.06 0.008 0.02"/>
+      </geometry>
+      <material name="gripper_orange"/>
+    </visual>
+  </link>
+
+  <joint name="gripper_right_joint" type="revolute">
+    <parent link="arm_wrist_link"/>
+    <child link="arm_right_claw"/>
+    <origin xyz="0.025 -0.015 0" rpy="0 0 0"/>
+    <axis xyz="0 0 -1"/>
+    <limit lower="0.0" upper="0.8" effort="5.0" velocity="3.0"/>
   </joint>
 
 </robot>

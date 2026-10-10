@@ -8,6 +8,10 @@ Panels:
         - /LaserScan1
         - /RobotModel1
         - /Image1
+        - /Map1
+        - /Robot Path1
+        - /BallMarker1
+        - /TF1
       Splitter Ratio: 0.5
     Tree Height: 384
 Visualization Manager:
@@ -19,7 +23,7 @@ Visualization Manager:
       Color: 160; 160; 164
       Enabled: true
       Line Style:
-        Line Width: 0.029999999329447746
+        Line Width: 0.03
         Value: Lines
       Name: Grid
       Normal Cell Count: 0
@@ -53,7 +57,7 @@ Visualization Manager:
       Position Transformer: XYZ
       Selectable: true
       Size (Pixels): 5
-      Size (m): 0.05999999865889549
+      Size (m): 0.06
       Style: Spheres
       Topic:
         Depth: 10
@@ -79,14 +83,50 @@ Visualization Manager:
       Enabled: true
       Links:
         All Links Enabled: true
-        Expand Joint Details: false
+        Expand Joint Details: true
         Expand Link Details: false
         Expand Tree: false
         Link Tree Style: Links in Alphabetic Order
+        arm_base_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        arm_elbow_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        arm_left_claw:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        arm_mount:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        arm_right_claw:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        arm_shoulder_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        arm_wrist_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
         base_link:
           Alpha: 1
           Show Axes: false
           Show Trail: false
+          Value: true
         camera_link:
           Alpha: 1
           Show Axes: false
@@ -134,31 +174,11 @@ Visualization Manager:
         Reliability Policy: System Default
         Value: /image_raw
       Value: true
-    - Class: rviz_default_plugins/Camera
-      Enabled: false
-      Far Plane Distance: 100
-      Image Rendering: background and overlay
-      Name: Camera
-      Overlay Alpha: 0.5
-      Topic:
-        Depth: 5
-        Durability Policy: Volatile
-        History Policy: Keep Last
-        Reliability Policy: Reliable
-        Value: /image_raw
-      Value: false
-      Visibility:
-        Grid: true
-        Image: true
-        LaserScan: true
-        RobotModel: true
-        Value: true
-      Zoom Factor: 1
     - Alpha: 0.7
       Class: rviz_default_plugins/Map
-      Color Scheme: map
+      Color Scheme: costmap
       Draw Behind: false
-      Enabled: false
+      Enabled: true
       Name: Map
       Topic:
         Depth: 5
@@ -174,6 +194,34 @@ Visualization Manager:
         Value: /map_updates
       Use Timestamp: false
       Value: true
+    - Alpha: 1
+      Buffer Length: 1
+      Class: rviz_default_plugins/Path
+      Color: 0; 255; 0
+      Draw Behind: false
+      Enabled: true
+      Head Diameter: 0.1
+      Head Shape: Cylinder
+      Length: 0.3
+      Line Style: Lines
+      Line Width: 0.04
+      Name: Robot Path
+      Offset:
+        X: 0
+        Y: 0
+        Z: 0
+      Pose Color: 255; 85; 255
+      Pose Style: None
+      Radius: 0.03
+      Shaft Diameter: 0.05
+      Shaft Length: 0.1
+      Topic:
+        Depth: 10
+        Durability Policy: Volatile
+        History Policy: Keep Last
+        Reliability Policy: Reliable
+        Value: /robot_path
+      Value: true
     - Class: rviz_default_plugins/Marker
       Enabled: true
       Name: BallMarker
@@ -186,10 +234,26 @@ Visualization Manager:
         Reliability Policy: Reliable
         Value: /ball_marker
       Value: true
+    - Class: rviz_default_plugins/TF
+      Enabled: true
+      Filter (blacklist): ""
+      Filter (whitelist): ""
+      Frame Timeout: 15
+      Frames:
+        All Enabled: true
+      Marker Scale: 0.25
+      Name: TF
+      Show Arrows: true
+      Show Axes: true
+      Show Names: false
+      Tree:
+        {}
+      Update Interval: 0
+      Value: true
   Enabled: true
   Global Options:
     Background Color: 48; 48; 48
-    Fixed Frame: base_link
+    Fixed Frame: map
     Frame Rate: 30
   Name: root
   Tools:
@@ -232,9 +296,9 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz_default_plugins/Orbit
-      Distance: 7.652810096740723
+      Distance: 4.5
       Enable Stereo Rendering:
-        Stereo Eye Separation: 0.05999999865889549
+        Stereo Eye Separation: 0.06
         Stereo Focal Distance: 1
         Swap Stereo Eyes: false
         Value: false
@@ -243,14 +307,14 @@ Visualization Manager:
         Y: 0
         Z: 0
       Focal Shape Fixed Size: true
-      Focal Shape Size: 0.05000000074505806
+      Focal Shape Size: 0.05
       Invert Z Axis: false
       Name: Current View
-      Near Clip Distance: 0.009999999776482582
-      Pitch: 0.6000000238418579
+      Near Clip Distance: 0.01
+      Pitch: 0.65
       Target Frame: <Fixed Frame>
       Value: Orbit (rviz)
-      Yaw: 0.800000011920929
+      Yaw: 0.785
     Saved: ~
 Window Geometry:
   Camera:
