@@ -19,12 +19,29 @@ import struct
 import math
 import time
 import threading
+import sys
+
+def discover_pi_ip():
+    if len(sys.argv) > 1 and not sys.argv[1].startswith('-'):
+        return sys.argv[1]
+    candidates = ["192.168.0.135", "10.127.69.146", "10.61.32.146", "10.72.30.146"]
+    for ip in candidates:
+        try:
+            s = socket.socket()
+            s.settimeout(0.25)
+            if s.connect_ex((ip, 22)) == 0 or s.connect_ex((ip, 5000)) == 0:
+                s.close()
+                return ip
+            s.close()
+        except Exception:
+            pass
+    return "192.168.0.135"
 
 class RawLidarPublisher(Node):
     def __init__(self):
         super().__init__('raw_lidar_publisher')
         self.publisher_ = self.create_publisher(LaserScan, '/scan', 10)
-        self.pi_ip = '10.127.69.146'
+        self.pi_ip = discover_pi_ip()
         self.port = 5000
         self.running = True
         

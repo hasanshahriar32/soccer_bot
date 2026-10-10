@@ -9,13 +9,30 @@ import threading
 import time
 
 import struct
+import sys
+
+def discover_pi_ip():
+    if len(sys.argv) > 1 and not sys.argv[1].startswith('-'):
+        return sys.argv[1]
+    candidates = ["192.168.0.135", "10.127.69.146", "10.61.32.146", "10.72.30.146"]
+    for ip in candidates:
+        try:
+            s = socket.socket()
+            s.settimeout(0.25)
+            if s.connect_ex((ip, 22)) == 0 or s.connect_ex((ip, 8000)) == 0:
+                s.close()
+                return ip
+            s.close()
+        except Exception:
+            pass
+    return "192.168.0.135"
 
 class CameraHubNode(Node):
     def __init__(self):
         super().__init__('camera_hub_node')
         self.publisher_ = self.create_publisher(Image, '/image_raw', 10)
         self.bridge = CvBridge()
-        self.pi_ip = '10.127.69.146'
+        self.pi_ip = discover_pi_ip()
         self.port = 8000
         self.running = True
         
