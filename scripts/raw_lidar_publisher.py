@@ -51,14 +51,15 @@ class RawLidarPublisher(Node):
 
     def receive_lidar_stream(self):
         scan_cnt = 0
-        current_scan = [0.0] * 360
+        NUM_BINS = 720  # 0.5° sub-degree high resolution
+        current_scan = [0.0] * NUM_BINS
         
         while self.running:
             try:
                 sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
                 sock.settimeout(5.0)
                 sock.connect((self.pi_ip, self.port))
-                self.get_logger().info(f"Connected to Lidar Stream at {self.pi_ip}:{self.port} successfully!")
+                self.get_logger().info(f"Connected to Lidar Stream at {self.pi_ip}:{self.port} successfully (720-point high-density mode)!")
                 
                 buffer = b''
                 while self.running:
@@ -106,37 +107,37 @@ class RawLidarPublisher(Node):
                             dist_raw = struct.unpack('<H', pkt[10 + i*2 : 12 + i*2])[0]
                             dist_m = (dist_raw / 4.0) / 1000.0  # Convert mm to meters
                             
-                            angle = start_angle + (step * i)
-                            angle_idx = int(angle) % 360
+                            angle = (start_angle + (step * i)) % 360.0
+                            angle_idx = int(round(angle * 2.0)) % NUM_BINS
                             
-                            if 0.05 < dist_m < 10.0:
+                            if 0.08 <= dist_m <= 10.0:
                                 current_scan[angle_idx] = dist_m
                                 
                         if ct & 0x01: # Zero packet bit indicating full 360 turn
-                            self.publish_scan(current_scan)
+                            self.publish_scan(current_scan, NUM_BINS)
                             scan_cnt += 1
                             if scan_cnt % 100 == 0:
-                                self.get_logger().info(f"Published {scan_cnt} 360 scans to /scan")
-                            current_scan = [0.0] * 360
+                                self.get_logger().info(f"Published {scan_cnt} 360 scans (720-pt) to /scan")
+                            current_scan = [0.0] * NUM_BINS
 
                 sock.close()
             except Exception as e:
                 time.sleep(1.0)
 
-    def publish_scan(self, scan_data):
+    def publish_scan(self, scan_data, num_bins=720):
         scan_msg = LaserScan()
         scan_msg.header.stamp = self.get_clock().now().to_msg()
         scan_msg.header.frame_id = 'laser_frame'
         
         scan_msg.angle_min = 0.0
         scan_msg.angle_max = 2.0 * math.pi
-        scan_msg.angle_increment = (2.0 * math.pi) / 360.0
+        scan_msg.angle_increment = (2.0 * math.pi) / float(num_bins)  # 0.5°
         scan_msg.time_increment = 0.0
-        scan_msg.scan_time = 0.1
+        scan_msg.scan_time = 0.14
         scan_msg.range_min = 0.08
         scan_msg.range_max = 10.0
         
-        scan_msg.ranges = scan_data
+        scan_msg.ranges = [float(r) for r in scan_data]
         self.publisher_.publish(scan_msg)
 
 def main(args=None):

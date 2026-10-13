@@ -222,17 +222,35 @@ Visualization Manager:
         Reliability Policy: Reliable
         Value: /robot_path
       Value: true
-    - Class: rviz_default_plugins/Marker
+    - Class: rviz_default_plugins/MarkerArray
       Enabled: true
-      Name: BallMarker
-      Namespaces:
-        ball: true
+      Name: Camera Ball Marker
       Topic:
         Depth: 10
         Durability Policy: Volatile
         History Policy: Keep Last
         Reliability Policy: Reliable
         Value: /ball_marker
+      Value: true
+    - Class: rviz_default_plugins/MarkerArray
+      Enabled: true
+      Name: LiDAR Ball Marker
+      Topic:
+        Depth: 10
+        Durability Policy: Volatile
+        History Policy: Keep Last
+        Reliability Policy: Reliable
+        Value: /lidar_ball_marker
+      Value: true
+    - Class: rviz_default_plugins/MarkerArray
+      Enabled: true
+      Name: LiDAR Obstacle Clusters
+      Topic:
+        Depth: 10
+        Durability Policy: Volatile
+        History Policy: Keep Last
+        Reliability Policy: Reliable
+        Value: /lidar_clusters
       Value: true
     - Class: rviz_default_plugins/TF
       Enabled: true

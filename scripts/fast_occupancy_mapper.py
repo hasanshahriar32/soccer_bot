@@ -19,11 +19,11 @@ import numpy as np
 import math
 import time
 
-MAP_WIDTH = 200    # 200 cells
-MAP_HEIGHT = 200   # 200 cells
-RESOLUTION = 0.05  # 5 cm per cell -> 10m x 10m map
-ORIGIN_X = -(MAP_WIDTH * RESOLUTION) / 2.0   # -5.0 m
-ORIGIN_Y = -(MAP_HEIGHT * RESOLUTION) / 2.0  # -5.0 m
+MAP_WIDTH = 240    # 240 cells
+MAP_HEIGHT = 240   # 240 cells
+RESOLUTION = 0.03  # 3 cm per cell -> 7.2m x 7.2m high-detail local map
+ORIGIN_X = -(MAP_WIDTH * RESOLUTION) / 2.0   # -3.6 m
+ORIGIN_Y = -(MAP_HEIGHT * RESOLUTION) / 2.0  # -3.6 m
 
 class FastOccupancyMapper(Node):
     def __init__(self):

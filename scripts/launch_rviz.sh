@@ -19,6 +19,7 @@ cleanup() {
     pkill -9 -f camera_hub_node 2>/dev/null || true
     pkill -9 -f ball_tracker_node 2>/dev/null || true
     pkill -9 -f raw_lidar_publisher 2>/dev/null || true
+    pkill -9 -f lidar_cluster_detector 2>/dev/null || true
     pkill -9 -f robot_model_publisher 2>/dev/null || true
     pkill -9 -f fast_occupancy_mapper 2>/dev/null || true
     pkill -9 -f pi_screen_streamer 2>/dev/null || true
@@ -64,6 +65,7 @@ echo "==========================================================="
 
 # 4. Start ROS 2 Sensor, Model, Mapping & Vision Tracking Nodes
 python3 "${WSL_BASE}/scripts/raw_lidar_publisher.py" > /tmp/soccer_bot_lidar.log 2>&1 &
+python3 "${WSL_BASE}/scripts/lidar_cluster_detector.py" > /tmp/soccer_bot_cluster.log 2>&1 &
 python3 "${WSL_BASE}/src/soccer_vision/soccer_vision/camera_hub_node.py" > /tmp/soccer_bot_camera.log 2>&1 &
 python3 "${WSL_BASE}/src/soccer_vision/soccer_vision/ball_tracker_node.py" > /tmp/soccer_bot_tracker.log 2>&1 &
 python3 "${WSL_BASE}/scripts/robot_model_publisher.py" > /tmp/soccer_bot_model.log 2>&1 &
