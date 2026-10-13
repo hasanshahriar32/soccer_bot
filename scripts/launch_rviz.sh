@@ -40,8 +40,13 @@ else
 fi
 export QT_QPA_PLATFORM=xcb
 export QT_X11_NO_MITSHM=1
-export LIBGL_ALWAYS_SOFTWARE=1
-export MESA_GL_VERSION_OVERRIDE=3.3
+if grep -qi microsoft /proc/version 2>/dev/null; then
+    export LIBGL_ALWAYS_SOFTWARE=1
+    export MESA_GL_VERSION_OVERRIDE=3.3
+else
+    unset LIBGL_ALWAYS_SOFTWARE
+    unset MESA_GL_VERSION_OVERRIDE
+fi
 export OMP_NUM_THREADS=2
 export RMW_FASTRTPS_USE_QOS_FROM_XML=0
 
