@@ -32,18 +32,36 @@ import numpy as np
 import math
 import threading
 import time
+import json
+import socket
+import sys
 
 # --------------- Physical & Optical Constants ---------------
 KNOWN_BALL_DIAMETER_M = 0.065   # Standard ball diameter (~6.5 cm)
 CAMERA_FOV_H = math.radians(62.0)  # Raspberry Pi Camera horizontal FOV (62 deg)
 
 # --------------- Detection Tuning ---------------
-MIN_CONTOUR_AREA = 120          # Minimum blob area in pixels²
-MIN_RADIUS_PX = 6               # Minimum enclosing circle radius
-MIN_CIRCULARITY = 0.45          # 4π·area/perimeter² threshold
+MIN_CONTOUR_AREA = 80           # Minimum blob area in pixels² (more sensitive)
+MIN_RADIUS_PX = 5               # Minimum enclosing circle radius
+MIN_CIRCULARITY = 0.35          # 4π·area/perimeter² threshold
 EMA_ALPHA = 0.40                # Exponential Moving Average smoothing
-BALL_LOST_GRACE_SEC = 1.0       # Retain tracking for 1.0s after occlusion
+BALL_LOST_GRACE_SEC = 1.2       # Retain tracking for 1.2s after occlusion
 
+def discover_pi_ip():
+    if len(sys.argv) > 1 and not sys.argv[1].startswith('-'):
+        return sys.argv[1]
+    candidates = ["192.168.0.135", "10.127.69.146", "10.61.32.146", "10.72.30.146"]
+    for ip in candidates:
+        try:
+            s = socket.socket()
+            s.settimeout(0.25)
+            if s.connect_ex((ip, 8001)) == 0 or s.connect_ex((ip, 22)) == 0:
+                s.close()
+                return ip
+            s.close()
+        except Exception:
+            pass
+    return "192.168.0.135"
 
 class BallTrackerNode(Node):
     def __init__(self):
@@ -64,20 +82,20 @@ class BallTrackerNode(Node):
         self.pub_position = self.create_publisher(Point, '/ball_position', 10)
         self.pub_markers = self.create_publisher(MarkerArray, '/ball_marker', 10)
 
-        # --------------- HSV Color Ranges ---------------
+        # --------------- HSV Color Ranges (Low-Light Tolerant) ---------------
         # Supports yellow tennis balls, orange soccer balls, red, green, blue
         self.hsv_ranges = [
-            # Yellow / Tennis ball (HSV ~ 22-42)
-            (np.array([20, 70, 70]),   np.array([45, 255, 255])),
+            # Yellow / Tennis ball (HSV ~ 18-50, V lowered to 15 for dark rooms)
+            (np.array([18, 40, 15]),   np.array([55, 255, 255])),
             # Orange ball (HSV ~ 5-22)
-            (np.array([5, 90, 90]),    np.array([22, 255, 255])),
+            (np.array([5, 50, 20]),    np.array([22, 255, 255])),
             # Red ball (wraps around hue 0 and 180)
-            (np.array([0, 90, 80]),    np.array([8, 255, 255])),
-            (np.array([168, 90, 80]),  np.array([180, 255, 255])),
+            (np.array([0, 50, 20]),    np.array([8, 255, 255])),
+            (np.array([168, 50, 20]),  np.array([180, 255, 255])),
             # Green ball
-            (np.array([45, 70, 70]),   np.array([85, 255, 255])),
+            (np.array([45, 40, 15]),   np.array([85, 255, 255])),
             # Blue ball
-            (np.array([90, 80, 80]),   np.array([130, 255, 255])),
+            (np.array([90, 50, 20]),   np.array([130, 255, 255])),
         ]
 
         # --------------- Tracking State ---------------
@@ -85,21 +103,95 @@ class BallTrackerNode(Node):
         self.smooth_y = 0.0
         self.smooth_r = 0.0
         self.last_detection_time = 0.0
+        self.last_yolo_time = 0.0
         self.has_detection = False
+
+        # --------------- Pi YOLOv8 AI Stream Bridge (Port 8001) ---------------
+        self.pi_ip = discover_pi_ip()
+        self.ai_bridge_thread = threading.Thread(target=self.ai_bridge_loop, daemon=True)
+        self.ai_bridge_thread.start()
 
         self.get_logger().info('===========================================================')
         self.get_logger().info(' ⚽ CAMERA-LIDAR SYNCHRONIZED BALL TRACKER ACTIVE')
-        self.get_logger().info(' Optical Bearing + LaserScan Ground-Truth Distance Fusion')
+        self.get_logger().info(f' Connected to Pi YOLOv8 AI Model on {self.pi_ip}:8001')
         self.get_logger().info(' Publishing: /ball_position & /ball_marker (MarkerArray)')
         self.get_logger().info('===========================================================')
+
+    def ai_bridge_loop(self):
+        """Streams real-time YOLOv8 detections directly from Pi Camera Server (Port 8001)."""
+        while rclpy.ok():
+            try:
+                s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+                s.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1)
+                s.settimeout(10.0)
+                s.connect((self.pi_ip, 8001))
+                self.get_logger().info(f"Connected to Pi YOLOv8 AI Stream at {self.pi_ip}:8001!")
+                buf = ""
+                while rclpy.ok():
+                    chunk = s.recv(4096)
+                    if not chunk:
+                        break
+                    buf += chunk.decode('utf-8', errors='ignore')
+                    while '\n' in buf:
+                        line, buf = buf.split('\n', 1)
+                        line = line.strip()
+                        if not line:
+                            continue
+                        try:
+                            data = json.loads(line)
+                            if data.get('type') == 'ball':
+                                self.process_ai_detection(data)
+                        except Exception:
+                            pass
+                s.close()
+            except Exception:
+                time.sleep(1.0)
+
+    def process_ai_detection(self, data):
+        dist_m = float(data.get('x', 0.0))
+        bearing_deg = float(data.get('z', 0.0))
+        label = data.get('label', 'Tennis Ball')
+        score = float(data.get('score', 0.6))
+        bearing_rad = math.radians(bearing_deg)
+
+        if dist_m <= 0.05 or dist_m > 6.0:
+            return
+
+        # Check if LiDAR has a ground-truth laser reflection at this bearing
+        lidar_dist, mode = self.sync_lidar_distance(bearing_rad, expected_dist_m=dist_m)
+        if lidar_dist is not None:
+            final_dist = lidar_dist
+            mode_label = f"Fused (YOLO + LiDAR {int(score*100)}%)"
+        else:
+            final_dist = dist_m
+            mode_label = f"YOLO AI Floor ({int(score*100)}%)"
+
+        ball_x = final_dist * math.cos(bearing_rad)
+        ball_y = final_dist * math.sin(bearing_rad)
+
+        now_stamp = self.get_clock().now().to_msg()
+
+        # Publish /ball_position
+        pos_msg = Point()
+        pos_msg.x = float(ball_x)
+        pos_msg.y = float(ball_y)
+        pos_msg.z = float(final_dist)
+        self.pub_position.publish(pos_msg)
+
+        # Publish 3D Markers to RViz
+        self.publish_rviz_markers(ball_x, ball_y, final_dist, bearing_rad, mode_label, now_stamp)
+
+        self.last_detection_time = time.time()
+        self.last_yolo_time = time.time()
+        self.has_detection = True
 
     def scan_callback(self, msg: LaserScan):
         with self.scan_lock:
             self.latest_scan = msg
             self.latest_scan_time = time.time()
 
-    def sync_lidar_distance(self, bearing_rad: float):
-        """Finds closest LiDAR range within an angular cone around bearing_rad."""
+    def sync_lidar_distance(self, bearing_rad: float, expected_dist_m: float = None):
+        """Finds closest LiDAR range within an angular cone around bearing_rad with optional distance gating."""
         with self.scan_lock:
             scan = self.latest_scan
             scan_time = self.latest_scan_time
@@ -121,7 +213,13 @@ class BallTrackerNode(Node):
             if min_angle <= ray_angle <= max_angle:
                 if scan.range_min <= r <= scan.range_max and not math.isnan(r) and not math.isinf(r):
                     if 0.08 <= r <= 8.0:
-                        valid_ranges.append(r)
+                        # If expected distance is given, gate ranges to reject far background walls
+                        if expected_dist_m is not None:
+                            gate = max(0.18, 0.35 * expected_dist_m)
+                            if abs(r - expected_dist_m) <= gate:
+                                valid_ranges.append(r)
+                        else:
+                            valid_ranges.append(r)
 
         if valid_ranges:
             r_front = min(valid_ranges)
@@ -129,16 +227,20 @@ class BallTrackerNode(Node):
             r_center = r_front + (KNOWN_BALL_DIAMETER_M / 2.0)
             return r_center, "LIDAR_SYNC"
 
-        return None, "NO_RETURN"
+        return None, "NO_MATCH"
 
     def image_callback(self, msg: Image):
+        now = time.time()
+        # If Pi YOLOv8 AI is actively detecting the ball, let YOLO handle it to avoid flickering
+        if (now - getattr(self, 'last_yolo_time', 0.0)) < 1.5:
+            return
+
         try:
             frame = self.bridge.imgmsg_to_cv2(msg, "bgr8")
         except CvBridgeError as e:
             self.get_logger().error(f"CV Bridge Error: {e}")
             return
 
-        now = time.time()
         img_h, img_w = frame.shape[:2]
         focal_px = (img_w / 2.0) / math.tan(CAMERA_FOV_H / 2.0)
 

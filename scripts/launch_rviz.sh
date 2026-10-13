@@ -48,6 +48,7 @@ else
     unset LIBGL_ALWAYS_SOFTWARE
     unset MESA_GL_VERSION_OVERRIDE
 fi
+export allow_glsl_sampler_type_mismatch=true
 export OMP_NUM_THREADS=2
 export RMW_FASTRTPS_USE_QOS_FROM_XML=0
 
@@ -64,14 +65,14 @@ echo "   Workspace: $WSL_BASE"
 echo "==========================================================="
 
 # 4. Start ROS 2 Sensor, Model, Mapping & Vision Tracking Nodes
-python3 "${WSL_BASE}/scripts/raw_lidar_publisher.py" > /tmp/soccer_bot_lidar.log 2>&1 &
-python3 "${WSL_BASE}/scripts/lidar_cluster_detector.py" > /tmp/soccer_bot_cluster.log 2>&1 &
-python3 "${WSL_BASE}/src/soccer_vision/soccer_vision/camera_hub_node.py" > /tmp/soccer_bot_camera.log 2>&1 &
-python3 "${WSL_BASE}/src/soccer_vision/soccer_vision/ball_tracker_node.py" > /tmp/soccer_bot_tracker.log 2>&1 &
-python3 "${WSL_BASE}/scripts/robot_model_publisher.py" > /tmp/soccer_bot_model.log 2>&1 &
-python3 "${WSL_BASE}/scripts/path_publisher.py" > /tmp/soccer_bot_path.log 2>&1 &
-python3 "${WSL_BASE}/scripts/fast_occupancy_mapper.py" > /tmp/soccer_bot_mapper.log 2>&1 &
-python3 "${WSL_BASE}/src/soccer_slam/soccer_slam/pi_screen_streamer.py" > /tmp/soccer_bot_streamer.log 2>&1 &
+python3 -u "${WSL_BASE}/scripts/raw_lidar_publisher.py" > /tmp/soccer_bot_lidar.log 2>&1 &
+python3 -u "${WSL_BASE}/scripts/lidar_cluster_detector.py" > /tmp/soccer_bot_cluster.log 2>&1 &
+python3 -u "${WSL_BASE}/src/soccer_vision/soccer_vision/camera_hub_node.py" > /tmp/soccer_bot_camera.log 2>&1 &
+python3 -u "${WSL_BASE}/src/soccer_vision/soccer_vision/ball_tracker_node.py" > /tmp/soccer_bot_tracker.log 2>&1 &
+python3 -u "${WSL_BASE}/scripts/robot_model_publisher.py" > /tmp/soccer_bot_model.log 2>&1 &
+python3 -u "${WSL_BASE}/scripts/path_publisher.py" > /tmp/soccer_bot_path.log 2>&1 &
+python3 -u "${WSL_BASE}/scripts/fast_occupancy_mapper.py" > /tmp/soccer_bot_mapper.log 2>&1 &
+python3 -u "${WSL_BASE}/src/soccer_slam/soccer_slam/pi_screen_streamer.py" > /tmp/soccer_bot_streamer.log 2>&1 &
 
 sleep 2
 

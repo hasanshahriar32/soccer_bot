@@ -107,8 +107,12 @@ class RawLidarPublisher(Node):
                             dist_raw = struct.unpack('<H', pkt[10 + i*2 : 12 + i*2])[0]
                             dist_m = (dist_raw / 4.0) / 1000.0  # Convert mm to meters
                             
-                            angle = (start_angle + (step * i)) % 360.0
-                            angle_idx = int(round(angle * 2.0)) % NUM_BINS
+                            raw_angle = (start_angle + (step * i)) % 360.0
+                            # Official YDLidar X4 calibration (reversion=True, inverted=True):
+                            # Rotates 180° to align 0° with forward (+X) and inverts to CCW (+Y left):
+                            # (360.0 - (raw_angle + 180.0)) % 360.0 = (180.0 - raw_angle) % 360.0
+                            calibrated_angle = (180.0 - raw_angle) % 360.0
+                            angle_idx = int(round(calibrated_angle * 2.0)) % NUM_BINS
                             
                             if 0.08 <= dist_m <= 10.0:
                                 current_scan[angle_idx] = dist_m

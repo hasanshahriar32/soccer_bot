@@ -36,10 +36,10 @@ from geometry_msgs.msg import Point
 from visualization_msgs.msg import Marker, MarkerArray
 
 # --------------- Physical Dimensions ---------------
-BALL_MIN_DIAMETER_M = 0.035    # 3.5 cm minimum chord width
-BALL_MAX_DIAMETER_M = 0.095    # 9.5 cm maximum chord width (allowing beam dispersion)
+BALL_MIN_DIAMETER_M = 0.025    # 2.5 cm minimum chord width
+BALL_MAX_DIAMETER_M = 0.115    # 11.5 cm maximum chord width (allowing beam dispersion & partial grazing)
 BALL_IDEAL_DIAMETER_M = 0.065  # 6.5 cm standard tennis ball
-MAX_BALL_DISTANCE_M = 4.0      # Maximum reliable detection range for small objects
+MAX_BALL_DISTANCE_M = 4.5      # Maximum reliable detection range for small objects
 
 class LidarClusterDetector(Node):
     def __init__(self):
