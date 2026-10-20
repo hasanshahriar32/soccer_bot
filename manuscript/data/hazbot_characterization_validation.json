@@ -1,0 +1,22 @@
+{
+  "analysis": "Independent HazBot characterization read-back and reproducibility check",
+  "checks": {
+    "builtin_checks_passed": 29,
+    "byte_identical_repeat_outputs": 4,
+    "csv_matrix_chain_tolerance_m": 2e-12,
+    "dataset_hashes_verified": 3,
+    "independent_csv_matrix_chain_samples": 8,
+    "protocol_csv_rows": 2304,
+    "source_hashes_verified": 10,
+    "workspace_csv_rows": 68921
+  },
+  "date": "2026-10-21",
+  "limits": "Source geometry and isolated pure branch execution only. No robot, hardware, inference, transport, hazard, or physical-performance test.",
+  "passed": true,
+  "primary_output_sha256": {
+    "hazbot_characterization.json": "aa98e31de0b2c5bb5e21de76825e3a4103451c8d9241e70d0576482c22964042",
+    "hazbot_height_slabs.csv": "0dc0861709e1b405758285a95f8fe81eb5d26bee24bd426bef9c6ec9ebb65ed4",
+    "hazbot_protocol.csv": "78d39bcdbbf88a8f582248905e6292bdfe127f1949ded353b2277d9db1ae8705",
+    "hazbot_workspace.csv": "e967655ec72b73bb85f791185ca554205b93db318394a67e7c5214da79d51395"
+  }
+}

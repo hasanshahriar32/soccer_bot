@@ -1,0 +1,119 @@
+{
+  "full": null,
+  "no_base_arm_interlock": {
+    "first_violating_phase": "SEARCH",
+    "minimum_observation_prefix_length": 1,
+    "trace": [
+      {
+        "action": "rotate",
+        "observation_mask": 28,
+        "observations": {
+          "arm_stowed": false,
+          "at_drop_zone": false,
+          "at_pick_zone": false,
+          "base_stopped": false,
+          "grip_confirmed": false,
+          "release_confirmed": false,
+          "route_clear": true,
+          "scan_fresh": true,
+          "scan_usable": true,
+          "target_authorized": false,
+          "target_fresh": false,
+          "wrist_reachable": false
+        },
+        "phase_after": "SEARCH",
+        "phase_before": "SEARCH",
+        "policy": "no_base_arm_interlock",
+        "step": 1,
+        "violations": [
+          "base_requires_stowed_arm"
+        ]
+      }
+    ]
+  },
+  "no_scan_age": {
+    "first_violating_phase": "SEARCH",
+    "minimum_observation_prefix_length": 1,
+    "trace": [
+      {
+        "action": "rotate",
+        "observation_mask": 56,
+        "observations": {
+          "arm_stowed": true,
+          "at_drop_zone": false,
+          "at_pick_zone": false,
+          "base_stopped": false,
+          "grip_confirmed": false,
+          "release_confirmed": false,
+          "route_clear": true,
+          "scan_fresh": false,
+          "scan_usable": true,
+          "target_authorized": false,
+          "target_fresh": false,
+          "wrist_reachable": false
+        },
+        "phase_after": "SEARCH",
+        "phase_before": "SEARCH",
+        "policy": "no_scan_age",
+        "step": 1,
+        "violations": [
+          "base_requires_fresh_scan"
+        ]
+      }
+    ]
+  },
+  "no_target_authorization": {
+    "first_violating_phase": "APPROACH",
+    "minimum_observation_prefix_length": 2,
+    "trace": [
+      {
+        "action": "hold",
+        "observation_mask": 2,
+        "observations": {
+          "arm_stowed": false,
+          "at_drop_zone": false,
+          "at_pick_zone": false,
+          "base_stopped": false,
+          "grip_confirmed": false,
+          "release_confirmed": false,
+          "route_clear": false,
+          "scan_fresh": false,
+          "scan_usable": false,
+          "target_authorized": false,
+          "target_fresh": true,
+          "wrist_reachable": false
+        },
+        "phase_after": "APPROACH",
+        "phase_before": "SEARCH",
+        "policy": "no_target_authorization",
+        "step": 1,
+        "violations": []
+      },
+      {
+        "action": "advance",
+        "observation_mask": 62,
+        "observations": {
+          "arm_stowed": true,
+          "at_drop_zone": false,
+          "at_pick_zone": false,
+          "base_stopped": false,
+          "grip_confirmed": false,
+          "release_confirmed": false,
+          "route_clear": true,
+          "scan_fresh": true,
+          "scan_usable": true,
+          "target_authorized": false,
+          "target_fresh": true,
+          "wrist_reachable": false
+        },
+        "phase_after": "APPROACH",
+        "phase_before": "APPROACH",
+        "policy": "no_target_authorization",
+        "step": 2,
+        "violations": [
+          "advance_requires_authorized_target"
+        ]
+      }
+    ]
+  }
+}

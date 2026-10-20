@@ -1,0 +1,1832 @@
+{
+  "analysis": "Exhaustive abstract HazBot mission command-admissibility study",
+  "counterexamples": {
+    "full": null,
+    "no_base_arm_interlock": {
+      "first_violating_phase": "SEARCH",
+      "minimum_observation_prefix_length": 1,
+      "trace": [
+        {
+          "action": "rotate",
+          "observation_mask": 28,
+          "observations": {
+            "arm_stowed": false,
+            "at_drop_zone": false,
+            "at_pick_zone": false,
+            "base_stopped": false,
+            "grip_confirmed": false,
+            "release_confirmed": false,
+            "route_clear": true,
+            "scan_fresh": true,
+            "scan_usable": true,
+            "target_authorized": false,
+            "target_fresh": false,
+            "wrist_reachable": false
+          },
+          "phase_after": "SEARCH",
+          "phase_before": "SEARCH",
+          "policy": "no_base_arm_interlock",
+          "step": 1,
+          "violations": [
+            "base_requires_stowed_arm"
+          ]
+        }
+      ]
+    },
+    "no_scan_age": {
+      "first_violating_phase": "SEARCH",
+      "minimum_observation_prefix_length": 1,
+      "trace": [
+        {
+          "action": "rotate",
+          "observation_mask": 56,
+          "observations": {
+            "arm_stowed": true,
+            "at_drop_zone": false,
+            "at_pick_zone": false,
+            "base_stopped": false,
+            "grip_confirmed": false,
+            "release_confirmed": false,
+            "route_clear": true,
+            "scan_fresh": false,
+            "scan_usable": true,
+            "target_authorized": false,
+            "target_fresh": false,
+            "wrist_reachable": false
+          },
+          "phase_after": "SEARCH",
+          "phase_before": "SEARCH",
+          "policy": "no_scan_age",
+          "step": 1,
+          "violations": [
+            "base_requires_fresh_scan"
+          ]
+        }
+      ]
+    },
+    "no_target_authorization": {
+      "first_violating_phase": "APPROACH",
+      "minimum_observation_prefix_length": 2,
+      "trace": [
+        {
+          "action": "hold",
+          "observation_mask": 2,
+          "observations": {
+            "arm_stowed": false,
+            "at_drop_zone": false,
+            "at_pick_zone": false,
+            "base_stopped": false,
+            "grip_confirmed": false,
+            "release_confirmed": false,
+            "route_clear": false,
+            "scan_fresh": false,
+            "scan_usable": false,
+            "target_authorized": false,
+            "target_fresh": true,
+            "wrist_reachable": false
+          },
+          "phase_after": "APPROACH",
+          "phase_before": "SEARCH",
+          "policy": "no_target_authorization",
+          "step": 1,
+          "violations": []
+        },
+        {
+          "action": "advance",
+          "observation_mask": 62,
+          "observations": {
+            "arm_stowed": true,
+            "at_drop_zone": false,
+            "at_pick_zone": false,
+            "base_stopped": false,
+            "grip_confirmed": false,
+            "release_confirmed": false,
+            "route_clear": true,
+            "scan_fresh": true,
+            "scan_usable": true,
+            "target_authorized": false,
+            "target_fresh": true,
+            "wrist_reachable": false
+          },
+          "phase_after": "APPROACH",
+          "phase_before": "APPROACH",
+          "policy": "no_target_authorization",
+          "step": 2,
+          "violations": [
+            "advance_requires_authorized_target"
+          ]
+        }
+      ]
+    }
+  },
+  "datasets": {
+    "hazbot_mission_counterexamples.csv": {
+      "rows": 4,
+      "sha256": "b0d96d4e26a9c3a0f07e71e04ab31be713cec21286c7fc723c70f78f7a52137a"
+    },
+    "hazbot_mission_counterexamples.json": {
+      "sha256": "fa88e23e1722e021486d1b5213a93f8a8b12d87582156b9f3ecb45f829efbd5f"
+    }
+  },
+  "date": "2026-10-21",
+  "dependencies": "Python standard library only",
+  "evidence_type": "New abstract reference coordinator and independent command oracle; not deployed robotics code, physics/sensor simulation, hardware trial, hazard classification, or real mission success",
+  "generated_documents": {
+    "hazbot_mission_summary.tex": {
+      "path": "manuscript/generated/hazbot_mission_summary.tex",
+      "sha256": "6e3ea58f8dc51c0ff5dc80bf656f32b3301fb3a8f0cb5fb567bd98cef51c9200"
+    }
+  },
+  "limitations": [
+    "Seven phases and twelve Booleans are the complete bounded abstraction, not the complete robot state.",
+    "Unconstrained observations include physically inconsistent combinations; no probabilities or observed failure rates are inferred.",
+    "BFS is existential reachability with arbitrary next observations, not guaranteed completion under realistic sensing or environmental dynamics.",
+    "A shortest counterexample minimizes Boolean-observation prefix length, not time, distance, or severity.",
+    "Target authorization, freshness, grip, reachability and release are assumed input facts; their physical verification is outside this model.",
+    "HOLD is an abstract inhibit; deployed motion requires explicit lower-level stop/watchdog and arbitration semantics.",
+    "No collision dynamics, human proximity, hazardous substance properties, payload, contact mechanics, or response latencies are modeled.",
+    "Zero violating model commands is not a claim of physical safety, detector accuracy, or successful autonomous hazardous-material retrieval."
+  ],
+  "model": {
+    "ablation_definitions": {
+      "no_base_arm_interlock": "Remove arm_stowed from base-motion guards and base_stopped from arm-operation guards.",
+      "no_scan_age": "Remove scan_fresh only; scan_usable remains required.",
+      "no_target_authorization": "Remove target_authorized only; target_fresh remains required."
+    },
+    "actions": [
+      "rotate",
+      "advance",
+      "transport",
+      "reach",
+      "close_gripper",
+      "stow_arm",
+      "open_gripper",
+      "stop_base",
+      "hold"
+    ],
+    "cases_per_policy": 28672,
+    "event_alphabet_size": 4096,
+    "hold_semantics": "Abstract inhibit/no progressing actuation intent. Blocked guards preserve phase; target-acquisition and release-completion observations may advance logical phase while emitting hold. No physical stopping-time or command-cancellation guarantee follows.",
+    "observation_bitmask_encoding": "bit i is observation_fields_lsb_first[i]; all masks 0..4095",
+    "observation_fields_lsb_first": [
+      "target_authorized",
+      "target_fresh",
+      "scan_fresh",
+      "scan_usable",
+      "route_clear",
+      "arm_stowed",
+      "base_stopped",
+      "wrist_reachable",
+      "at_pick_zone",
+      "grip_confirmed",
+      "at_drop_zone",
+      "release_confirmed"
+    ],
+    "observations": "External Boolean assertions. No generation from RGB, LiDAR, material sensors, odometry or arm feedback is modeled.",
+    "oracle_scope": "Command obligations and command-to-phase contracts; not exhaustive correctness of every transition guard or physical safety.",
+    "phase_count": 7,
+    "phases": [
+      "SEARCH",
+      "APPROACH",
+      "DOCK",
+      "GRASP",
+      "CARRY",
+      "PLACE",
+      "COMPLETE"
+    ],
+    "policy_count": 4,
+    "pruning": "none; including logically possible but physically inconsistent combinations",
+    "scan_scope": "Fresh usable clear scans required by oracle for base motion. Coordinator also conservatively requires fresh usable scans for DOCK/GRASP/PLACE; these extra arm-phase scan guards are not additional oracle obligations.",
+    "total_cases": 114688
+  },
+  "nominal_sequence": {
+    "final_phase": "COMPLETE",
+    "interpretation": "Hand-constructed Boolean witness of reference-model completion, not measured task success or a simulated physical mission.",
+    "steps": 11,
+    "trace": [
+      {
+        "action": "rotate",
+        "description": "Search without an authorized target",
+        "observation_mask": 252,
+        "observations": {
+          "arm_stowed": true,
+          "at_drop_zone": false,
+          "at_pick_zone": false,
+          "base_stopped": true,
+          "grip_confirmed": false,
+          "release_confirmed": false,
+          "route_clear": true,
+          "scan_fresh": true,
+          "scan_usable": true,
+          "target_authorized": false,
+          "target_fresh": false,
+          "wrist_reachable": true
+        },
+        "phase_after": "SEARCH",
+        "phase_before": "SEARCH",
+        "policy": "full",
+        "step": 1,
+        "violations": []
+      },
+      {
+        "action": "hold",
+        "description": "Acquire a fresh authorized surrogate target",
+        "observation_mask": 255,
+        "observations": {
+          "arm_stowed": true,
+          "at_drop_zone": false,
+          "at_pick_zone": false,
+          "base_stopped": true,
+          "grip_confirmed": false,
+          "release_confirmed": false,
+          "route_clear": true,
+          "scan_fresh": true,
+          "scan_usable": true,
+          "target_authorized": true,
+          "target_fresh": true,
+          "wrist_reachable": true
+        },
+        "phase_after": "APPROACH",
+        "phase_before": "SEARCH",
+        "policy": "full",
+        "step": 2,
+        "violations": []
+      },
+      {
+        "action": "advance",
+        "description": "Approach with clear route and stowed arm",
+        "observation_mask": 255,
+        "observations": {
+          "arm_stowed": true,
+          "at_drop_zone": false,
+          "at_pick_zone": false,
+          "base_stopped": true,
+          "grip_confirmed": false,
+          "release_confirmed": false,
+          "route_clear": true,
+          "scan_fresh": true,
+          "scan_usable": true,
+          "target_authorized": true,
+          "target_fresh": true,
+          "wrist_reachable": true
+        },
+        "phase_after": "APPROACH",
+        "phase_before": "APPROACH",
+        "policy": "full",
+        "step": 3,
+        "violations": []
+      },
+      {
+        "action": "stop_base",
+        "description": "Reach pick zone and request base stop",
+        "observation_mask": 511,
+        "observations": {
+          "arm_stowed": true,
+          "at_drop_zone": false,
+          "at_pick_zone": true,
+          "base_stopped": true,
+          "grip_confirmed": false,
+          "release_confirmed": false,
+          "route_clear": true,
+          "scan_fresh": true,
+          "scan_usable": true,
+          "target_authorized": true,
+          "target_fresh": true,
+          "wrist_reachable": true
+        },
+        "phase_after": "DOCK",
+        "phase_before": "APPROACH",
+        "policy": "full",
+        "step": 4,
+        "violations": []
+      },
+      {
+        "action": "reach",
+        "description": "Stationary, reachable target permits arm reach",
+        "observation_mask": 511,
+        "observations": {
+          "arm_stowed": true,
+          "at_drop_zone": false,
+          "at_pick_zone": true,
+          "base_stopped": true,
+          "grip_confirmed": false,
+          "release_confirmed": false,
+          "route_clear": true,
+          "scan_fresh": true,
+          "scan_usable": true,
+          "target_authorized": true,
+          "target_fresh": true,
+          "wrist_reachable": true
+        },
+        "phase_after": "GRASP",
+        "phase_before": "DOCK",
+        "policy": "full",
+        "step": 5,
+        "violations": []
+      },
+      {
+        "action": "close_gripper",
+        "description": "Close gripper while base is stopped",
+        "observation_mask": 479,
+        "observations": {
+          "arm_stowed": false,
+          "at_drop_zone": false,
+          "at_pick_zone": true,
+          "base_stopped": true,
+          "grip_confirmed": false,
+          "release_confirmed": false,
+          "route_clear": true,
+          "scan_fresh": true,
+          "scan_usable": true,
+          "target_authorized": true,
+          "target_fresh": true,
+          "wrist_reachable": true
+        },
+        "phase_after": "GRASP",
+        "phase_before": "GRASP",
+        "policy": "full",
+        "step": 6,
+        "violations": []
+      },
+      {
+        "action": "stow_arm",
+        "description": "Confirmed grip permits stow request",
+        "observation_mask": 735,
+        "observations": {
+          "arm_stowed": false,
+          "at_drop_zone": false,
+          "at_pick_zone": false,
+          "base_stopped": true,
+          "grip_confirmed": true,
+          "release_confirmed": false,
+          "route_clear": true,
+          "scan_fresh": true,
+          "scan_usable": true,
+          "target_authorized": true,
+          "target_fresh": true,
+          "wrist_reachable": true
+        },
+        "phase_after": "CARRY",
+        "phase_before": "GRASP",
+        "policy": "full",
+        "step": 7,
+        "violations": []
+      },
+      {
+        "action": "transport",
+        "description": "Confirmed stow and clear route permit transport",
+        "observation_mask": 767,
+        "observations": {
+          "arm_stowed": true,
+          "at_drop_zone": false,
+          "at_pick_zone": false,
+          "base_stopped": true,
+          "grip_confirmed": true,
+          "release_confirmed": false,
+          "route_clear": true,
+          "scan_fresh": true,
+          "scan_usable": true,
+          "target_authorized": true,
+          "target_fresh": true,
+          "wrist_reachable": true
+        },
+        "phase_after": "CARRY",
+        "phase_before": "CARRY",
+        "policy": "full",
+        "step": 8,
+        "violations": []
+      },
+      {
+        "action": "stop_base",
+        "description": "Reach drop zone and request base stop",
+        "observation_mask": 1791,
+        "observations": {
+          "arm_stowed": true,
+          "at_drop_zone": true,
+          "at_pick_zone": false,
+          "base_stopped": true,
+          "grip_confirmed": true,
+          "release_confirmed": false,
+          "route_clear": true,
+          "scan_fresh": true,
+          "scan_usable": true,
+          "target_authorized": true,
+          "target_fresh": true,
+          "wrist_reachable": true
+        },
+        "phase_after": "PLACE",
+        "phase_before": "CARRY",
+        "policy": "full",
+        "step": 9,
+        "violations": []
+      },
+      {
+        "action": "open_gripper",
+        "description": "Stationary at drop zone permits release request",
+        "observation_mask": 1759,
+        "observations": {
+          "arm_stowed": false,
+          "at_drop_zone": true,
+          "at_pick_zone": false,
+          "base_stopped": true,
+          "grip_confirmed": true,
+          "release_confirmed": false,
+          "route_clear": true,
+          "scan_fresh": true,
+          "scan_usable": true,
+          "target_authorized": true,
+          "target_fresh": true,
+          "wrist_reachable": true
+        },
+        "phase_after": "PLACE",
+        "phase_before": "PLACE",
+        "policy": "full",
+        "step": 10,
+        "violations": []
+      },
+      {
+        "action": "hold",
+        "description": "Observed release completes reference sequence",
+        "observation_mask": 3327,
+        "observations": {
+          "arm_stowed": true,
+          "at_drop_zone": true,
+          "at_pick_zone": false,
+          "base_stopped": true,
+          "grip_confirmed": false,
+          "release_confirmed": true,
+          "route_clear": true,
+          "scan_fresh": true,
+          "scan_usable": true,
+          "target_authorized": true,
+          "target_fresh": true,
+          "wrist_reachable": true
+        },
+        "phase_after": "COMPLETE",
+        "phase_before": "PLACE",
+        "policy": "full",
+        "step": 11,
+        "violations": []
+      }
+    ]
+  },
+  "policies": {
+    "full": {
+      "admissible_cases": 28672,
+      "cases": 28672,
+      "phases": {
+        "APPROACH": {
+          "action_counts": {
+            "advance": 32,
+            "hold": 4032,
+            "stop_base": 32
+          },
+          "cases": 4096,
+          "next_phase_counts": {
+            "APPROACH": 4064,
+            "DOCK": 32
+          },
+          "violating_action_counts": {},
+          "violating_cases": 0
+        },
+        "CARRY": {
+          "action_counts": {
+            "hold": 3008,
+            "stop_base": 1024,
+            "transport": 64
+          },
+          "cases": 4096,
+          "next_phase_counts": {
+            "CARRY": 3072,
+            "PLACE": 1024
+          },
+          "violating_action_counts": {},
+          "violating_cases": 0
+        },
+        "COMPLETE": {
+          "action_counts": {
+            "hold": 4096
+          },
+          "cases": 4096,
+          "next_phase_counts": {
+            "COMPLETE": 4096
+          },
+          "violating_action_counts": {},
+          "violating_cases": 0
+        },
+        "DOCK": {
+          "action_counts": {
+            "hold": 4032,
+            "reach": 64
+          },
+          "cases": 4096,
+          "next_phase_counts": {
+            "DOCK": 4032,
+            "GRASP": 64
+          },
+          "violating_action_counts": {},
+          "violating_cases": 0
+        },
+        "GRASP": {
+          "action_counts": {
+            "close_gripper": 32,
+            "hold": 4032,
+            "stow_arm": 32
+          },
+          "cases": 4096,
+          "next_phase_counts": {
+            "CARRY": 32,
+            "GRASP": 4064
+          },
+          "violating_action_counts": {},
+          "violating_cases": 0
+        },
+        "PLACE": {
+          "action_counts": {
+            "hold": 4032,
+            "open_gripper": 64
+          },
+          "cases": 4096,
+          "next_phase_counts": {
+            "COMPLETE": 128,
+            "PLACE": 3968
+          },
+          "violating_action_counts": {},
+          "violating_cases": 0
+        },
+        "SEARCH": {
+          "action_counts": {
+            "hold": 3904,
+            "rotate": 192
+          },
+          "cases": 4096,
+          "next_phase_counts": {
+            "APPROACH": 1024,
+            "SEARCH": 3072
+          },
+          "violating_action_counts": {},
+          "violating_cases": 0
+        }
+      },
+      "reachability": {
+        "examined_valuation_edges": 28672,
+        "initial_phase": "SEARCH",
+        "maximum_shortest_depth": 6,
+        "phase_edges": [
+          {
+            "destination": "APPROACH",
+            "source": "SEARCH",
+            "valuation_edges": 1024
+          },
+          {
+            "destination": "SEARCH",
+            "source": "SEARCH",
+            "valuation_edges": 3072
+          },
+          {
+            "destination": "APPROACH",
+            "source": "APPROACH",
+            "valuation_edges": 4064
+          },
+          {
+            "destination": "DOCK",
+            "source": "APPROACH",
+            "valuation_edges": 32
+          },
+          {
+            "destination": "DOCK",
+            "source": "DOCK",
+            "valuation_edges": 4032
+          },
+          {
+            "destination": "GRASP",
+            "source": "DOCK",
+            "valuation_edges": 64
+          },
+          {
+            "destination": "CARRY",
+            "source": "GRASP",
+            "valuation_edges": 32
+          },
+          {
+            "destination": "GRASP",
+            "source": "GRASP",
+            "valuation_edges": 4064
+          },
+          {
+            "destination": "CARRY",
+            "source": "CARRY",
+            "valuation_edges": 3072
+          },
+          {
+            "destination": "PLACE",
+            "source": "CARRY",
+            "valuation_edges": 1024
+          },
+          {
+            "destination": "COMPLETE",
+            "source": "PLACE",
+            "valuation_edges": 128
+          },
+          {
+            "destination": "PLACE",
+            "source": "PLACE",
+            "valuation_edges": 3968
+          },
+          {
+            "destination": "COMPLETE",
+            "source": "COMPLETE",
+            "valuation_edges": 4096
+          }
+        ],
+        "pruning": "none; all 4096 valuations retained at every reached phase",
+        "reachable_phases": [
+          "SEARCH",
+          "APPROACH",
+          "DOCK",
+          "GRASP",
+          "CARRY",
+          "PLACE",
+          "COMPLETE"
+        ],
+        "shortest_depth": {
+          "APPROACH": 1,
+          "CARRY": 4,
+          "COMPLETE": 6,
+          "DOCK": 2,
+          "GRASP": 3,
+          "PLACE": 5,
+          "SEARCH": 0
+        },
+        "unique_phase_edges": 13
+      },
+      "violating_cases": 0,
+      "violation_obligation_counts": {}
+    },
+    "no_base_arm_interlock": {
+      "admissible_cases": 28192,
+      "cases": 28672,
+      "phases": {
+        "APPROACH": {
+          "action_counts": {
+            "advance": 64,
+            "hold": 3968,
+            "stop_base": 64
+          },
+          "cases": 4096,
+          "next_phase_counts": {
+            "APPROACH": 4032,
+            "DOCK": 64
+          },
+          "violating_action_counts": {
+            "advance": 32
+          },
+          "violating_cases": 32
+        },
+        "CARRY": {
+          "action_counts": {
+            "hold": 2944,
+            "stop_base": 1024,
+            "transport": 128
+          },
+          "cases": 4096,
+          "next_phase_counts": {
+            "CARRY": 3072,
+            "PLACE": 1024
+          },
+          "violating_action_counts": {
+            "transport": 64
+          },
+          "violating_cases": 64
+        },
+        "COMPLETE": {
+          "action_counts": {
+            "hold": 4096
+          },
+          "cases": 4096,
+          "next_phase_counts": {
+            "COMPLETE": 4096
+          },
+          "violating_action_counts": {},
+          "violating_cases": 0
+        },
+        "DOCK": {
+          "action_counts": {
+            "hold": 3968,
+            "reach": 128
+          },
+          "cases": 4096,
+          "next_phase_counts": {
+            "DOCK": 3968,
+            "GRASP": 128
+          },
+          "violating_action_counts": {
+            "reach": 64
+          },
+          "violating_cases": 64
+        },
+        "GRASP": {
+          "action_counts": {
+            "close_gripper": 64,
+            "hold": 3968,
+            "stow_arm": 64
+          },
+          "cases": 4096,
+          "next_phase_counts": {
+            "CARRY": 64,
+            "GRASP": 4032
+          },
+          "violating_action_counts": {
+            "close_gripper": 32,
+            "stow_arm": 32
+          },
+          "violating_cases": 64
+        },
+        "PLACE": {
+          "action_counts": {
+            "hold": 3968,
+            "open_gripper": 128
+          },
+          "cases": 4096,
+          "next_phase_counts": {
+            "COMPLETE": 256,
+            "PLACE": 3840
+          },
+          "violating_action_counts": {
+            "open_gripper": 64
+          },
+          "violating_cases": 64
+        },
+        "SEARCH": {
+          "action_counts": {
+            "hold": 3712,
+            "rotate": 384
+          },
+          "cases": 4096,
+          "next_phase_counts": {
+            "APPROACH": 1024,
+            "SEARCH": 3072
+          },
+          "violating_action_counts": {
+            "rotate": 192
+          },
+          "violating_cases": 192
+        }
+      },
+      "reachability": {
+        "examined_valuation_edges": 28672,
+        "initial_phase": "SEARCH",
+        "maximum_shortest_depth": 6,
+        "phase_edges": [
+          {
+            "destination": "APPROACH",
+            "source": "SEARCH",
+            "valuation_edges": 1024
+          },
+          {
+            "destination": "SEARCH",
+            "source": "SEARCH",
+            "valuation_edges": 3072
+          },
+          {
+            "destination": "APPROACH",
+            "source": "APPROACH",
+            "valuation_edges": 4032
+          },
+          {
+            "destination": "DOCK",
+            "source": "APPROACH",
+            "valuation_edges": 64
+          },
+          {
+            "destination": "DOCK",
+            "source": "DOCK",
+            "valuation_edges": 3968
+          },
+          {
+            "destination": "GRASP",
+            "source": "DOCK",
+            "valuation_edges": 128
+          },
+          {
+            "destination": "CARRY",
+            "source": "GRASP",
+            "valuation_edges": 64
+          },
+          {
+            "destination": "GRASP",
+            "source": "GRASP",
+            "valuation_edges": 4032
+          },
+          {
+            "destination": "CARRY",
+            "source": "CARRY",
+            "valuation_edges": 3072
+          },
+          {
+            "destination": "PLACE",
+            "source": "CARRY",
+            "valuation_edges": 1024
+          },
+          {
+            "destination": "COMPLETE",
+            "source": "PLACE",
+            "valuation_edges": 256
+          },
+          {
+            "destination": "PLACE",
+            "source": "PLACE",
+            "valuation_edges": 3840
+          },
+          {
+            "destination": "COMPLETE",
+            "source": "COMPLETE",
+            "valuation_edges": 4096
+          }
+        ],
+        "pruning": "none; all 4096 valuations retained at every reached phase",
+        "reachable_phases": [
+          "SEARCH",
+          "APPROACH",
+          "DOCK",
+          "GRASP",
+          "CARRY",
+          "PLACE",
+          "COMPLETE"
+        ],
+        "shortest_depth": {
+          "APPROACH": 1,
+          "CARRY": 4,
+          "COMPLETE": 6,
+          "DOCK": 2,
+          "GRASP": 3,
+          "PLACE": 5,
+          "SEARCH": 0
+        },
+        "unique_phase_edges": 13
+      },
+      "violating_cases": 480,
+      "violation_obligation_counts": {
+        "arm_requires_stopped_base": 192,
+        "base_requires_stowed_arm": 288
+      }
+    },
+    "no_scan_age": {
+      "admissible_cases": 28384,
+      "cases": 28672,
+      "phases": {
+        "APPROACH": {
+          "action_counts": {
+            "advance": 64,
+            "hold": 3968,
+            "stop_base": 64
+          },
+          "cases": 4096,
+          "next_phase_counts": {
+            "APPROACH": 4032,
+            "DOCK": 64
+          },
+          "violating_action_counts": {
+            "advance": 32
+          },
+          "violating_cases": 32
+        },
+        "CARRY": {
+          "action_counts": {
+            "hold": 2944,
+            "stop_base": 1024,
+            "transport": 128
+          },
+          "cases": 4096,
+          "next_phase_counts": {
+            "CARRY": 3072,
+            "PLACE": 1024
+          },
+          "violating_action_counts": {
+            "transport": 64
+          },
+          "violating_cases": 64
+        },
+        "COMPLETE": {
+          "action_counts": {
+            "hold": 4096
+          },
+          "cases": 4096,
+          "next_phase_counts": {
+            "COMPLETE": 4096
+          },
+          "violating_action_counts": {},
+          "violating_cases": 0
+        },
+        "DOCK": {
+          "action_counts": {
+            "hold": 3968,
+            "reach": 128
+          },
+          "cases": 4096,
+          "next_phase_counts": {
+            "DOCK": 3968,
+            "GRASP": 128
+          },
+          "violating_action_counts": {},
+          "violating_cases": 0
+        },
+        "GRASP": {
+          "action_counts": {
+            "close_gripper": 64,
+            "hold": 3968,
+            "stow_arm": 64
+          },
+          "cases": 4096,
+          "next_phase_counts": {
+            "CARRY": 64,
+            "GRASP": 4032
+          },
+          "violating_action_counts": {},
+          "violating_cases": 0
+        },
+        "PLACE": {
+          "action_counts": {
+            "hold": 3968,
+            "open_gripper": 128
+          },
+          "cases": 4096,
+          "next_phase_counts": {
+            "COMPLETE": 256,
+            "PLACE": 3840
+          },
+          "violating_action_counts": {},
+          "violating_cases": 0
+        },
+        "SEARCH": {
+          "action_counts": {
+            "hold": 3712,
+            "rotate": 384
+          },
+          "cases": 4096,
+          "next_phase_counts": {
+            "APPROACH": 1024,
+            "SEARCH": 3072
+          },
+          "violating_action_counts": {
+            "rotate": 192
+          },
+          "violating_cases": 192
+        }
+      },
+      "reachability": {
+        "examined_valuation_edges": 28672,
+        "initial_phase": "SEARCH",
+        "maximum_shortest_depth": 6,
+        "phase_edges": [
+          {
+            "destination": "APPROACH",
+            "source": "SEARCH",
+            "valuation_edges": 1024
+          },
+          {
+            "destination": "SEARCH",
+            "source": "SEARCH",
+            "valuation_edges": 3072
+          },
+          {
+            "destination": "APPROACH",
+            "source": "APPROACH",
+            "valuation_edges": 4032
+          },
+          {
+            "destination": "DOCK",
+            "source": "APPROACH",
+            "valuation_edges": 64
+          },
+          {
+            "destination": "DOCK",
+            "source": "DOCK",
+            "valuation_edges": 3968
+          },
+          {
+            "destination": "GRASP",
+            "source": "DOCK",
+            "valuation_edges": 128
+          },
+          {
+            "destination": "CARRY",
+            "source": "GRASP",
+            "valuation_edges": 64
+          },
+          {
+            "destination": "GRASP",
+            "source": "GRASP",
+            "valuation_edges": 4032
+          },
+          {
+            "destination": "CARRY",
+            "source": "CARRY",
+            "valuation_edges": 3072
+          },
+          {
+            "destination": "PLACE",
+            "source": "CARRY",
+            "valuation_edges": 1024
+          },
+          {
+            "destination": "COMPLETE",
+            "source": "PLACE",
+            "valuation_edges": 256
+          },
+          {
+            "destination": "PLACE",
+            "source": "PLACE",
+            "valuation_edges": 3840
+          },
+          {
+            "destination": "COMPLETE",
+            "source": "COMPLETE",
+            "valuation_edges": 4096
+          }
+        ],
+        "pruning": "none; all 4096 valuations retained at every reached phase",
+        "reachable_phases": [
+          "SEARCH",
+          "APPROACH",
+          "DOCK",
+          "GRASP",
+          "CARRY",
+          "PLACE",
+          "COMPLETE"
+        ],
+        "shortest_depth": {
+          "APPROACH": 1,
+          "CARRY": 4,
+          "COMPLETE": 6,
+          "DOCK": 2,
+          "GRASP": 3,
+          "PLACE": 5,
+          "SEARCH": 0
+        },
+        "unique_phase_edges": 13
+      },
+      "violating_cases": 288,
+      "violation_obligation_counts": {
+        "base_requires_fresh_scan": 288
+      }
+    },
+    "no_target_authorization": {
+      "admissible_cases": 28544,
+      "cases": 28672,
+      "phases": {
+        "APPROACH": {
+          "action_counts": {
+            "advance": 64,
+            "hold": 3968,
+            "stop_base": 64
+          },
+          "cases": 4096,
+          "next_phase_counts": {
+            "APPROACH": 4032,
+            "DOCK": 64
+          },
+          "violating_action_counts": {
+            "advance": 32
+          },
+          "violating_cases": 32
+        },
+        "CARRY": {
+          "action_counts": {
+            "hold": 3008,
+            "stop_base": 1024,
+            "transport": 64
+          },
+          "cases": 4096,
+          "next_phase_counts": {
+            "CARRY": 3072,
+            "PLACE": 1024
+          },
+          "violating_action_counts": {},
+          "violating_cases": 0
+        },
+        "COMPLETE": {
+          "action_counts": {
+            "hold": 4096
+          },
+          "cases": 4096,
+          "next_phase_counts": {
+            "COMPLETE": 4096
+          },
+          "violating_action_counts": {},
+          "violating_cases": 0
+        },
+        "DOCK": {
+          "action_counts": {
+            "hold": 3968,
+            "reach": 128
+          },
+          "cases": 4096,
+          "next_phase_counts": {
+            "DOCK": 3968,
+            "GRASP": 128
+          },
+          "violating_action_counts": {
+            "reach": 64
+          },
+          "violating_cases": 64
+        },
+        "GRASP": {
+          "action_counts": {
+            "close_gripper": 64,
+            "hold": 3968,
+            "stow_arm": 64
+          },
+          "cases": 4096,
+          "next_phase_counts": {
+            "CARRY": 64,
+            "GRASP": 4032
+          },
+          "violating_action_counts": {
+            "close_gripper": 32
+          },
+          "violating_cases": 32
+        },
+        "PLACE": {
+          "action_counts": {
+            "hold": 4032,
+            "open_gripper": 64
+          },
+          "cases": 4096,
+          "next_phase_counts": {
+            "COMPLETE": 128,
+            "PLACE": 3968
+          },
+          "violating_action_counts": {},
+          "violating_cases": 0
+        },
+        "SEARCH": {
+          "action_counts": {
+            "hold": 3968,
+            "rotate": 128
+          },
+          "cases": 4096,
+          "next_phase_counts": {
+            "APPROACH": 2048,
+            "SEARCH": 2048
+          },
+          "violating_action_counts": {},
+          "violating_cases": 0
+        }
+      },
+      "reachability": {
+        "examined_valuation_edges": 28672,
+        "initial_phase": "SEARCH",
+        "maximum_shortest_depth": 6,
+        "phase_edges": [
+          {
+            "destination": "APPROACH",
+            "source": "SEARCH",
+            "valuation_edges": 2048
+          },
+          {
+            "destination": "SEARCH",
+            "source": "SEARCH",
+            "valuation_edges": 2048
+          },
+          {
+            "destination": "APPROACH",
+            "source": "APPROACH",
+            "valuation_edges": 4032
+          },
+          {
+            "destination": "DOCK",
+            "source": "APPROACH",
+            "valuation_edges": 64
+          },
+          {
+            "destination": "DOCK",
+            "source": "DOCK",
+            "valuation_edges": 3968
+          },
+          {
+            "destination": "GRASP",
+            "source": "DOCK",
+            "valuation_edges": 128
+          },
+          {
+            "destination": "CARRY",
+            "source": "GRASP",
+            "valuation_edges": 64
+          },
+          {
+            "destination": "GRASP",
+            "source": "GRASP",
+            "valuation_edges": 4032
+          },
+          {
+            "destination": "CARRY",
+            "source": "CARRY",
+            "valuation_edges": 3072
+          },
+          {
+            "destination": "PLACE",
+            "source": "CARRY",
+            "valuation_edges": 1024
+          },
+          {
+            "destination": "COMPLETE",
+            "source": "PLACE",
+            "valuation_edges": 128
+          },
+          {
+            "destination": "PLACE",
+            "source": "PLACE",
+            "valuation_edges": 3968
+          },
+          {
+            "destination": "COMPLETE",
+            "source": "COMPLETE",
+            "valuation_edges": 4096
+          }
+        ],
+        "pruning": "none; all 4096 valuations retained at every reached phase",
+        "reachable_phases": [
+          "SEARCH",
+          "APPROACH",
+          "DOCK",
+          "GRASP",
+          "CARRY",
+          "PLACE",
+          "COMPLETE"
+        ],
+        "shortest_depth": {
+          "APPROACH": 1,
+          "CARRY": 4,
+          "COMPLETE": 6,
+          "DOCK": 2,
+          "GRASP": 3,
+          "PLACE": 5,
+          "SEARCH": 0
+        },
+        "unique_phase_edges": 13
+      },
+      "violating_cases": 128,
+      "violation_obligation_counts": {
+        "advance_requires_authorized_target": 32,
+        "grasp_requires_authorized_target": 96
+      }
+    }
+  },
+  "source_binding": {
+    "path": "manuscript/experiments/verify_hazbot_mission.py",
+    "sha256": "f669498cc4ab6cc0a302e97c20c72f7b7bbb78704e85c2ee5d66daa4a10c7623"
+  },
+  "validation": {
+    "check_count": 109,
+    "checks": [
+      {
+        "detail": null,
+        "name": "oracle admits positive rotate/scan_fresh",
+        "passed": true
+      },
+      {
+        "detail": null,
+        "name": "oracle rejects missing scan_fresh for rotate",
+        "passed": true
+      },
+      {
+        "detail": null,
+        "name": "oracle admits positive rotate/scan_usable",
+        "passed": true
+      },
+      {
+        "detail": null,
+        "name": "oracle rejects missing scan_usable for rotate",
+        "passed": true
+      },
+      {
+        "detail": null,
+        "name": "oracle admits positive rotate/route_clear",
+        "passed": true
+      },
+      {
+        "detail": null,
+        "name": "oracle rejects missing route_clear for rotate",
+        "passed": true
+      },
+      {
+        "detail": null,
+        "name": "oracle admits positive rotate/arm_stowed",
+        "passed": true
+      },
+      {
+        "detail": null,
+        "name": "oracle rejects missing arm_stowed for rotate",
+        "passed": true
+      },
+      {
+        "detail": null,
+        "name": "oracle admits positive advance/target_authorized",
+        "passed": true
+      },
+      {
+        "detail": null,
+        "name": "oracle rejects missing target_authorized for advance",
+        "passed": true
+      },
+      {
+        "detail": null,
+        "name": "oracle admits positive advance/target_fresh",
+        "passed": true
+      },
+      {
+        "detail": null,
+        "name": "oracle rejects missing target_fresh for advance",
+        "passed": true
+      },
+      {
+        "detail": null,
+        "name": "oracle admits positive reach/base_stopped",
+        "passed": true
+      },
+      {
+        "detail": null,
+        "name": "oracle rejects missing base_stopped for reach",
+        "passed": true
+      },
+      {
+        "detail": null,
+        "name": "oracle admits positive reach/wrist_reachable",
+        "passed": true
+      },
+      {
+        "detail": null,
+        "name": "oracle rejects missing wrist_reachable for reach",
+        "passed": true
+      },
+      {
+        "detail": null,
+        "name": "oracle admits positive close_gripper/target_authorized",
+        "passed": true
+      },
+      {
+        "detail": null,
+        "name": "oracle rejects missing target_authorized for close_gripper",
+        "passed": true
+      },
+      {
+        "detail": null,
+        "name": "oracle admits positive close_gripper/target_fresh",
+        "passed": true
+      },
+      {
+        "detail": null,
+        "name": "oracle rejects missing target_fresh for close_gripper",
+        "passed": true
+      },
+      {
+        "detail": null,
+        "name": "oracle admits positive stow_arm/base_stopped",
+        "passed": true
+      },
+      {
+        "detail": null,
+        "name": "oracle rejects missing base_stopped for stow_arm",
+        "passed": true
+      },
+      {
+        "detail": null,
+        "name": "oracle admits positive transport/grip_confirmed",
+        "passed": true
+      },
+      {
+        "detail": null,
+        "name": "oracle rejects missing grip_confirmed for transport",
+        "passed": true
+      },
+      {
+        "detail": null,
+        "name": "oracle admits positive open_gripper/at_drop_zone",
+        "passed": true
+      },
+      {
+        "detail": null,
+        "name": "oracle rejects missing at_drop_zone for open_gripper",
+        "passed": true
+      },
+      {
+        "detail": null,
+        "name": "oracle admits positive open_gripper/grip_confirmed",
+        "passed": true
+      },
+      {
+        "detail": null,
+        "name": "oracle rejects missing grip_confirmed for open_gripper",
+        "passed": true
+      },
+      {
+        "detail": null,
+        "name": "oracle admits positive open_gripper/base_stopped",
+        "passed": true
+      },
+      {
+        "detail": null,
+        "name": "oracle rejects missing base_stopped for open_gripper",
+        "passed": true
+      },
+      {
+        "detail": null,
+        "name": "oracle permits stop with all observations false",
+        "passed": true
+      },
+      {
+        "detail": null,
+        "name": "oracle permits hold with all observations false",
+        "passed": true
+      },
+      {
+        "detail": null,
+        "name": "oracle rejects unknown command",
+        "passed": true
+      },
+      {
+        "detail": null,
+        "name": "oracle rejects incorrect command phase",
+        "passed": true
+      },
+      {
+        "detail": null,
+        "name": "full: complete phase/valuation cardinality",
+        "passed": true
+      },
+      {
+        "detail": null,
+        "name": "full: every input retained once per phase",
+        "passed": true
+      },
+      {
+        "detail": null,
+        "name": "full: actions belong to defined alphabet",
+        "passed": true
+      },
+      {
+        "detail": null,
+        "name": "full: all seven phases reachable",
+        "passed": true
+      },
+      {
+        "detail": null,
+        "name": "full: BFS examines all reachable valuation edges",
+        "passed": true
+      },
+      {
+        "detail": null,
+        "name": "full: shortest completion depth six",
+        "passed": true
+      },
+      {
+        "detail": null,
+        "name": "full: complete state absorbing",
+        "passed": true
+      },
+      {
+        "detail": null,
+        "name": "no_base_arm_interlock: complete phase/valuation cardinality",
+        "passed": true
+      },
+      {
+        "detail": null,
+        "name": "no_base_arm_interlock: every input retained once per phase",
+        "passed": true
+      },
+      {
+        "detail": null,
+        "name": "no_base_arm_interlock: actions belong to defined alphabet",
+        "passed": true
+      },
+      {
+        "detail": null,
+        "name": "no_base_arm_interlock: all seven phases reachable",
+        "passed": true
+      },
+      {
+        "detail": null,
+        "name": "no_base_arm_interlock: BFS examines all reachable valuation edges",
+        "passed": true
+      },
+      {
+        "detail": null,
+        "name": "no_base_arm_interlock: shortest completion depth six",
+        "passed": true
+      },
+      {
+        "detail": null,
+        "name": "no_base_arm_interlock: complete state absorbing",
+        "passed": true
+      },
+      {
+        "detail": null,
+        "name": "no_base_arm_interlock: counterexample has shortest observation-prefix length",
+        "passed": true
+      },
+      {
+        "detail": null,
+        "name": "no_base_arm_interlock: counterexample starts at SEARCH",
+        "passed": true
+      },
+      {
+        "detail": null,
+        "name": "no_base_arm_interlock: counterexample final command violates oracle",
+        "passed": true
+      },
+      {
+        "detail": null,
+        "name": "no_base_arm_interlock: no earlier command in chosen shortest trace violates oracle",
+        "passed": true
+      },
+      {
+        "detail": null,
+        "name": "no_base_arm_interlock: counterexample step 1 replays exactly",
+        "passed": true
+      },
+      {
+        "detail": null,
+        "name": "no_target_authorization: complete phase/valuation cardinality",
+        "passed": true
+      },
+      {
+        "detail": null,
+        "name": "no_target_authorization: every input retained once per phase",
+        "passed": true
+      },
+      {
+        "detail": null,
+        "name": "no_target_authorization: actions belong to defined alphabet",
+        "passed": true
+      },
+      {
+        "detail": null,
+        "name": "no_target_authorization: all seven phases reachable",
+        "passed": true
+      },
+      {
+        "detail": null,
+        "name": "no_target_authorization: BFS examines all reachable valuation edges",
+        "passed": true
+      },
+      {
+        "detail": null,
+        "name": "no_target_authorization: shortest completion depth six",
+        "passed": true
+      },
+      {
+        "detail": null,
+        "name": "no_target_authorization: complete state absorbing",
+        "passed": true
+      },
+      {
+        "detail": null,
+        "name": "no_target_authorization: counterexample has shortest observation-prefix length",
+        "passed": true
+      },
+      {
+        "detail": null,
+        "name": "no_target_authorization: counterexample starts at SEARCH",
+        "passed": true
+      },
+      {
+        "detail": null,
+        "name": "no_target_authorization: counterexample final command violates oracle",
+        "passed": true
+      },
+      {
+        "detail": null,
+        "name": "no_target_authorization: no earlier command in chosen shortest trace violates oracle",
+        "passed": true
+      },
+      {
+        "detail": null,
+        "name": "no_target_authorization: counterexample step 1 replays exactly",
+        "passed": true
+      },
+      {
+        "detail": null,
+        "name": "no_target_authorization: counterexample step 2 replays exactly",
+        "passed": true
+      },
+      {
+        "detail": null,
+        "name": "no_scan_age: complete phase/valuation cardinality",
+        "passed": true
+      },
+      {
+        "detail": null,
+        "name": "no_scan_age: every input retained once per phase",
+        "passed": true
+      },
+      {
+        "detail": null,
+        "name": "no_scan_age: actions belong to defined alphabet",
+        "passed": true
+      },
+      {
+        "detail": null,
+        "name": "no_scan_age: all seven phases reachable",
+        "passed": true
+      },
+      {
+        "detail": null,
+        "name": "no_scan_age: BFS examines all reachable valuation edges",
+        "passed": true
+      },
+      {
+        "detail": null,
+        "name": "no_scan_age: shortest completion depth six",
+        "passed": true
+      },
+      {
+        "detail": null,
+        "name": "no_scan_age: complete state absorbing",
+        "passed": true
+      },
+      {
+        "detail": null,
+        "name": "no_scan_age: counterexample has shortest observation-prefix length",
+        "passed": true
+      },
+      {
+        "detail": null,
+        "name": "no_scan_age: counterexample starts at SEARCH",
+        "passed": true
+      },
+      {
+        "detail": null,
+        "name": "no_scan_age: counterexample final command violates oracle",
+        "passed": true
+      },
+      {
+        "detail": null,
+        "name": "no_scan_age: no earlier command in chosen shortest trace violates oracle",
+        "passed": true
+      },
+      {
+        "detail": null,
+        "name": "no_scan_age: counterexample step 1 replays exactly",
+        "passed": true
+      },
+      {
+        "detail": null,
+        "name": "full reference policy admits no violating commands",
+        "passed": true
+      },
+      {
+        "detail": null,
+        "name": "every named ablation exposes a counterexample",
+        "passed": true
+      },
+      {
+        "detail": null,
+        "name": "exact total policy/phase/valuation case count",
+        "passed": true
+      },
+      {
+        "detail": null,
+        "name": "independent Boolean-cube count matches full action histogram",
+        "passed": true
+      },
+      {
+        "detail": null,
+        "name": "independent interlock-ablation Boolean count",
+        "passed": true
+      },
+      {
+        "detail": null,
+        "name": "independent authorization-ablation Boolean count",
+        "passed": true
+      },
+      {
+        "detail": null,
+        "name": "independent scan-age-ablation Boolean count",
+        "passed": true
+      },
+      {
+        "detail": null,
+        "name": "nominal step 1: expected transition/action",
+        "passed": true
+      },
+      {
+        "detail": null,
+        "name": "nominal step 1: independently admissible",
+        "passed": true
+      },
+      {
+        "detail": null,
+        "name": "nominal step 2: expected transition/action",
+        "passed": true
+      },
+      {
+        "detail": null,
+        "name": "nominal step 2: independently admissible",
+        "passed": true
+      },
+      {
+        "detail": null,
+        "name": "nominal step 3: expected transition/action",
+        "passed": true
+      },
+      {
+        "detail": null,
+        "name": "nominal step 3: independently admissible",
+        "passed": true
+      },
+      {
+        "detail": null,
+        "name": "nominal step 4: expected transition/action",
+        "passed": true
+      },
+      {
+        "detail": null,
+        "name": "nominal step 4: independently admissible",
+        "passed": true
+      },
+      {
+        "detail": null,
+        "name": "nominal step 5: expected transition/action",
+        "passed": true
+      },
+      {
+        "detail": null,
+        "name": "nominal step 5: independently admissible",
+        "passed": true
+      },
+      {
+        "detail": null,
+        "name": "nominal step 6: expected transition/action",
+        "passed": true
+      },
+      {
+        "detail": null,
+        "name": "nominal step 6: independently admissible",
+        "passed": true
+      },
+      {
+        "detail": null,
+        "name": "nominal step 7: expected transition/action",
+        "passed": true
+      },
+      {
+        "detail": null,
+        "name": "nominal step 7: independently admissible",
+        "passed": true
+      },
+      {
+        "detail": null,
+        "name": "nominal step 8: expected transition/action",
+        "passed": true
+      },
+      {
+        "detail": null,
+        "name": "nominal step 8: independently admissible",
+        "passed": true
+      },
+      {
+        "detail": null,
+        "name": "nominal step 9: expected transition/action",
+        "passed": true
+      },
+      {
+        "detail": null,
+        "name": "nominal step 9: independently admissible",
+        "passed": true
+      },
+      {
+        "detail": null,
+        "name": "nominal step 10: expected transition/action",
+        "passed": true
+      },
+      {
+        "detail": null,
+        "name": "nominal step 10: independently admissible",
+        "passed": true
+      },
+      {
+        "detail": null,
+        "name": "nominal step 11: expected transition/action",
+        "passed": true
+      },
+      {
+        "detail": null,
+        "name": "nominal step 11: independently admissible",
+        "passed": true
+      },
+      {
+        "detail": null,
+        "name": "nominal reference sequence reaches COMPLETE",
+        "passed": true
+      },
+      {
+        "detail": null,
+        "name": "nominal sequence covers all action types",
+        "passed": true
+      }
+    ],
+    "oracle_positive_negative_probe_pairs": 15,
+    "passed": true
+  }
+}

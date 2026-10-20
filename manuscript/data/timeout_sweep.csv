@@ -1,0 +1,4 @@
+scan_ttl_s,full_constrained_motion_ticks,slow_scan_forward_held_ticks,dropout_forward_duration_after_last_scan_s
+0.1,0,60,0.1
+0.25,0,30,0.25
+0.5,0,0,0.5

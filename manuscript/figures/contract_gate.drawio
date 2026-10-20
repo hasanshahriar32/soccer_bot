@@ -1,0 +1,89 @@
+<?xml version='1.0' encoding='utf-8'?>
+<mxfile host="app.diagrams.net" type="device" compressed="false">
+  <diagram id="soccerbot-technical-architecture" name="SoccerBot architecture">
+    <mxGraphModel dx="690" dy="468" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="690" pageHeight="468" math="0" shadow="0" background="#ffffff">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="rect-001" value="" style="shape=rectangle;rounded=1;arcSize=2;fillColor=white;strokeColor=none;strokeWidth=1.6;dashed=0;dashPattern=7 5;" vertex="1" parent="1">
+          <mxGeometry x="0" y="0" width="690" height="468" as="geometry" />
+        </mxCell>
+        <mxCell id="text-002" value="OBSERVATION CONTRACT AT EACH TICK" style="text=;html=0;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=nowrap;overflow=visible;spacing=0;fontFamily=Noto Sans;fontSize=23;fontStyle=1;fontColor=#263645;" vertex="1" parent="1">
+          <mxGeometry x="20" y="5.24" width="522.12" height="32.2" as="geometry" />
+        </mxCell>
+        <mxCell id="text-003" value="Illustrative logic of the offline full supervisor" style="text=;html=0;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=nowrap;overflow=visible;spacing=0;fontFamily=Noto Sans;fontSize=18.5;fontStyle=0;fontColor=#647582;" vertex="1" parent="1">
+          <mxGeometry x="20" y="37.28" width="622.42" height="25.9" as="geometry" />
+        </mxCell>
+        <mxCell id="icon-004" value="" style="shape=image;imageAspect=0;aspect=fixed;image=data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%20width%3D%2264%22%20height%3D%2264%22%3E%3Cg%3E%3Cg%20stroke%3D%22%23263645%22%20stroke-width%3D%221.7%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Ccircle%20cx%3D%2232%22%20cy%3D%2233%22%20r%3D%2223%22%20fill%3D%22%23f8fbfc%22%20%2F%3E%0A%20%3Cpath%20d%3D%22M32%2016v17l11%207M25%204h14M32%204v6%22%20fill%3D%22none%22%20%2F%3E%0A%20%3Cpath%20d%3D%22m16%2014-5-5M48%2014l5-5%22%20stroke%3D%22%23008b91%22%20%2F%3E%3C%2Fg%3E%3C%2Fg%3E%3C%2Fsvg%3E;opacity=100.0;resizable=1;movable=1;" vertex="1" parent="1">
+          <mxGeometry x="24" y="89" width="70" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="text-005" value="1  Fresh scan receipt" style="text=;html=0;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=nowrap;overflow=visible;spacing=0;fontFamily=Noto Sans;fontSize=21;fontStyle=1;fontColor=#263645;" vertex="1" parent="1">
+          <mxGeometry x="113" y="87.48" width="305.88" height="29.4" as="geometry" />
+        </mxCell>
+        <mxCell id="text-006" value="Receipt exists; 0 ≤ age &lt; timeout" style="text=;html=0;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=nowrap;overflow=visible;spacing=0;fontFamily=Noto Sans;fontSize=19;fontStyle=0;fontColor=#647582;" vertex="1" parent="1">
+          <mxGeometry x="113" y="116.72" width="432.36" height="26.6" as="geometry" />
+        </mxCell>
+        <mxCell id="icon-007" value="" style="shape=image;imageAspect=0;aspect=fixed;image=data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%20width%3D%2264%22%20height%3D%2264%22%3E%3Cg%3E%3Cg%20stroke%3D%22%23263645%22%20stroke-width%3D%221.7%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cellipse%20cx%3D%2232%22%20cy%3D%2245%22%20rx%3D%2223%22%20ry%3D%229%22%20fill%3D%22%23becfdd%22%20%2F%3E%0A%20%3Cpath%20d%3D%22M9%2028v17c0%2012%2046%2012%2046%200V28Z%22%20fill%3D%22%23dce7ee%22%20%2F%3E%0A%20%3Cellipse%20cx%3D%2232%22%20cy%3D%2228%22%20rx%3D%2223%22%20ry%3D%229%22%20fill%3D%22%23f8fbfc%22%20%2F%3E%0A%20%3Cpath%20d%3D%22M15%2034v8c9%206%2025%206%2034%200v-8%22%20fill%3D%22%23356d93%22%20%2F%3E%0A%20%3Cpath%20d%3D%22M32%2015V5M19%2017%2012%209M45%2017l7-8%22%20stroke%3D%22%23008b91%22%20%2F%3E%0A%20%3Ccircle%20cx%3D%2232%22%20cy%3D%2228%22%20r%3D%224%22%20fill%3D%22%23008b91%22%20stroke%3D%22none%22%20%2F%3E%3C%2Fg%3E%3C%2Fg%3E%3C%2Fsvg%3E;opacity=100.0;resizable=1;movable=1;" vertex="1" parent="1">
+          <mxGeometry x="24" y="178" width="70" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="text-008" value="2  Usable range evidence" style="text=;html=0;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=nowrap;overflow=visible;spacing=0;fontFamily=Noto Sans;fontSize=21;fontStyle=1;fontColor=#263645;" vertex="1" parent="1">
+          <mxGeometry x="113" y="176.48" width="348.72" height="29.4" as="geometry" />
+        </mxCell>
+        <mxCell id="text-009" value="Finite accepted ranges: 0.05 &lt; r &lt; 20 m" style="text=;html=0;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=nowrap;overflow=visible;spacing=0;fontFamily=Noto Sans;fontSize=19;fontStyle=0;fontColor=#647582;" vertex="1" parent="1">
+          <mxGeometry x="113" y="205.72" width="509.88" height="26.6" as="geometry" />
+        </mxCell>
+        <mxCell id="icon-010" value="" style="shape=image;imageAspect=0;aspect=fixed;image=data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%20width%3D%2264%22%20height%3D%2264%22%3E%3Cg%3E%3Cg%20stroke%3D%22%23263645%22%20stroke-width%3D%221.7%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22M11%208h42v47H11Z%22%20fill%3D%22%23f8fbfc%22%20%2F%3E%0A%20%3Ccircle%20cx%3D%2221%22%20cy%3D%2221%22%20r%3D%225%22%20fill%3D%22%239bbbcf%22%20%2F%3E%3Ccircle%20cx%3D%2243%22%20cy%3D%2221%22%20r%3D%225%22%20fill%3D%22%23008b91%22%20%2F%3E%0A%20%3Cpath%20d%3D%22M21%2026v8h11M43%2026v8H32v9%22%20fill%3D%22none%22%20%2F%3E%0A%20%3Ccircle%20cx%3D%2232%22%20cy%3D%2247%22%20r%3D%225%22%20fill%3D%22%23dce7ee%22%20%2F%3E%3C%2Fg%3E%3C%2Fg%3E%3C%2Fsvg%3E;opacity=100.0;resizable=1;movable=1;" vertex="1" parent="1">
+          <mxGeometry x="24" y="267" width="70" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="text-011" value="3  Metric target payload" style="text=;html=0;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=nowrap;overflow=visible;spacing=0;fontFamily=Noto Sans;fontSize=21;fontStyle=1;fontColor=#263645;" vertex="1" parent="1">
+          <mxGeometry x="113" y="265.48" width="348.72" height="29.4" as="geometry" />
+        </mxCell>
+        <mxCell id="text-012" value="Finite target, absence or unobserved state" style="text=;html=0;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=nowrap;overflow=visible;spacing=0;fontFamily=Noto Sans;fontSize=18.5;fontStyle=0;fontColor=#647582;" vertex="1" parent="1">
+          <mxGeometry x="113" y="295.28" width="534.36" height="25.9" as="geometry" />
+        </mxCell>
+        <mxCell id="route-013" value="" edge="1" parent="1" target="icon-016" style="edgeStyle=none;rounded=0;html=0;strokeColor=#008b91;strokeWidth=2.4;dashed=0;dashPattern=8 5;startArrow=none;endArrow=open;endFill=0;endSize=8;entryX=0.52857;entryY=0;entryPerimeter=0;">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="520" y="124" as="sourcePoint" />
+            <mxPoint x="574" y="361" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="574" y="124" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="route-014" value="" edge="1" parent="1" target="icon-016" style="edgeStyle=none;rounded=0;html=0;strokeColor=#008b91;strokeWidth=2.4;dashed=0;dashPattern=8 5;startArrow=none;endArrow=open;endFill=0;endSize=8;entryX=0.52857;entryY=0;entryPerimeter=0;">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="520" y="213" as="sourcePoint" />
+            <mxPoint x="574" y="361" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="574" y="213" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="route-015" value="" edge="1" parent="1" target="icon-016" style="edgeStyle=none;rounded=0;html=0;strokeColor=#008b91;strokeWidth=2.4;dashed=0;dashPattern=8 5;startArrow=none;endArrow=open;endFill=0;endSize=8;entryX=0.52857;entryY=0;entryPerimeter=0;">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="520" y="302" as="sourcePoint" />
+            <mxPoint x="574" y="361" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="574" y="302" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="icon-016" value="" style="shape=image;imageAspect=0;aspect=fixed;image=data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%20width%3D%2264%22%20height%3D%2264%22%3E%3Cg%3E%3Cg%20stroke%3D%22%23263645%22%20stroke-width%3D%221.7%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22M32%205%2054%2014v19c0%2012-10%2020-22%2027C20%2053%2010%2045%2010%2033V14Z%22%20fill%3D%22%23e6f3f1%22%20%2F%3E%0A%20%3Cpath%20d%3D%22m20%2032%208%208%2017-19%22%20stroke%3D%22%23008b91%22%20stroke-width%3D%223.4%22%20fill%3D%22none%22%20%2F%3E%3C%2Fg%3E%3C%2Fg%3E%3C%2Fsvg%3E;opacity=100.0;resizable=1;movable=1;" vertex="1" parent="1">
+          <mxGeometry x="537" y="361" width="70" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="text-017" value="Pass / zero" style="text=;html=0;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=nowrap;overflow=visible;spacing=0;fontFamily=Noto Sans;fontSize=19;fontStyle=0;fontColor=#008b91;" vertex="1" parent="1">
+          <mxGeometry x="499.94" y="433.72" width="148.12" height="26.6" as="geometry" />
+        </mxCell>
+        <mxCell id="text-018" value="Near-range stop is retained from the source." style="text=;html=0;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=nowrap;overflow=visible;spacing=0;fontFamily=Noto Sans;fontSize=18.5;fontStyle=0;fontColor=#647582;" vertex="1" parent="1">
+          <mxGeometry x="20" y="358.28" width="559.52" height="25.9" as="geometry" />
+        </mxCell>
+        <mxCell id="text-019" value="A fresh invalid payload fails usability." style="text=;html=0;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=nowrap;overflow=visible;spacing=0;fontFamily=Noto Sans;fontSize=18.5;fontStyle=0;fontColor=#a84b45;" vertex="1" parent="1">
+          <mxGeometry x="20" y="386.28" width="509.2" height="25.9" as="geometry" />
+        </mxCell>
+        <mxCell id="text-020" value="Receipt age does not measure capture age." style="text=;html=0;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=nowrap;overflow=visible;spacing=0;fontFamily=Noto Sans;fontSize=18.5;fontStyle=0;fontColor=#647582;" vertex="1" parent="1">
+          <mxGeometry x="20" y="414.28" width="521.78" height="25.9" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

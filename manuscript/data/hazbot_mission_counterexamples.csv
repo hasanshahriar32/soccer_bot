@@ -1,0 +1,5 @@
+policy,step,phase_before,action,phase_after,observation_mask,target_authorized,target_fresh,scan_fresh,scan_usable,route_clear,arm_stowed,base_stopped,wrist_reachable,at_pick_zone,grip_confirmed,at_drop_zone,release_confirmed,violations
+no_base_arm_interlock,1,SEARCH,rotate,SEARCH,28,0,0,1,1,1,0,0,0,0,0,0,0,base_requires_stowed_arm
+no_target_authorization,1,SEARCH,hold,APPROACH,2,0,1,0,0,0,0,0,0,0,0,0,0,
+no_target_authorization,2,APPROACH,advance,APPROACH,62,0,1,1,1,1,1,0,0,0,0,0,0,advance_requires_authorized_target
+no_scan_age,1,SEARCH,rotate,SEARCH,56,0,0,0,1,1,1,0,0,0,0,0,0,base_requires_fresh_scan

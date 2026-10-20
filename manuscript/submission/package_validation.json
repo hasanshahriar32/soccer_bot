@@ -1,0 +1,21 @@
+{
+  "date": "2026-10-21",
+  "timezone": "Asia/Dhaka",
+  "archive": "SoccerBot_IEEE_Overleaf.zip",
+  "file_count": 29,
+  "archive_bytes": 233326,
+  "archive_sha256": "98ca44a81e4b7d0cb4768d4dca1d5f886e604627acc5023181489559201bfefd",
+  "checks": {
+    "archive_integrity": true,
+    "required_and_editable_assets_present": true,
+    "author_side_data_and_runtime_excluded": true,
+    "archive_sources_and_assets_match_workspace": true,
+    "independent_source_compilation": true,
+    "independent_pdf_text_matches_current": true,
+    "independent_pdf_six_pages": true,
+    "independent_pdf_no_overfull_boxes": true,
+    "independent_pdf_references_resolved": true
+  },
+  "all_checks_pass": true,
+  "scope": "Anonymous typesetting ZIP with vector/editable figures and standalone compilation; research data and runtime sources remain local."
+}

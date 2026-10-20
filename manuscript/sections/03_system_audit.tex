@@ -1,0 +1,38 @@
+\section{System Architecture}
+\subsection{Central Computer and Physical Interfaces}
+Figure~\ref{fig:architecture} places the Raspberry Pi at the computational center. It receives images and range observations, hosts native visual inference, and exchanges commands with the low-level actuator controllers. A workstation may support visualization or development, but is not required to host the native detector. The evaluated configuration uses a Pi Camera V2, YDLIDAR X4 ranging path, differential drive with an L298N bridge, and a servo arm. Table~\ref{tab:interfaces} distinguishes physical connections from logical responsibilities.
+
+\begin{table}[t]
+\caption{Four Subsystems and Their Pi Interfaces}
+\label{tab:interfaces}
+\centering\footnotesize
+\begin{tabularx}{\columnwidth}{@{}lX@{}}
+\toprule
+Subsystem & Connection and responsibility \\
+\midrule
+Vision / ML & CSI camera directly to Pi; local TFLite inference. \\
+Navigation & LiDAR sensor controller and USB--UART path; ranging data consumed on Pi. \\
+Wheel drive & USB serial, 9600 baud, to drive Arduino; PWM/direction through L298N. \\
+Manipulator & Separate USB serial, 115200 baud, to arm Arduino; four servo channels. \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\subsection{Navigation and Wheel Control}
+The scanner's built-in controller acquires range samples; its USB interface carries scan packets to the Pi. Navigation logic therefore remains on the central computer rather than on the scanner controller. Range observations support route-clearance decisions and target-distance association. Mapping and navigation components can be connected through ROS 2, but the present evaluation measures neither map quality nor localization error.
+
+The wheel Arduino drives the motor bridge independently of the arm controller. For an ideal differential base, wheel radius $R$ and track $b$ relate desired body velocity $(v,\omega)$ to wheel angular rates:
+\begin{equation}
+\dot\phi_L=\frac{v-b\omega/2}{R},\qquad
+\dot\phi_R=\frac{v+b\omega/2}{R}.
+\label{eq:drive}
+\end{equation}
+The geometric model uses $R=0.033$\,m and $b=0.210$\,m. Equation~\ref{eq:drive} describes the intended kinematic relationship; a gateway must preserve appropriate command meaning to realize it. Our characterization explicitly tests this condition instead of assuming that a pair of numeric inputs produces calibrated wheel velocities.
+
+\subsection{Vision and Native Inference}
+The camera acquires RGB images through the Pi's CSI interface. The native path configures a $640\times480$ image stream and a two-thread TFLite interpreter for an INT8 detector. Its current label set contains tennis and cricket balls, providing task surrogates. The architecture permits replacing the model and label set, but any extension to designated hazardous objects requires a corresponding dataset and evaluation. Model weights are not part of the analyzed artifacts, so detector accuracy and execution time are outside the reported results.
+
+A detection record should carry its class, confidence, image position, and observation age. Metric approach control additionally requires a range estimate associated with the same target and coordinate frame. Class acceptance and freshness are separate predicates: a confident but stale record cannot authorize a current approach. The task authority supplies the handling policy; visual confidence alone supplies neither material identification nor permission to manipulate an object.
+
+\subsection{Robotic Hand and Arm}
+The manipulator uses three positioning axes---base yaw, shoulder pitch, and elbow pitch---plus a separately actuated gripper. Its modeled wrist is fixed. The arm Arduino therefore drives four servo channels, rather than four independent positioning joints. Existing arm commands include a preset pickup sequence; the general seven-phase coordinator introduced below is a separate executable reference model. Keeping the drive and arm Arduino paths distinct also avoids conflating their serial protocols and pin assignments.

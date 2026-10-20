@@ -1,0 +1,400 @@
+{
+  "assessed_on": "2026-10-21",
+  "method": "Read-only source inspection, full PDF text extraction, visual inspection of selected PDF pages. No runtime or robot scripts executed.",
+  "author_clarification": {
+    "central_compute": "Raspberry Pi",
+    "subsystems": [
+      "navigation via LiDAR embedded controller/interface",
+      "wheel control via Arduino",
+      "direct-camera visual perception and native onboard ML",
+      "robotic manipulation via Arduino"
+    ],
+    "application_direction": "autonomous hazardous-object recognition and retrieval",
+    "current_surrogate_evidence": "Author reports simulated ball control. No verified physical hazard tests or quantified physical ball pick-and-place experiment."
+  },
+  "attachments": [
+    {
+      "path": "proposal_resources/Autonomous-Mobile-Manipulator-Engineering-Exam-Report.pdf",
+      "pages": 6,
+      "metadata_creation_date": "2026-09-30",
+      "role": "engineering development report",
+      "visual_pages_inspected": [
+        3
+      ],
+      "evidence_limit": "Manual integration and autonomous goals distinguished; no raw trial table."
+    },
+    {
+      "path": "proposal_resources/HazBot_Presentation.pptx.pdf",
+      "pages": 18,
+      "metadata_creation_date": "2026-10-21",
+      "role": "application/proposal presentation",
+      "visual_pages_inspected": [
+        6,
+        12,
+        15
+      ],
+      "evidence_limit": "Simulated detection illustration and unvalidated performance claims; hardware revision differs from source."
+    }
+  ],
+  "files": [
+    {
+      "path": "proposal_resources/Autonomous-Mobile-Manipulator-Engineering-Exam-Report.pdf",
+      "bytes": 431218,
+      "sha256": "c9aebf99f1dc36cf938772488dc404226ce76cb312e24016a35b45833046bec2"
+    },
+    {
+      "path": "proposal_resources/HazBot_Presentation.pptx.pdf",
+      "bytes": 2737410,
+      "sha256": "f649cad5b23d8e20d54c6c0baefd247465a4f6c8a78a7d4f6d126dcfc1f5ee47"
+    },
+    {
+      "path": "scripts/robot.urdf",
+      "bytes": 8179,
+      "sha256": "3bb63a2e55094801cc83093a75f589f68d446e1f4b635626045a31208bf72627"
+    },
+    {
+      "path": "scripts/arm_server.py",
+      "bytes": 17923,
+      "sha256": "6c303607a8e66bb9b37560a35e5629c96282ddc022e0278f6b33e056b92c846c"
+    },
+    {
+      "path": "scripts/arduino_arm_controller/arduino_arm_controller.ino",
+      "bytes": 9280,
+      "sha256": "1eb9a4e6a07490c8dd2838019d3a8a04f9dbf257933d68086ee1aa3915c77ac7"
+    },
+    {
+      "path": "scripts/arduino_arm_controller.ino",
+      "bytes": 5480,
+      "sha256": "9bc3b30c6d91f5efdfdeafb5446eccc064b3cca0834cde493641f0c08d67c772"
+    },
+    {
+      "path": "scripts/detect_live_picamera2.py",
+      "bytes": 19978,
+      "sha256": "09409f0f30da02c54c96a31887c646947e3ec7af2b1931502880a19b95560ee9"
+    },
+    {
+      "path": "scripts/lidar_bridge.py",
+      "bytes": 3798,
+      "sha256": "5b9d2b6bf93dbe7ce3d754ef01e88ff6aa04197ddc95a98a1e2e2a10e3d4a3ba"
+    },
+    {
+      "path": "scripts/raw_lidar_publisher.py",
+      "bytes": 6349,
+      "sha256": "e79ab95f171ba5936bb060e1f725189ae66822dfd94058aa7f6b3bf84b53b158"
+    },
+    {
+      "path": "motor_control/motor_server.py",
+      "bytes": 7501,
+      "sha256": "5b1ec929a9062bc4f79c89d078db7f3507d299d7a59459414e8c8c88e3becd2b"
+    },
+    {
+      "path": "motor_control/soccer_bot_motor_driver.ino",
+      "bytes": 3339,
+      "sha256": "391799fdd30b6911b11c932b9879095f2f75805066757e488d335704416b5ff7"
+    },
+    {
+      "path": "src/soccer_vision/soccer_vision/ball_tracker_node.py",
+      "bytes": 17064,
+      "sha256": "e4899d1b4f0ba13aca566a78d5825a13cf131b306abd4f79431bc5b5d9af7d21"
+    },
+    {
+      "path": "src/soccer_slam/launch/soccer_slam_launch.py",
+      "bytes": 4797,
+      "sha256": "0b445aedb402493016971388a1306085aebd9f7047b6b3d2a40aa3295ac85f3d"
+    },
+    {
+      "path": "src/soccer_navigation/soccer_navigation/autonomous_ball_chaser_node.py",
+      "bytes": 7386,
+      "sha256": "9133fb0894f81befb10880e9aa6bbb7598a64afa56ec3bf25330b76c31661d5b"
+    },
+    {
+      "path": "manuscript/research/repository_audit.md",
+      "bytes": 19531,
+      "sha256": "632fc8d195a830bd366fa5de82acf179e02aa9c8aa990069b4b02f30f3f5d654"
+    }
+  ],
+  "implemented_detector": {
+    "source": "scripts/detect_live_picamera2.py",
+    "described_model": "INT8 YOLOv8 through TFLite runtime",
+    "weights_in_repository": false,
+    "classes": {
+      "0": "Tennis Ball",
+      "1": "Cricket Ball"
+    },
+    "confidence_threshold": 0.4,
+    "nms_iou_threshold": 0.45,
+    "cpu_threads": 2,
+    "capture_dimensions_pixels": [
+      640,
+      480
+    ],
+    "camera_horizontal_fov_degrees": 62.0,
+    "weights_validated": false,
+    "hazardous_classes_validated": false
+  },
+  "firmware_channels": {
+    "drive": {
+      "source": "motor_control/soccer_bot_motor_driver.ino",
+      "serial_baud": 9600,
+      "pwm_pins": [
+        5,
+        6
+      ],
+      "direction_pins": [
+        9,
+        10,
+        11,
+        12
+      ],
+      "encoder_pins": [
+        2,
+        3,
+        4,
+        7
+      ],
+      "encoder_accumulation_in_this_variant": false
+    },
+    "arm": {
+      "source": "scripts/arduino_arm_controller/arduino_arm_controller.ino",
+      "serial_baud": 115200,
+      "channels": {
+        "base": 9,
+        "shoulder": 10,
+        "elbow": 11,
+        "gripper": 12
+      },
+      "positioning_axes": 3,
+      "gripper_actuator_channels": 1,
+      "independent_wrist_actuator": false
+    },
+    "interpretation": "Separate drive and arm microcontrollers are indicated by separate serial identities and conflicting D9-D12 assignments."
+  },
+  "urdf_geometry": {
+    "source": "scripts/robot.urdf",
+    "units": "meters and radians",
+    "model_not_physical_metrology": true,
+    "chassis_dimensions_m": [
+      0.33,
+      0.17,
+      0.11
+    ],
+    "wheel_radius_m": 0.033,
+    "wheel_center_track_m": 0.21,
+    "shoulder_origin_base_m": [
+      0.1,
+      0,
+      0.155
+    ],
+    "upper_link_length_m": 0.1,
+    "forearm_length_m": 0.1,
+    "wrist": "fixed",
+    "shoulder_to_wrist_link_sum_upper_bound_m": 0.2,
+    "joints": [
+      {
+        "name": "base_to_chassis",
+        "type": "fixed",
+        "parent": "base_link",
+        "child": "chassis",
+        "origin": {
+          "xyz": "0 0 0",
+          "rpy": "0 0 0"
+        }
+      },
+      {
+        "name": "chassis_to_left_wheel",
+        "type": "fixed",
+        "parent": "chassis",
+        "child": "left_wheel",
+        "origin": {
+          "xyz": "-0.115 0.105 0.033",
+          "rpy": "-1.5708 0 0"
+        }
+      },
+      {
+        "name": "chassis_to_right_wheel",
+        "type": "fixed",
+        "parent": "chassis",
+        "child": "right_wheel",
+        "origin": {
+          "xyz": "-0.115 -0.105 0.033",
+          "rpy": "-1.5708 0 0"
+        }
+      },
+      {
+        "name": "base_to_laser",
+        "type": "fixed",
+        "parent": "base_link",
+        "child": "laser_frame",
+        "origin": {
+          "xyz": "0.0 -0.019 0.09",
+          "rpy": "0 0 0"
+        }
+      },
+      {
+        "name": "base_to_camera",
+        "type": "fixed",
+        "parent": "base_link",
+        "child": "camera_link",
+        "origin": {
+          "xyz": "0.165 0.02 0.045",
+          "rpy": "-1.5708 0 -1.5708"
+        }
+      },
+      {
+        "name": "chassis_to_arm_mount",
+        "type": "fixed",
+        "parent": "chassis",
+        "child": "arm_mount",
+        "origin": {
+          "xyz": "0.10 0.0 0.11",
+          "rpy": "0 0 0"
+        }
+      },
+      {
+        "name": "base_joint",
+        "type": "revolute",
+        "parent": "arm_mount",
+        "child": "arm_base_link",
+        "origin": {
+          "xyz": "0 0 0.015",
+          "rpy": "0 0 0"
+        },
+        "axis": {
+          "xyz": "0 0 1"
+        },
+        "limit": {
+          "lower": "-1.5708",
+          "upper": "1.5708",
+          "effort": "10.0",
+          "velocity": "3.0"
+        }
+      },
+      {
+        "name": "shoulder_joint",
+        "type": "revolute",
+        "parent": "arm_base_link",
+        "child": "arm_shoulder_link",
+        "origin": {
+          "xyz": "0 0 0.03",
+          "rpy": "0 0 0"
+        },
+        "axis": {
+          "xyz": "0 1 0"
+        },
+        "limit": {
+          "lower": "-0.5",
+          "upper": "2.6179",
+          "effort": "10.0",
+          "velocity": "3.0"
+        }
+      },
+      {
+        "name": "elbow_joint",
+        "type": "revolute",
+        "parent": "arm_shoulder_link",
+        "child": "arm_elbow_link",
+        "origin": {
+          "xyz": "0 0 0.10",
+          "rpy": "0 0 0"
+        },
+        "axis": {
+          "xyz": "0 1 0"
+        },
+        "limit": {
+          "lower": "-1.5708",
+          "upper": "2.6179",
+          "effort": "10.0",
+          "velocity": "3.0"
+        }
+      },
+      {
+        "name": "wrist_joint",
+        "type": "fixed",
+        "parent": "arm_elbow_link",
+        "child": "arm_wrist_link",
+        "origin": {
+          "xyz": "0.10 0 0",
+          "rpy": "0 0 0"
+        }
+      },
+      {
+        "name": "gripper_left_joint",
+        "type": "revolute",
+        "parent": "arm_wrist_link",
+        "child": "arm_left_claw",
+        "origin": {
+          "xyz": "0.025 0.015 0",
+          "rpy": "0 0 0"
+        },
+        "axis": {
+          "xyz": "0 0 1"
+        },
+        "limit": {
+          "lower": "0.0",
+          "upper": "0.8",
+          "effort": "5.0",
+          "velocity": "3.0"
+        }
+      },
+      {
+        "name": "gripper_right_joint",
+        "type": "revolute",
+        "parent": "arm_wrist_link",
+        "child": "arm_right_claw",
+        "origin": {
+          "xyz": "0.025 -0.015 0",
+          "rpy": "0 0 0"
+        },
+        "axis": {
+          "xyz": "0 0 -1"
+        },
+        "limit": {
+          "lower": "0.0",
+          "upper": "0.8",
+          "effort": "5.0",
+          "velocity": "3.0"
+        }
+      }
+    ]
+  },
+  "claims_excluded_from_results": [
+    "arbitrary hazardous-material recognition",
+    "physical hazardous-material handling",
+    "98% accuracy",
+    "detection latency below50ms",
+    "Nav2 path recalculation below100ms",
+    "grip response below200ms",
+    "500g payload",
+    "10hour runtime",
+    "25-40second autonomous mission cycle"
+  ],
+  "conflicts": [
+    {
+      "item": "Pi model",
+      "sources": [
+        "Engineering report and detector comments:3B",
+        "Verifiedconfiguration:4"
+      ],
+      "resolution": "Use Raspberry Pi without version pendingconfirmation."
+    },
+    {
+      "item": "Sensor revision",
+      "sources": [
+        "Source/exam:YDLIDAR X4 and PiCameraV2 CSI",
+        "Presentation:RPLidarA1 and OAK-DLite depth"
+      ],
+      "resolution": "Describe source-supported configuration; presentation hardware is a separate proposed revision."
+    },
+    {
+      "item": "Manipulator",
+      "sources": [
+        "Source:three positioning axes + gripper",
+        "Exam:four positioning joints plus gripper",
+        "Presentation:sixDOF tendon hand"
+      ],
+      "resolution": "Use four-channel articulated arm / three positioning axes plus gripper for implemented source."
+    }
+  ],
+  "private_author_names_in_extracted_pdf_text": [],
+  "privacy": "No private deployment addresses, credentials, or user account identifiers are reproduced in this inventory."
+}

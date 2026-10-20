@@ -1,0 +1,6 @@
+# Statistical plots; original robotics glyphs and draw.io exporter use stdlib.
+matplotlib==3.11.2
+numpy==2.5.4
+# System dependencies for diagram regeneration (not pip packages):
+# rsvg-convert from librsvg (tested 2.63.3), plus Noto Sans fonts.
+# Committed vector PDFs allow LaTeX compilation without figure-generation tools.

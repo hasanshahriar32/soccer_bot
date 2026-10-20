@@ -1,0 +1,72 @@
+{
+  "date": "2026-10-21",
+  "timezone": "Asia/Dhaka",
+  "study": "HazBot technical figures",
+  "checks": {
+    "all_bound_hashes_match": true,
+    "repeat_render_byte_identical": true,
+    "all_five_pdf_exports_vector_with_embedded_fonts": true,
+    "drawio_xml_structure_and_labels_valid": true,
+    "workspace_slice_has1681poses_and67belowground": true,
+    "protocol_counts_conserve261121inputs": true
+  },
+  "all_checks_pass": true,
+  "hash_bindings_checked": 40,
+  "tracked_exports_and_records": 19,
+  "paper_asset_count": 4,
+  "total_figure_sets": 5,
+  "pdf_figures": {
+    "hazbot_architecture": {
+      "font_count": 3,
+      "all_fonts_embedded": true,
+      "no_type_3": true,
+      "raster_image_objects": 0
+    },
+    "hazbot_mission": {
+      "font_count": 3,
+      "all_fonts_embedded": true,
+      "no_type_3": true,
+      "raster_image_objects": 0
+    },
+    "hazbot_arm_geometry": {
+      "font_count": 2,
+      "all_fonts_embedded": true,
+      "no_type_3": true,
+      "raster_image_objects": 0
+    },
+    "hazbot_workspace": {
+      "font_count": 3,
+      "all_fonts_embedded": true,
+      "no_type_3": true,
+      "raster_image_objects": 0
+    },
+    "hazbot_protocol": {
+      "font_count": 2,
+      "all_fonts_embedded": true,
+      "no_type_3": true,
+      "raster_image_objects": 0
+    }
+  },
+  "editable_diagrams": {
+    "hazbot_architecture": {
+      "cells": 68,
+      "unique_ids_and_resolving_connectors": true,
+      "all_svg_labels_retained": true,
+      "interactive_editor_render_checked": false
+    },
+    "hazbot_mission": {
+      "cells": 49,
+      "unique_ids_and_resolving_connectors": true,
+      "all_svg_labels_retained": true,
+      "interactive_editor_render_checked": false
+    },
+    "hazbot_arm_geometry": {
+      "cells": 36,
+      "unique_ids_and_resolving_connectors": true,
+      "all_svg_labels_retained": true,
+      "interactive_editor_render_checked": false
+    }
+  },
+  "visual_inspection": "All five PNG previews inspected; equal workspace axis scaling; no interactive editor rendering check.",
+  "scope": "Source-derived wrist geometry, software protocol semantics, schematic system roles, and abstract reference mission. No physical or hazard experiments."
+}

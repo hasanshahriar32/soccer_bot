@@ -1,0 +1,79 @@
+{
+  "scope": "Local format checks only. Not IEEE PDF eXpress certification, novelty certification, similarity checking, authorship approval, or venue-policy approval.",
+  "pdf": "HazBot_IEEE_Anonymous.pdf",
+  "sha256": "c61d78d2fd15ae26c50ce0768bc64452e303d178a98eac4b406748fd3806428a",
+  "checks": [
+    {
+      "check": "maximum_six_pages",
+      "passed": true,
+      "detail": "6 pages, maximum 6"
+    },
+    {
+      "check": "maximum_three_MB",
+      "passed": true,
+      "detail": "180279 bytes"
+    },
+    {
+      "check": "A4_all_pages",
+      "passed": true,
+      "detail": "6 A4 page sizes checked"
+    },
+    {
+      "check": "embedded_fonts",
+      "passed": true,
+      "detail": "22 font entries"
+    },
+    {
+      "check": "no_Type_3_fonts",
+      "passed": true,
+      "detail": "pdffonts inspection"
+    },
+    {
+      "check": "anonymous_PDF_author_metadata",
+      "passed": true,
+      "detail": "Author metadata empty or absent"
+    },
+    {
+      "check": "anonymous_author_block",
+      "passed": true,
+      "detail": "Anonymous author block present"
+    },
+    {
+      "check": "no_known_local_identifiers_in_PDF",
+      "passed": true,
+      "detail": "No known machine paths or private network identifiers"
+    },
+    {
+      "check": "no_email_addresses_in_anonymous_PDF",
+      "passed": true,
+      "detail": "No email addresses in PDF text"
+    },
+    {
+      "check": "no_unresolved_reference_markers",
+      "passed": true,
+      "detail": "No double-question reference markers"
+    },
+    {
+      "check": "resolved_TeX_references",
+      "passed": true,
+      "detail": "Compiler log inspected"
+    },
+    {
+      "check": "no_overfull_boxes",
+      "passed": true,
+      "detail": "Compiler log inspected; underfull spacing warnings are permitted"
+    },
+    {
+      "check": "citation_keys_exist",
+      "passed": true,
+      "detail": "9 cited keys; missing []"
+    }
+  ],
+  "all_mechanical_checks_pass": true,
+  "pending_author_decisions": [
+    "The supplied guideline restricts LLM use to non-intellectual purposes and requires acknowledgment. The current draft uses a neutral acknowledgment at the author's request. Assistance-policy compliance is unresolved; mechanical passes do not establish eligibility.",
+    "Human verification and approval of research, source interpretations, bibliography, and submission are required.",
+    "No similarity service, IEEE PDF eXpress, originality certification, or simultaneous-submission check was run.",
+    "Results concern source geometry, isolated command execution and a new abstract mission reference model, not physical hazard handling."
+  ]
+}

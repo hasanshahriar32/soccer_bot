@@ -1,0 +1,23 @@
+{
+  "analysis": "Independent read-back validation of abstract HazBot mission results",
+  "checks": {
+    "builtin_checks_passed": 109,
+    "byte_identical_repeat_outputs": 3,
+    "cases_per_policy": 28672,
+    "counterexample_csv_rows": 4,
+    "dataset_hashes_verified": 2,
+    "nominal_witness_steps": 11,
+    "phase_graph_edges_per_policy": 13,
+    "policies": 4,
+    "source_hashes_verified": 1,
+    "total_phase_valuation_policy_cases": 114688
+  },
+  "date": "2026-10-21",
+  "limits": "Abstract command admissibility and existential phase reachability; no physical safety or actual mission success claim.",
+  "output_sha256": {
+    "hazbot_mission_counterexamples.csv": "b0d96d4e26a9c3a0f07e71e04ab31be713cec21286c7fc723c70f78f7a52137a",
+    "hazbot_mission_counterexamples.json": "fa88e23e1722e021486d1b5213a93f8a8b12d87582156b9f3ecb45f829efbd5f",
+    "hazbot_mission_results.json": "a7f94b75a3bce536149508396ba7f67eb8916359fab756686d3512777355458b"
+  },
+  "passed": true
+}

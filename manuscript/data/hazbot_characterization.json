@@ -1,0 +1,553 @@
+{
+  "analysis": "Source-derived HazBot geometric and interface characterization",
+  "datasets": {
+    "hazbot_height_slabs.csv": {
+      "bytes": 489,
+      "sha256": "0dc0861709e1b405758285a95f8fe81eb5d26bee24bd426bef9c6ec9ebb65ed4"
+    },
+    "hazbot_protocol.csv": {
+      "bytes": 50659,
+      "sha256": "78d39bcdbbf88a8f582248905e6292bdfe127f1949ded353b2277d9db1ae8705"
+    },
+    "hazbot_workspace.csv": {
+      "bytes": 7760273,
+      "sha256": "e967655ec72b73bb85f791185ca554205b93db318394a67e7c5214da79d51395"
+    }
+  },
+  "date": "2026-10-21",
+  "dependencies": "Python standard library only",
+  "evidence_type": "Analytical geometry and isolated source-code execution; no hardware, trajectory simulation, model inference, hazard tests or physical measurements",
+  "limitations": [
+    "URDF geometry is uncalibrated source model geometry, not physical metrology.",
+    "Endpoint is fixed wrist origin. No calibrated grasp TCP is defined; jaw geometry is not grasp reach.",
+    "No collision, torque, payload, chassis tipping, servo dynamics, cable or contact constraints included.",
+    "Below-ground samples retained and flagged to expose model-only envelope limits.",
+    "Grid counts and extrema are sample-dependent, not uniform Cartesian volumes or exact continuous workspace boundaries.",
+    "Protocol outputs describe code semantics, not physical wheel or arm performance.",
+    "No hazardous material was handled or recognized by this characterization."
+  ],
+  "protocols": {
+    "arm": {
+      "alternative_firmware_gripper_constants": {
+        "GRIPPER_MAX": 270,
+        "GRIPPER_MAX_US": 2000,
+        "GRIPPER_MIN": 115,
+        "GRIPPER_MIN_US": 1150
+      },
+      "channels": {
+        "A": {
+          "at_input_0": 180,
+          "at_input_180": 0,
+          "distinct_outputs": 181,
+          "hardware_max": 180,
+          "hardware_min": 0,
+          "reversed": true,
+          "tested_inputs": 451
+        },
+        "B": {
+          "at_input_0": 0,
+          "at_input_180": 180,
+          "distinct_outputs": 181,
+          "hardware_max": 180,
+          "hardware_min": 0,
+          "reversed": false,
+          "tested_inputs": 451
+        },
+        "E": {
+          "at_input_0": 180,
+          "at_input_180": 0,
+          "distinct_outputs": 181,
+          "hardware_max": 180,
+          "hardware_min": 0,
+          "reversed": true,
+          "tested_inputs": 451
+        },
+        "G": {
+          "at_input_0": 90,
+          "at_input_180": 180,
+          "distinct_outputs": 181,
+          "hardware_max": 270,
+          "hardware_min": 90,
+          "reversed": false,
+          "tested_inputs": 451
+        },
+        "S": {
+          "at_input_0": 180,
+          "at_input_180": 0,
+          "distinct_outputs": 181,
+          "hardware_max": 180,
+          "hardware_min": 0,
+          "reversed": true,
+          "tested_inputs": 451
+        }
+      },
+      "input_interval": [
+        -90,
+        360
+      ],
+      "interpretation": "Three positioning channels plus gripper; E aliases elbow A. Command units and clamps are software conventions, not calibrated mechanical joint angle measurements.",
+      "locator": {
+        "first_line": 59,
+        "last_line": 73,
+        "path": "scripts/arm_server.py"
+      },
+      "primary_firmware_constants": {
+        "ALBO_MAX": 180,
+        "ALBO_MIN": 0,
+        "ALBO_PIN": 11,
+        "BASE_MAX": 180,
+        "BASE_MIN": 0,
+        "BASE_PIN": 9,
+        "GRIPPER_MAX": 270,
+        "GRIPPER_MAX_US": 2000,
+        "GRIPPER_MIN": 90,
+        "GRIPPER_MIN_US": 1000,
+        "GRIPPER_PIN": 12,
+        "MOVE_DELAY": 40,
+        "SHOULDER_MAX": 180,
+        "SHOULDER_MIN": 0,
+        "SHOULDER_PIN": 10
+      },
+      "servo_pins": {
+        "ALBO_PIN": 11,
+        "BASE_PIN": 9,
+        "GRIPPER_PIN": 12,
+        "SHOULDER_PIN": 10
+      },
+      "tested_aliases": [
+        "B",
+        "S",
+        "A",
+        "E",
+        "G"
+      ],
+      "total_mapping_cases": 2255
+    },
+    "wheel": {
+      "exhaustive_cases": 261121,
+      "exhaustive_input_interval_each_wheel": [
+        -255,
+        255
+      ],
+      "exhaustive_output_counts": {
+        "B": 65025,
+        "F": 65025,
+        "L": 65025,
+        "NO_COMMAND": 1020,
+        "R": 65025,
+        "S": 1
+      },
+      "interpretation": "Gateway sign-to-direction semantics; magnitudes discarded; mixed-zero pairs silently emit no new command. No motor displacement, speed, or physical stopping was measured.",
+      "locator": {
+        "first_line": 149,
+        "last_line": 165,
+        "method": "AST-extracted actual SET branch; transport sender replaced by list append; no runtime module imported",
+        "path": "motor_control/motor_server.py"
+      },
+      "small_grid_cases": 49,
+      "small_grid_output_counts": {
+        "B": 9,
+        "F": 9,
+        "L": 9,
+        "NO_COMMAND": 12,
+        "R": 9,
+        "S": 1
+      },
+      "small_input_values": [
+        -255,
+        -127,
+        -1,
+        0,
+        1,
+        127,
+        255
+      ]
+    }
+  },
+  "schemas": {
+    "lidar": {
+      "bridge_serial_baud": 115200,
+      "interface": "sensor controller and CP2102 USB-UART interface to Raspberry Pi; independent of drive/arm Arduino",
+      "interpretation": "Configured serialization/angular discretization, not measured resolution or localization accuracy.",
+      "nominal_bin_width_degrees": 0.5,
+      "raw_parser_bins": 720
+    },
+    "vision": {
+      "class_count": 2,
+      "class_names": {
+        "0": "Tennis Ball",
+        "1": "Cricket Ball"
+      },
+      "confidence_threshold": 0.4,
+      "cpu_threads": 2,
+      "hazard_class_validation": "none in inspected evidence",
+      "model_description_from_source": "INT8 YOLOv8 TFLite; model weights external and not evaluated",
+      "nms_iou_threshold": 0.45
+    }
+  },
+  "source_bindings": {
+    "arm_firmware": {
+      "path": "scripts/arduino_arm_controller/arduino_arm_controller.ino",
+      "sha256": "1eb9a4e6a07490c8dd2838019d3a8a04f9dbf257933d68086ee1aa3915c77ac7"
+    },
+    "arm_firmware_alternative": {
+      "path": "scripts/arduino_arm_controller.ino",
+      "sha256": "9bc3b30c6d91f5efdfdeafb5446eccc064b3cca0834cde493641f0c08d67c772"
+    },
+    "arm_gateway": {
+      "path": "scripts/arm_server.py",
+      "sha256": "6c303607a8e66bb9b37560a35e5629c96282ddc022e0278f6b33e056b92c846c"
+    },
+    "generator": {
+      "path": "manuscript/experiments/characterize_hazbot.py",
+      "sha256": "96c00e95209085f54ff52043c8f36218dc94a7e156f83971f38cac6d219d6dfc"
+    },
+    "lidar_bridge": {
+      "path": "scripts/lidar_bridge.py",
+      "sha256": "5b9d2b6bf93dbe7ce3d754ef01e88ff6aa04197ddc95a98a1e2e2a10e3d4a3ba"
+    },
+    "motor_firmware": {
+      "path": "motor_control/soccer_bot_motor_driver.ino",
+      "sha256": "391799fdd30b6911b11c932b9879095f2f75805066757e488d335704416b5ff7"
+    },
+    "motor_gateway": {
+      "path": "motor_control/motor_server.py",
+      "sha256": "5b1ec929a9062bc4f79c89d078db7f3507d299d7a59459414e8c8c88e3becd2b"
+    },
+    "raw_lidar": {
+      "path": "scripts/raw_lidar_publisher.py",
+      "sha256": "e79ab95f171ba5936bb060e1f725189ae66822dfd94058aa7f6b3bf84b53b158"
+    },
+    "urdf": {
+      "path": "scripts/robot.urdf",
+      "sha256": "3bb63a2e55094801cc83093a75f589f68d446e1f4b635626045a31208bf72627"
+    },
+    "vision": {
+      "path": "scripts/detect_live_picamera2.py",
+      "sha256": "09409f0f30da02c54c96a31887c646947e3ec7af2b1931502880a19b95560ee9"
+    }
+  },
+  "validation": {
+    "check_count": 29,
+    "checks": [
+      {
+        "detail": null,
+        "name": "exact modeled chain recognized",
+        "passed": true
+      },
+      {
+        "detail": null,
+        "name": "chain origins have zero rpy",
+        "passed": true
+      },
+      {
+        "detail": null,
+        "name": "positioning axes match yaw-pitch-pitch",
+        "passed": true
+      },
+      {
+        "detail": null,
+        "name": "wrist is fixed",
+        "passed": true
+      },
+      {
+        "detail": null,
+        "name": "upper link is initially vertical",
+        "passed": true
+      },
+      {
+        "detail": null,
+        "name": "forearm initially points forward",
+        "passed": true
+      },
+      {
+        "detail": null,
+        "name": "yaw to shoulder has only axial offset",
+        "passed": true
+      },
+      {
+        "detail": null,
+        "name": "validation angles inside declared bounds",
+        "passed": true
+      },
+      {
+        "detail": {
+          "max_error_m": 6.798699777552591e-17,
+          "poses": 1013
+        },
+        "name": "analytic FK agrees with independent homogeneous chain",
+        "passed": true
+      },
+      {
+        "detail": null,
+        "name": "exact collinear pose attains link-sum bound",
+        "passed": true
+      },
+      {
+        "detail": null,
+        "name": "folded pose attains link-difference bound",
+        "passed": true
+      },
+      {
+        "detail": {
+          "elbow_interval_rad": [
+            -1.5707963267948966,
+            1.5707963267948966
+          ],
+          "samples": 401
+        },
+        "name": "reach decreases monotonically from extended to folded",
+        "passed": true
+      },
+      {
+        "detail": null,
+        "name": "joint grid has declared number of points",
+        "passed": true
+      },
+      {
+        "detail": null,
+        "name": "every grid wrist lies within shoulder link-sum bound",
+        "passed": true
+      },
+      {
+        "detail": null,
+        "name": "every grid wrist satisfies link-difference lower bound",
+        "passed": true
+      },
+      {
+        "detail": {
+          "maximum_difference_m": 8.326672684688674e-17
+        },
+        "name": "yaw preserves wrist height and shoulder distance",
+        "passed": true
+      },
+      {
+        "detail": null,
+        "name": "exact SET branch uniquely located",
+        "passed": true
+      },
+      {
+        "detail": null,
+        "name": "isolated SET branch contains no imports/global statements",
+        "passed": true
+      },
+      {
+        "detail": [
+          "Exception",
+          "err",
+          "int",
+          "l",
+          "line",
+          "print",
+          "r",
+          "send_to_arduino",
+          "vals"
+        ],
+        "name": "isolated SET branch uses only audited names",
+        "passed": true
+      },
+      {
+        "detail": {
+          "evaluated_pairs": 261121,
+          "mismatches": 0
+        },
+        "name": "all signed PWM-magnitude pairs match independent sign partition",
+        "passed": true
+      },
+      {
+        "detail": null,
+        "name": "mixed-zero wheel commands emit no command",
+        "passed": true
+      },
+      {
+        "detail": null,
+        "name": "all four nonzero sign quadrants erase magnitudes",
+        "passed": true
+      },
+      {
+        "detail": null,
+        "name": "only all-zero pair emits stop",
+        "passed": true
+      },
+      {
+        "detail": null,
+        "name": "pure arm angle map uniquely located",
+        "passed": true
+      },
+      {
+        "detail": null,
+        "name": "arm mapping has no calls beyond pure builtins",
+        "passed": true
+      },
+      {
+        "detail": {
+          "evaluated_cases": 2255,
+          "mismatches": 0
+        },
+        "name": "isolated arm mapping matches independent clamp model",
+        "passed": true
+      },
+      {
+        "detail": null,
+        "name": "four distinct arm servo pins",
+        "passed": true
+      },
+      {
+        "detail": null,
+        "name": "primary firmware clamp ranges agree with gateway",
+        "passed": true
+      },
+      {
+        "detail": null,
+        "name": "two visual classes extracted from source literal",
+        "passed": true
+      }
+    ],
+    "passed": true
+  },
+  "workspace": {
+    "endpoint": "arm_wrist_link origin",
+    "fk_validation": {
+      "maximum_disagreement_m": 6.798699777552591e-17,
+      "random_poses": 1000,
+      "random_seed": 20261021,
+      "special_poses": 13,
+      "total_poses": 1013
+    },
+    "frame": "base_link",
+    "geometry": {
+      "forearm_length_m": 0.1,
+      "shoulder_origin_m": [
+        0.1,
+        0.0,
+        0.155
+      ],
+      "upper_link_length_m": 0.1
+    },
+    "grid": {
+      "above_or_on_ground_plane_count": 66174,
+      "below_ground_plane_count": 2747,
+      "extrema_m": {
+        "distance_from_shoulder_origin_m": {
+          "max": 0.19999999999966275,
+          "min": 7.1326794881038975e-06
+        },
+        "radius_from_shoulder_axis_m": {
+          "max": 0.19988587271554495,
+          "min": 2.406858688412918e-07
+        },
+        "wrist_x_m": {
+          "max": 0.2998858727155449,
+          "min": 3.586109634409751e-05
+        },
+        "wrist_y_m": {
+          "max": 0.19988587271419644,
+          "min": -0.19988587271419644
+        },
+        "wrist_z_m": {
+          "max": 0.354895571295924,
+          "min": -0.03159784550509505
+        }
+      },
+      "including_limit_endpoints": true,
+      "points_per_joint": 41,
+      "total_poses": 68921
+    },
+    "height_slabs": [
+      {
+        "half_width_m": 0.01,
+        "height_center_m": 0.0,
+        "maximum_radius_from_shoulder_axis_m": 0.13742681581392033,
+        "minimum_radius_from_shoulder_axis_m": 0.00016697353236140008,
+        "sample_count": 2214
+      },
+      {
+        "half_width_m": 0.01,
+        "height_center_m": 0.05,
+        "maximum_radius_from_shoulder_axis_m": 0.17537543546440212,
+        "minimum_radius_from_shoulder_axis_m": 0.00037437138061260244,
+        "sample_count": 2665
+      },
+      {
+        "half_width_m": 0.01,
+        "height_center_m": 0.1,
+        "maximum_radius_from_shoulder_axis_m": 0.19390422632946624,
+        "minimum_radius_from_shoulder_axis_m": 0.00030022373278451245,
+        "sample_count": 3567
+      },
+      {
+        "half_width_m": 0.01,
+        "height_center_m": 0.15,
+        "maximum_radius_from_shoulder_axis_m": 0.19988587271554495,
+        "minimum_radius_from_shoulder_axis_m": 2.406858688412918e-07,
+        "sample_count": 9020
+      },
+      {
+        "half_width_m": 0.01,
+        "height_center_m": 0.2,
+        "maximum_radius_from_shoulder_axis_m": 0.1960110041797149,
+        "minimum_radius_from_shoulder_axis_m": 0.00038842511375076637,
+        "sample_count": 5207
+      },
+      {
+        "half_width_m": 0.01,
+        "height_center_m": 0.25,
+        "maximum_radius_from_shoulder_axis_m": 0.17901017488294335,
+        "minimum_radius_from_shoulder_axis_m": 0.001170429083908836,
+        "sample_count": 2624
+      },
+      {
+        "half_width_m": 0.01,
+        "height_center_m": 0.3,
+        "maximum_radius_from_shoulder_axis_m": 0.1469238953558068,
+        "minimum_radius_from_shoulder_axis_m": 0.02792800741751095,
+        "sample_count": 1599
+      },
+      {
+        "half_width_m": 0.01,
+        "height_center_m": 0.35,
+        "maximum_radius_from_shoulder_axis_m": 0.07216729318582855,
+        "minimum_radius_from_shoulder_axis_m": 0.0008433655794335966,
+        "sample_count": 2583
+      }
+    ],
+    "interpretation": "Ideal geometric wrist-origin envelope; not end-effector contact reach, collision-free workspace, payload, stability, or physical accuracy.",
+    "jaw_joint_origins_from_wrist_m": {
+      "gripper_left_joint": [
+        0.025,
+        0.015,
+        0.0
+      ],
+      "gripper_right_joint": [
+        0.025,
+        -0.015,
+        0.0
+      ]
+    },
+    "jaw_local_geometry": "Each jaw has 0.06m visual length, 0.025m joint x offset, opposite z rotations. No calibrated grasp TCP is defined.",
+    "joint_chain": [
+      "base_to_chassis",
+      "chassis_to_arm_mount",
+      "base_joint",
+      "shoulder_joint",
+      "elbow_joint",
+      "wrist_joint"
+    ],
+    "joint_limits_rad": {
+      "base_joint": [
+        -1.5708,
+        1.5708
+      ],
+      "elbow_joint": [
+        -1.5708,
+        2.6179
+      ],
+      "shoulder_joint": [
+        -0.5,
+        2.6179
+      ]
+    },
+    "shoulder_to_wrist_link_difference_bound_m": 0.0,
+    "shoulder_to_wrist_link_sum_bound_m": 0.2
+  }
+}

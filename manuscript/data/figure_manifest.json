@@ -1,0 +1,103 @@
+{
+  "generator": "Original Python-authored SVG + librsvg diagrams; Matplotlib native-vector source-derived plots",
+  "study": "HazBot source-derived architecture and geometric/interface characterization",
+  "python_version": "3.14.8",
+  "matplotlib_version": "3.11.2",
+  "numpy_version": "2.5.4",
+  "librsvg_version": "rsvg-convert version 2.63.3\n\nlibraries used:\n  cairo 1.18.6\n  pango 1.58.2\n  harfbuzz 14.6.0\n  fontconfig 2.18.3",
+  "settings": {
+    "preview_dpi": 300,
+    "pdf_plot_fonttype": 42,
+    "svg_plot_fonttype": "none",
+    "svg_hashsalt": "hazbot-source-figures-v1",
+    "rasterized_plot_artists": false,
+    "diagram_primary_font": "Noto Sans",
+    "plot_primary_font": "DejaVu Sans",
+    "creation_and_modification_metadata": "Fixed diagram SOURCE_DATE_EPOCH; omitted plot timestamps"
+  },
+  "figures": {
+    "hazbot_architecture": {
+      "in_paper": true,
+      "dimensions_inches": [
+        7.1,
+        3.6
+      ]
+    },
+    "hazbot_mission": {
+      "in_paper": true,
+      "dimensions_inches": [
+        7.1,
+        1.62
+      ]
+    },
+    "hazbot_arm_geometry": {
+      "in_paper": true,
+      "dimensions_inches": [
+        3.45,
+        2.25
+      ]
+    },
+    "hazbot_workspace": {
+      "in_paper": true,
+      "dimensions_inches": [
+        3.45,
+        2.25
+      ]
+    },
+    "hazbot_protocol": {
+      "in_paper": false,
+      "dimensions_inches": [
+        3.45,
+        2.4
+      ]
+    }
+  },
+  "inputs_sha256": {
+    "data/hazbot_characterization.json": "aa98e31de0b2c5bb5e21de76825e3a4103451c8d9241e70d0576482c22964042",
+    "data/hazbot_workspace.csv": "e967655ec72b73bb85f791185ca554205b93db318394a67e7c5214da79d51395",
+    "data/hazbot_protocol.csv": "78d39bcdbbf88a8f582248905e6292bdfe127f1949ded353b2277d9db1ae8705",
+    "data/hazbot_height_slabs.csv": "0dc0861709e1b405758285a95f8fe81eb5d26bee24bd426bef9c6ec9ebb65ed4"
+  },
+  "source_evidence_sha256": {
+    "scripts/arduino_arm_controller/arduino_arm_controller.ino": "1eb9a4e6a07490c8dd2838019d3a8a04f9dbf257933d68086ee1aa3915c77ac7",
+    "scripts/arduino_arm_controller.ino": "9bc3b30c6d91f5efdfdeafb5446eccc064b3cca0834cde493641f0c08d67c772",
+    "scripts/arm_server.py": "6c303607a8e66bb9b37560a35e5629c96282ddc022e0278f6b33e056b92c846c",
+    "manuscript/experiments/characterize_hazbot.py": "96c00e95209085f54ff52043c8f36218dc94a7e156f83971f38cac6d219d6dfc",
+    "scripts/lidar_bridge.py": "5b9d2b6bf93dbe7ce3d754ef01e88ff6aa04197ddc95a98a1e2e2a10e3d4a3ba",
+    "motor_control/soccer_bot_motor_driver.ino": "391799fdd30b6911b11c932b9879095f2f75805066757e488d335704416b5ff7",
+    "motor_control/motor_server.py": "5b1ec929a9062bc4f79c89d078db7f3507d299d7a59459414e8c8c88e3becd2b",
+    "scripts/raw_lidar_publisher.py": "e79ab95f171ba5936bb060e1f725189ae66822dfd94058aa7f6b3bf84b53b158",
+    "scripts/robot.urdf": "3bb63a2e55094801cc83093a75f589f68d446e1f4b635626045a31208bf72627",
+    "scripts/detect_live_picamera2.py": "09409f0f30da02c54c96a31887c646947e3ec7af2b1931502880a19b95560ee9",
+    "motor_control/README.md": "365711c094bebdb91d6e8f0f084ef6e34af5e50f5d889b5a3efde44ed8d50748",
+    "proposal_resources/Autonomous-Mobile-Manipulator-Engineering-Exam-Report.pdf": "c9aebf99f1dc36cf938772488dc404226ce76cb312e24016a35b45833046bec2",
+    "proposal_resources/HazBot_Presentation.pptx.pdf": "f649cad5b23d8e20d54c6c0baefd247465a4f6c8a78a7d4f6d126dcfc1f5ee47"
+  },
+  "scripts_sha256": {
+    "scripts/build_figures.py": "42b4987bcfa5ebf63df10027ca568fdfda5b5672e39fa2205d79dcc44bded00b",
+    "scripts/render_hazbot_figures.py": "d918ef0bccc72ca5034f041f488e76fe1df00fc03a3679be00c914b2b373ff24",
+    "scripts/hazbot_icons.py": "5a564d7dd737f84f154dddff1fc899698fa8e52b2d9bc7a7f24b6da2c0935a96",
+    "scripts/export_drawio.py": "5b9e1f77cd6bd38b9aaa16157d5e091d3def13beb07fee15288e5c6b4f2159b1"
+  },
+  "outputs_sha256": {
+    "figures/hazbot_architecture.pdf": "7174cac7e6aa19b4d626fb40e5dd6c29073b352de7e4e52e418be4309d8eef1a",
+    "figures/hazbot_architecture.svg": "c84d1f89776a12bedc63e61edbb67d9ecb94e8a429c9ceb3526947caf84441b5",
+    "figures/hazbot_architecture.png": "5edbdc05d6059f3b2aa7fb16fe88aba97846ed038613c0620352a47e97570955",
+    "figures/hazbot_mission.pdf": "39444cf055247a5ed28c88120a47bdec14b3aafdfe60759acb5f77510b598c8c",
+    "figures/hazbot_mission.svg": "094225e24e8951639771e46c644a1e403c120bd114b2836680710791deea190d",
+    "figures/hazbot_mission.png": "6a92041d868d47b3a51ed6afdcf66382743a82b00d662a813cff602c0baa8d93",
+    "figures/hazbot_arm_geometry.pdf": "1f1779ec4b290baa52e6e1b6704ca0620a88c8565a49cda3588950e580f2e3ce",
+    "figures/hazbot_arm_geometry.svg": "6232ce01a30c75e1eee2d41ee21d2fc618eee16c7865cc13eff38a42fc8b5f2a",
+    "figures/hazbot_arm_geometry.png": "0322706c7b88cded90d1deb38a4a784ec5770a54f94fb64bdde5a592eb7d5c2a",
+    "figures/hazbot_workspace.pdf": "78a04782511c57b2704914c255f645d1494f71a648098b0b287b8345e6e973b9",
+    "figures/hazbot_workspace.svg": "351561e9ce818b0f8989bbef8d3215413a63dee1dcbf4b6ec258c2574656acde",
+    "figures/hazbot_workspace.png": "a482b2d69f7d9ba67a978211cf0ec62c44aab03868c4105defe6e4a57919d9da",
+    "figures/hazbot_protocol.pdf": "3a68979c09fe763125bdc3107d01f7446f1cefd005ab32a69d811d08246336da",
+    "figures/hazbot_protocol.svg": "80ee774178400110f8b5e780c79dffce85c0fa3e068a3ae2e4901dc86a5ca894",
+    "figures/hazbot_protocol.png": "8d10dab814ee82563290ca8f561146c9d66e737aa4e617a03285d85d48f07893",
+    "figures/hazbot_architecture.drawio": "24fef8c17bf08934cd6e0ea43a67c5b2198a7e5b72f75786f2de1ac56574768f",
+    "figures/hazbot_mission.drawio": "2bbbf4aae07563f375cbbaaeca47d890b7e994f88c69838691384428286493b1",
+    "figures/hazbot_arm_geometry.drawio": "2be646b8fff2b48f3d2a3d70bb8d9e51c488c4f410b40d87392cde6b48c1d6f3",
+    "data/figure_data.json": "fc406594dcaef079987487cbc0a37580b910dba4369d0aeba67a44e24414a960"
+  }
+}

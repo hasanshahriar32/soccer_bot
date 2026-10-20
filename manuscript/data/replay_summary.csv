@@ -1,0 +1,37 @@
+scenario,label,policy,ticks,motion_ticks,forward_ticks,constrained_ticks,constrained_motion_ticks,constrained_forward_ticks,override_ticks,clear_forward_opportunities,clear_forward_held_ticks,output_change_ticks
+healthy_centered,Healthy centered approach,source,80,80,80,0,0,0,0,80,0,0
+healthy_centered,Healthy centered approach,freshness_only,80,80,80,0,0,0,0,80,0,0
+healthy_centered,Healthy centered approach,full_supervisor,80,80,80,0,0,0,0,80,0,0
+healthy_turn_reversal,Healthy lateral reversal,source,80,80,0,0,0,0,0,0,0,0
+healthy_turn_reversal,Healthy lateral reversal,freshness_only,80,80,0,0,0,0,0,0,0,0
+healthy_turn_reversal,Healthy lateral reversal,full_supervisor,80,80,0,0,0,0,0,0,0,0
+near_obstacle,Near return and recovery,source,80,50,50,30,0,0,0,50,0,0
+near_obstacle,Near return and recovery,freshness_only,80,50,50,30,0,0,0,50,0,0
+near_obstacle,Near return and recovery,full_supervisor,80,50,50,30,0,0,30,50,0,0
+camera_silence,Camera stops publishing,source,80,80,36,0,0,0,0,36,0,0
+camera_silence,Camera stops publishing,freshness_only,80,80,36,0,0,0,0,36,0,0
+camera_silence,Camera stops publishing,full_supervisor,80,80,36,0,0,0,0,36,0,0
+explicit_ball_loss,Explicit absence messages,source,80,80,20,0,0,0,0,20,0,0
+explicit_ball_loss,Explicit absence messages,freshness_only,80,80,20,0,0,0,0,20,0,0
+explicit_ball_loss,Explicit absence messages,full_supervisor,80,80,20,0,0,0,0,20,0,0
+startup_without_scan,No scan at startup,source,80,80,80,20,20,20,0,80,0,0
+startup_without_scan,No scan at startup,freshness_only,80,60,60,20,0,0,20,80,20,20
+startup_without_scan,No scan at startup,full_supervisor,80,60,60,20,0,0,20,80,20,20
+scan_dropout,Scan stream interruption,source,80,80,80,37,37,37,0,80,0,0
+scan_dropout,Scan stream interruption,freshness_only,80,43,43,37,0,0,37,80,37,37
+scan_dropout,Scan stream interruption,full_supervisor,80,43,43,37,0,0,37,80,37,37
+all_invalid_scan,All ranges invalid,source,80,80,80,40,40,40,0,80,0,0
+all_invalid_scan,All ranges invalid,freshness_only,80,80,80,40,40,40,0,80,0,0
+all_invalid_scan,All ranges invalid,full_supervisor,80,40,40,40,0,0,40,80,40,40
+empty_scan,Empty scan messages,source,80,80,80,40,40,40,0,80,0,0
+empty_scan,Empty scan messages,freshness_only,80,80,80,40,40,40,0,80,0,0
+empty_scan,Empty scan messages,full_supervisor,80,40,40,40,0,0,40,80,40,40
+malformed_ball,Nonfinite ball coordinate,source,80,80,80,40,40,40,0,40,0,0
+malformed_ball,Nonfinite ball coordinate,freshness_only,80,80,80,40,40,40,0,40,0,0
+malformed_ball,Nonfinite ball coordinate,full_supervisor,80,40,40,40,0,0,40,40,0,40
+combined_fault,Scan and camera interruption,source,80,80,56,37,37,13,0,56,0,0
+combined_fault,Scan and camera interruption,freshness_only,80,43,43,37,0,0,37,56,13,37
+combined_fault,Scan and camera interruption,full_supervisor,80,43,43,37,0,0,37,56,13,37
+slow_healthy_scan,Clear scene at 2.5 Hz scan,source,80,80,80,30,30,30,0,80,0,0
+slow_healthy_scan,Clear scene at 2.5 Hz scan,freshness_only,80,50,50,30,0,0,30,80,30,30
+slow_healthy_scan,Clear scene at 2.5 Hz scan,full_supervisor,80,50,50,30,0,0,30,80,30,30
