@@ -1,6 +1,6 @@
 # HazBot figures
 
-The paper uses three technical vector figures and two compact real photographs. Original photos remain in photo/bot.jpeg and photo/laptop_front.jpeg; code adds small numbered markers, with component keys in the paper captions.
+The paper uses three technical vector figures, two compact real photographs, and an annotated dashboard screenshot. Supplied images remain in photo/bot.png, photo/laptop_front.png, and photo/dashboard_edited.png; compact JPEG derivatives feed the paper renderer, which adds small numbered markers with component and interface keys in the captions.
 
 | Paper asset | Exports | Content |
 |---|---|---|

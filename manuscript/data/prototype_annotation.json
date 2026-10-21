@@ -4,46 +4,46 @@
   "renderer": "Python-authored SVG labels and leaders; original JPEG photograph; librsvg PDF/PNG export",
   "source": "photo/bot.jpeg",
   "source_path": "photo/bot.jpeg",
-  "source_sha256": "6aca99fb652ce6a268c17d3527ae635485a7247c28b94a0200d3e833d44dbaee",
+  "source_sha256": "f3a534a612422d9a4f83fc8b5e073c20069dab16b690a26f8ac35e394a6c35f9",
   "original_size_px": [
-    890,
-    1161
+    768,
+    998
   ],
   "original_metadata_presence": {
-    "exif": true,
+    "exif": false,
     "gps": false,
     "comment": false,
     "icc_color_profile": false
   },
-  "embedded_source_byte_identical": false,
+  "embedded_source_byte_identical": true,
   "embedded_pixel_identical_to_source": true,
-  "embedded_jpeg_sha256": "41c8b8139063847982e0bcbed7ea197942261a322654b163c1e40dfe015ecd17",
+  "embedded_jpeg_sha256": "f3a534a612422d9a4f83fc8b5e073c20069dab16b690a26f8ac35e394a6c35f9",
   "source_pixel_modification": "none; entire current photograph retained; no crop, retouch, synthesis or pixel re-encoding before embedding",
   "source_privacy_review": "Nonessential JPEG metadata removed losslessly, including EXIF/XMP, comments and Photoshop metadata. JFIF/ICC/Adobe color interpretation retained. Original user file remains untouched.",
   "dimensions_inches": [
     2.7,
-    3.5221348314606744
+    3.5085937500000006
   ],
-  "png_resolution_dpi": 329.6296296296296,
+  "png_resolution_dpi": 284.4444444444444,
   "png_native_size_px": [
-    890,
-    1161
+    768,
+    998
   ],
   "photo_viewport_canvas": [
     0,
     0,
-    890,
-    1161
+    768,
+    998
   ],
   "photo_bbox_canvas": [
     0,
     0,
-    890,
-    1161
+    768,
+    998
   ],
   "canvas_viewbox": [
-    890,
-    1161
+    768,
+    998
   ],
   "compact_layout": true,
   "no_added_canvas": true,
@@ -56,8 +56,8 @@
       "title": "BALL SURROGATE",
       "detail": "Nonhazardous task object",
       "anchor": [
-        510,
-        111
+        432,
+        78
       ],
       "color": "#ac5c52",
       "rationale": "Red spherical object visibly held between the end-effector jaws.",
@@ -66,8 +66,8 @@
         100
       ],
       "anchor_normalized": [
-        0.5730337078651685,
-        0.09560723514211886
+        0.5625,
+        0.0781563126252505
       ]
     },
     {
@@ -75,8 +75,8 @@
       "title": "GRIPPER",
       "detail": "Opposing end-effector jaws",
       "anchor": [
-        478,
-        165
+        430,
+        112
       ],
       "color": "#ac5c52",
       "rationale": "Wooden opposing jaw mechanism surrounds the ball.",
@@ -85,8 +85,8 @@
         210
       ],
       "anchor_normalized": [
-        0.5370786516853933,
-        0.1421188630490956
+        0.5598958333333334,
+        0.11222444889779559
       ]
     },
     {
@@ -94,8 +94,8 @@
       "title": "SERVO ACTUATION",
       "detail": "Exposed servo and wiring",
       "anchor": [
-        437,
-        230
+        407,
+        158
       ],
       "color": "#ac5c52",
       "rationale": "Blue servo body and its wiring are visible beneath the jaw assembly.",
@@ -104,8 +104,8 @@
         220
       ],
       "anchor_normalized": [
-        0.4910112359550562,
-        0.19810508182601205
+        0.5299479166666666,
+        0.15831663326653306
       ]
     },
     {
@@ -113,8 +113,8 @@
       "title": "ARTICULATED LINKAGE",
       "detail": "Arm links and pivot joints",
       "anchor": [
-        352,
-        341
+        315,
+        310
       ],
       "color": "#ac5c52",
       "rationale": "Paired long arm members and pivot fasteners are visible.",
@@ -123,8 +123,8 @@
         350
       ],
       "anchor_normalized": [
-        0.3955056179775281,
-        0.29371231696813094
+        0.41015625,
+        0.3106212424849699
       ]
     },
     {
@@ -132,18 +132,18 @@
       "title": "RASPBERRY PI + DISPLAY",
       "detail": "GPIO-mounted local screen",
       "anchor": [
-        469,
-        613
+        390,
+        505
       ],
       "color": "#34799c",
       "rationale": "User identifies the Pi behind the screen and confirms the screen is connected directly by GPIO; the marker denotes that assembly.",
       "marker": [
-        690,
-        610
+        650,
+        505
       ],
       "anchor_normalized": [
-        0.5269662921348315,
-        0.5279931093884582
+        0.5078125,
+        0.5060120240480962
       ]
     },
     {
@@ -151,18 +151,18 @@
       "title": "LIDAR SCANNER",
       "detail": "Rotating ranging assembly",
       "anchor": [
-        396,
-        827
+        386,
+        735
       ],
       "color": "#16858d",
       "rationale": "Rotating scan head and black scanner housing are visible; brand/model is not inferred from the image.",
       "marker": [
-        690,
-        800
+        650,
+        735
       ],
       "anchor_normalized": [
-        0.4449438202247191,
-        0.7123169681309216
+        0.5026041666666666,
+        0.7364729458917836
       ]
     },
     {
@@ -170,18 +170,18 @@
       "title": "WHEEL DRIVE",
       "detail": "Treaded wheel pair",
       "anchor": [
-        233,
-        934
+        205,
+        780
       ],
       "color": "#a87935",
       "rationale": "Left treaded wheel is marked; the corresponding right wheel is also visible.",
       "marker": [
-        115,
-        920
+        90,
+        780
       ],
       "anchor_normalized": [
-        0.26179775280898876,
-        0.8044788975021533
+        0.2669270833333333,
+        0.781563126252505
       ]
     },
     {
@@ -190,17 +190,17 @@
       "detail": "Onboard electrical supply",
       "anchor": [
         315,
-        970
+        820
       ],
       "color": "#a87935",
       "rationale": "Cylindrical cells in a holder are visible; cell chemistry, voltage and runtime are not inferred.",
       "marker": [
-        120,
-        1060
+        95,
+        900
       ],
       "anchor_normalized": [
-        0.3539325842696629,
-        0.8354866494401378
+        0.41015625,
+        0.8216432865731463
       ]
     },
     {
@@ -208,18 +208,18 @@
       "title": "CONTROL ELECTRONICS",
       "detail": "Exposed boards and wiring",
       "anchor": [
-        513,
-        964
+        450,
+        885
       ],
       "color": "#34799c",
       "rationale": "Lower-platform electronic boards and harness are visible; the marker does not infer a particular board model.",
       "marker": [
-        700,
-        1100
+        650,
+        900
       ],
       "anchor_normalized": [
-        0.5764044943820225,
-        0.830318690783807
+        0.5859375,
+        0.8867735470941884
       ]
     },
     {
@@ -227,18 +227,18 @@
       "title": "CAMERA MODULE",
       "detail": "White CSI ribbon to Pi",
       "anchor": [
-        415,
-        432
+        380,
+        350
       ],
       "color": "#34799c",
       "rationale": "User identifies the camera at the far end of the white ribbon from the Pi; zoom inspection locates the small board and lens beside the arm.",
       "marker": [
-        640,
-        420
+        620,
+        350
       ],
       "anchor_normalized": [
-        0.46629213483146065,
-        0.37209302325581395
+        0.4947916666666667,
+        0.35070140280561124
       ]
     }
   ],
@@ -248,11 +248,11 @@
     "camera": "User confirms white ribbon from Raspberry Pi terminates at camera; image zoom used to anchor visible board/lens."
   },
   "evidence_scope": "Visible prototype component identification; no claim of autonomous grasp success or hazardous-material handling follows from the photograph.",
-  "generator_sha256": "8e7be053b96b5dc85dc75fba085d00b442f86299213850faceb9fcdd741a3a66",
+  "generator_sha256": "2f60fad6398eed9ad8711a923cc2e9d8ddedd27263993c3b4ec220690442d78a",
   "sha256": {
-    "svg": "bb4a12d3d2ef6dbe0a926629e5c7b84af4460040f69b197e7a57274f82b62748",
-    "pdf": "3770ab0243ccfa170bf0540aacbe5a9719fb2e8c6cae7f04be305e817a10e024",
-    "png": "c2f4b35b95c8d7c7d55424d5ea3853adf334aa91017358473ef04887cac22605"
+    "svg": "b35ae7cad4b1e8820cb78c589b60a882d32cf0d1a7e6a3c4594568096c63594c",
+    "pdf": "9b847442444ce57df3ab3b887a1dcafcfe2a9d6f63077c5a7616ddd6f5972a8b",
+    "png": "6e26031f15e801e376e1b71cb4283c11a65f21c69bc776dee033cb1153fbc219"
   },
   "validation": {
     "one_original_photo": true,

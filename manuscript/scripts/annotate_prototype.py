@@ -29,73 +29,87 @@ TEAL = "#16858d"
 GOLD = "#a87935"
 RED = "#ac5c52"
 PALE = "#dce5eb"
-SOURCE_WIDTH, SOURCE_HEIGHT = 890, 1161
+SOURCE_WIDTH, SOURCE_HEIGHT = 768, 998
 EPOCH = str(int(datetime(2026, 10, 21, tzinfo=timezone.utc).timestamp()))
+DASHBOARD = BASE.parent / "photo/dashboard_edited.png"
 
 # Pixel anchors refer to the full, current 890 x 1161 photograph. A leader
 # terminates at the actual visible component, never at an inferred hidden part.
 ANNOTATIONS = [
     dict(id=1, side="right", row=109, title="BALL SURROGATE",
-         detail="Nonhazardous task object", anchor=[510, 111], color=RED,
+         detail="Nonhazardous task object", anchor=[432, 78], color=RED,
          rationale="Red spherical object visibly held between the end-effector jaws."),
     dict(id=2, side="right", row=218, title="GRIPPER",
-         detail="Opposing end-effector jaws", anchor=[478, 165], color=RED,
+         detail="Opposing end-effector jaws", anchor=[430, 112], color=RED,
          rationale="Wooden opposing jaw mechanism surrounds the ball."),
     dict(id=3, side="left", row=220, title="SERVO ACTUATION",
-         detail="Exposed servo and wiring", anchor=[437, 230], color=RED,
+         detail="Exposed servo and wiring", anchor=[407, 158], color=RED,
          rationale="Blue servo body and its wiring are visible beneath the jaw assembly."),
     dict(id=4, side="left", row=345, title="ARTICULATED LINKAGE",
-         detail="Arm links and pivot joints", anchor=[352, 341], color=RED,
+         detail="Arm links and pivot joints", anchor=[315, 310], color=RED,
          rationale="Paired long arm members and pivot fasteners are visible."),
     dict(id=5, side="right", row=393, title="RASPBERRY PI + DISPLAY",
-         detail="GPIO-mounted local screen", anchor=[469, 613], color=BLUE,
+         detail="GPIO-mounted local screen", anchor=[390, 505], color=BLUE,
          rationale="User identifies the Pi behind the screen and confirms the screen is connected directly by GPIO; the marker denotes that assembly."),
     dict(id=6, side="right", row=558, title="LIDAR SCANNER",
-         detail="Rotating ranging assembly", anchor=[396, 827], color=TEAL,
+         detail="Rotating ranging assembly", anchor=[386, 735], color=TEAL,
          rationale="Rotating scan head and black scanner housing are visible; brand/model is not inferred from the image."),
     dict(id=7, side="left", row=610, title="WHEEL DRIVE",
-         detail="Treaded wheel pair", anchor=[233, 934], color=GOLD,
+         detail="Treaded wheel pair", anchor=[205, 780], color=GOLD,
          rationale="Left treaded wheel is marked; the corresponding right wheel is also visible."),
     dict(id=8, side="left", row=715, title="BATTERY CELLS",
-         detail="Onboard electrical supply", anchor=[315, 970], color=GOLD,
+         detail="Onboard electrical supply", anchor=[315, 820], color=GOLD,
          rationale="Cylindrical cells in a holder are visible; cell chemistry, voltage and runtime are not inferred."),
     dict(id=9, side="right", row=710, title="CONTROL ELECTRONICS",
-         detail="Exposed boards and wiring", anchor=[513, 964], color=BLUE,
+         detail="Exposed boards and wiring", anchor=[450, 885], color=BLUE,
          rationale="Lower-platform electronic boards and harness are visible; the marker does not infer a particular board model."),
     dict(id=10, side="left", row=470, title="CAMERA MODULE",
-         detail="White CSI ribbon to Pi", anchor=[415, 432], color=BLUE,
+         detail="White CSI ribbon to Pi", anchor=[380, 350], color=BLUE,
          rationale="User identifies the camera at the far end of the white ribbon from the Pi; zoom inspection locates the small board and lens beside the arm."),
 ]
 
 MARKERS = {1:[650,100], 2:[650,210], 3:[260,220], 4:[150,350],
-           5:[690,610], 6:[690,800], 7:[115,920], 8:[120,1060],
-           9:[700,1100], 10:[640,420]}
+           5:[650,505], 6:[650,735], 7:[90,780], 8:[95,900],
+           9:[650,900], 10:[620,350]}
 for annotation in ANNOTATIONS:
     annotation.pop("side"); annotation.pop("row")
     annotation["marker"] = MARKERS[annotation["id"]]
 
 FRONT_ANNOTATIONS = [
     dict(id=1, title="LAPTOP VISUALIZATION", detail="Optional visualization workstation",
-         anchor=[250,270], marker=[135,220], color=BLUE,
+         anchor=[330,270], marker=[120,150], color=BLUE,
          rationale="Laptop and robot-monitoring interface are visible; this does not imply offboard ML inference."),
     dict(id=2, title="LIDAR SCANNER", detail="Rotating ranging head",
-         anchor=[990,235], marker=[1155,150], color=TEAL,
+         anchor=[820,180], marker=[930,100], color=TEAL,
          rationale="Rotating scanner is visible above the robot."),
     dict(id=3, title="ARTICULATED ARM", detail="Links and pivot joints",
-         anchor=[985,420], marker=[1190,470], color=RED,
+         anchor=[810,330], marker=[955,360], color=RED,
          rationale="Articulated wooden links and joints are visible on the robot's right side."),
     dict(id=4, title="GRIPPER", detail="Opposing end-effector jaws",
-         anchor=[762,350], marker=[770,215], color=RED,
+         anchor=[620,300], marker=[620,150], color=RED,
          rationale="Open jaw mechanism projects toward the laptop."),
     dict(id=5, title="CSI CAMERA", detail="Front-mounted camera module",
-         anchor=[854,516], marker=[810,690], color=BLUE,
+         anchor=[690,440], marker=[690,650], color=BLUE,
          rationale="Green camera module with lens and ribbon connector is visible on the front platform."),
     dict(id=6, title="MOBILE BASE", detail="Robot chassis and support platform",
-         anchor=[1005,553], marker=[1160,650], color=GOLD,
+         anchor=[850,480], marker=[950,570], color=GOLD,
          rationale="Robot base, front platform and support structure are visible; no measured mobility performance is inferred."),
     dict(id=7, title="BALL SURROGATE", detail="Nonhazardous task object",
-         anchor=[532,840], marker=[710,865], color=RED,
+         anchor=[420,650], marker=[560,690], color=RED,
          rationale="Red ball is visible on the floor in front of the robot."),
+]
+
+DASHBOARD_ANNOTATIONS = [
+    dict(id=1, title="CAMERA VIEW", detail="Ball-detection panel",
+         anchor=[175, 365], marker=[110, 120], color=BLUE),
+    dict(id=2, title="LIDAR / SLAM MAP", detail="Range-map visualization",
+         anchor=[585, 370], marker=[520, 120], color=TEAL),
+    dict(id=3, title="WHEEL TELEOP", detail="Manual drive controls",
+         anchor=[1070, 150], marker=[1180, 85], color=GOLD),
+    dict(id=4, title="ARM CONTROL", detail="Four-servo interface",
+         anchor=[1075, 500], marker=[1180, 690], color=RED),
+    dict(id=5, title="BALL AUTOPILOT", detail="Mission-control action",
+         anchor=[400, 710], marker=[250, 735], color=RED),
 ]
 
 
@@ -133,12 +147,12 @@ def strip_private_metadata(jpeg: bytes) -> bytes:
     raise ValueError("JPEG scan data absent")
 
 
-def make_svg(photo_bytes: bytes, size, physical_width, annotations, title, description, font_size) -> str:
+def make_svg(photo_bytes: bytes, size, physical_width, annotations, title, description, font_size, media_type="image/jpeg") -> str:
     width, height = size
     physical_height = physical_width*height/width
     parts = []
     data = base64.b64encode(photo_bytes).decode("ascii")
-    parts.append(f'<image id="original-photograph" x="0" y="0" width="{width}" height="{height}" preserveAspectRatio="xMidYMid meet" href="data:image/jpeg;base64,{data}"/>')
+    parts.append(f'<image id="original-photograph" x="0" y="0" width="{width}" height="{height}" preserveAspectRatio="xMidYMid meet" href="data:{media_type};base64,{data}"/>')
     radius = font_size*.8
     for annotation in annotations:
         ident = annotation["id"]
@@ -174,13 +188,14 @@ def _render(photo_path, stem, expected_size, physical_width, annotations, json_n
                              "icc_color_profile": bool(original.info.get("icc_profile"))}
         assert exif.get(274) in (None, 1), "Review orientation before removing EXIF."
         original_pixels = original.tobytes()
-    embedded_photo = strip_private_metadata(source)
+    embedded_photo = strip_private_metadata(source) if source.startswith(b"\xff\xd8") else source
     with Image.open(io.BytesIO(embedded_photo)) as clean:
         assert not clean.getexif() and not clean.info.get("comment")
         assert clean.tobytes() == original_pixels, "Metadata removal must preserve every decoded pixel."
     OUT.mkdir(exist_ok=True)
     svg = OUT / f"{stem}.svg"
-    svg.write_text(make_svg(embedded_photo, expected_size, physical_width, annotations, title, description, font_size))
+    media_type = Image.MIME.get(Image.open(io.BytesIO(embedded_photo)).format, "image/jpeg")
+    svg.write_text(make_svg(embedded_photo, expected_size, physical_width, annotations, title, description, font_size, media_type))
     env = dict(os.environ, SOURCE_DATE_EPOCH=EPOCH)
     subprocess.run(["rsvg-convert", "--format=pdf1.5", "--output", str(OUT/f"{stem}.pdf"), str(svg)], check=True, env=env)
     subprocess.run(["rsvg-convert", "--format=png", f"--width={width}", f"--height={height}", "--output", str(OUT/f"{stem}.png"), str(svg)], check=True, env=env)
@@ -238,12 +253,58 @@ def render() -> dict:
 
 
 def render_front() -> dict:
-    return _render(BASE.parent/"photo/laptop_front.jpeg", "hazbot_front", (1280,960), 3.45,
+    return _render(BASE.parent/"photo/laptop_front.jpeg", "hazbot_front", (1024,768), 3.45,
         FRONT_ANNOTATIONS, "front_annotation.json", "HazBot front view and visualization workstation",
         "Full user-supplied front-view photograph. Laptop is a visualization workstation; the photograph does not move native ML inference off the Raspberry Pi. Ball is a nonhazardous task surrogate. Photograph alone does not establish autonomous mission performance.", 36,
         {"front_view": "User supplies the front-view photograph with laptop and requests the same component annotation style.", "camera": "Visible green camera board, lens and ribbon connector.", "laptop": "Visible visualization interface; no inference-host claim."})
 
 
+def render_dashboard() -> dict:
+    """Render the user-supplied dashboard with numbered panel callouts."""
+    if not DASHBOARD.is_file():
+        return {"available": False, "figure_stem": "hazbot_dashboard",
+                "source_path": "photo/dashboard_edited.png",
+                "reason": "Dashboard image is absent."}
+    with Image.open(DASHBOARD) as image:
+        width, height = image.size
+    source = DASHBOARD.read_bytes()
+    data = base64.b64encode(source).decode("ascii")
+    parts = [f'<image x="0" y="0" width="{width}" height="{height}" href="data:image/png;base64,{data}"/>']
+    for annotation in DASHBOARD_ANNOTATIONS:
+        ax, ay = annotation["anchor"]
+        cx, cy = annotation["marker"]
+        color = annotation["color"]
+        ident = annotation["id"]
+        parts.extend([
+            f'<path d="M{cx},{cy}L{ax},{ay}" stroke="white" stroke-width="7" fill="none"/>',
+            f'<path d="M{cx},{cy}L{ax},{ay}" stroke="{color}" stroke-width="3" fill="none"/>',
+            f'<circle cx="{ax}" cy="{ay}" r="5" fill="white" stroke="{color}" stroke-width="2"/>',
+            f'<circle cx="{cx}" cy="{cy}" r="25" fill="{color}" stroke="white" stroke-width="3"/>',
+            f'<text x="{cx}" y="{cy+9}" text-anchor="middle" font-size="25" font-weight="700" fill="white">{ident}</text>',
+        ])
+    svg = OUT / "hazbot_dashboard.svg"
+    svg.write_text(
+        f'<svg xmlns="http://www.w3.org/2000/svg" width="7.1in" height="{7.1*height/width}in" '
+        f'viewBox="0 0 {width} {height}" role="img"><title>HazBot dashboard</title>'
+        f'<desc>Numbered callouts identify the camera, LiDAR map, wheel teleoperation, arm control, and ball-autopilot panels.</desc>'
+        f'<g font-family="Noto Sans,sans-serif">{"".join(parts)}</g></svg>\n'
+    )
+    env = dict(os.environ, SOURCE_DATE_EPOCH=EPOCH)
+    subprocess.run(["rsvg-convert", "--format=pdf1.5", "--output", str(OUT/"hazbot_dashboard.pdf"), str(svg)], check=True, env=env)
+    subprocess.run(["rsvg-convert", "--format=png", f"--width={width}", f"--height={height}", "--output", str(OUT/"hazbot_dashboard.png"), str(svg)], check=True, env=env)
+    metadata = {
+        "available": True, "figure_stem": "hazbot_dashboard",
+        "source": "photo/dashboard_edited.png", "source_sha256": sha256(source).hexdigest(),
+        "original_size_px": [width, height], "dimensions_inches": [7.1, 7.1*height/width],
+        "media_type": "user-supplied dashboard screenshot with vector annotations",
+        "annotations": DASHBOARD_ANNOTATIONS,
+        "evidence_scope": "Visible software panels only; screenshot does not establish online connectivity, detector accuracy, SLAM quality, or mission success.",
+        "sha256": {ext: sha256((OUT/f"hazbot_dashboard.{ext}").read_bytes()).hexdigest() for ext in ("svg", "pdf", "png")},
+    }
+    (BASE/"data/dashboard_annotation.json").write_text(json.dumps(metadata, indent=2)+"\n")
+    return metadata
+
+
 if __name__ == "__main__":
-    for result in (render(), render_front()):
+    for result in (render(), render_front(), render_dashboard()):
         print(json.dumps({key: result[key] for key in ("available", "figure_stem", "source_sha256", "dimensions_inches", "embedded_source_byte_identical", "sha256", "reason") if key in result}))

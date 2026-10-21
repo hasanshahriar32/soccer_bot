@@ -15,7 +15,7 @@ def main():
             selected.append(BASE/name)
     selected.extend(sorted((BASE/"sections").glob("*.tex")))
     selected.extend(sorted((BASE/"generated").glob("hazbot_*.tex")))
-    active = ("hazbot_architecture", "hazbot_mission", "hazbot_arm_geometry", "hazbot_prototype", "hazbot_front")
+    active = ("hazbot_architecture", "hazbot_mission", "hazbot_arm_geometry", "hazbot_prototype", "hazbot_front", "hazbot_dashboard")
     for stem in active:
         for extension in ("pdf", "svg", "drawio"):
             asset = BASE/"figures"/f"{stem}.{extension}"

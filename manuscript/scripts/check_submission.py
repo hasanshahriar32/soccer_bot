@@ -61,6 +61,9 @@ def main():
     require("front_view_photograph_present", (BASE/"figures/hazbot_front.pdf").exists()
             and "Front view with laptop visualization" in normalized,
             "Compact annotated front-view photograph and caption present")
+    require("dashboard_figure_present", (BASE/"figures/hazbot_dashboard.pdf").exists()
+            and "Annotated operator dashboard" in normalized,
+            "Annotated dashboard screenshot and caption present")
     source = "\n".join(p.read_text() for p in [BASE/"main.tex", *sorted((BASE/"sections").glob("*.tex"))])
     cites = {k.strip() for group in re.findall(r"\\cite\{([^}]+)\}", source) for k in group.split(",")}
     bib_keys = set(re.findall(r"@\w+\s*\{\s*([^,]+),", (BASE/"references.bib").read_text()))

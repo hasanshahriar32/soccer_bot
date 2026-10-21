@@ -1,7 +1,7 @@
 {
   "scope": "Local format checks only. Not IEEE PDF eXpress certification, novelty certification, similarity checking, authorship approval, or venue-policy approval.",
   "pdf": "HazBot_IEEE_Anonymous.pdf",
-  "sha256": "57a02061088ed95360d0da5aca33bdfccd71ff167ae4ab0c4404ce653870199f",
+  "sha256": "7672a9a2a1198dd41a6952ded5301e4a53f4eb4bdc640abbe291f1d41cf41377",
   "checks": [
     {
       "check": "maximum_six_pages",
@@ -11,7 +11,7 @@
     {
       "check": "maximum_three_MB",
       "passed": true,
-      "detail": "2819178 bytes"
+      "detail": "2803398 bytes"
     },
     {
       "check": "A4_all_pages",
@@ -21,7 +21,7 @@
     {
       "check": "embedded_fonts",
       "passed": true,
-      "detail": "20 font entries"
+      "detail": "21 font entries"
     },
     {
       "check": "no_Type_3_fonts",
@@ -82,6 +82,11 @@
       "check": "front_view_photograph_present",
       "passed": true,
       "detail": "Compact annotated front-view photograph and caption present"
+    },
+    {
+      "check": "dashboard_figure_present",
+      "passed": true,
+      "detail": "Annotated dashboard screenshot and caption present"
     },
     {
       "check": "citation_keys_exist",

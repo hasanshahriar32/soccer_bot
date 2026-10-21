@@ -21,7 +21,7 @@ from matplotlib.patches import Circle, Rectangle
 import numpy as np
 
 from render_hazbot_figures import render as render_diagrams
-from annotate_prototype import render as render_prototype, render_front
+from annotate_prototype import render as render_prototype, render_front, render_dashboard
 
 BASE = Path(__file__).resolve().parents[1]
 ROOT = BASE.parent
@@ -139,15 +139,18 @@ def main():
         'workspace':workspace_plot(characterization),
         'prototype':render_prototype(),
         'front':render_front(),
+        'dashboard':render_dashboard(),
     }
     (DATA/'figure_data.json').write_text(json.dumps(records,indent=2)+'\n')
     stems = {'hazbot_architecture':True,'hazbot_mission':True,'hazbot_arm_geometry':True,
-             'hazbot_workspace':False,'hazbot_prototype':True,'hazbot_front':True}
+             'hazbot_workspace':False,'hazbot_prototype':True,'hazbot_front':True,
+             'hazbot_dashboard':True}
     dimensions = {name: records['diagrams']['figures'][name]['dimensions_inches']
                   for name in ('hazbot_architecture','hazbot_mission','hazbot_arm_geometry')}
     dimensions['hazbot_workspace'] = [3.45,2.55]
     dimensions['hazbot_prototype'] = records['prototype']['dimensions_inches']
     dimensions['hazbot_front'] = records['front']['dimensions_inches']
+    dimensions['hazbot_dashboard'] = records['dashboard']['dimensions_inches']
     inputs = [DATA/name for name in ('hazbot_characterization.json','hazbot_workspace.csv',
                                     'hazbot_height_slabs.csv')]
     scripts = [Path(__file__).resolve(),BASE/'scripts/render_hazbot_figures.py',BASE/'scripts/annotate_prototype.py',

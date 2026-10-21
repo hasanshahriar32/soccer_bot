@@ -4,46 +4,46 @@
   "renderer": "Python-authored SVG labels and leaders; original JPEG photograph; librsvg PDF/PNG export",
   "source": "photo/laptop_front.jpeg",
   "source_path": "photo/laptop_front.jpeg",
-  "source_sha256": "ab065bf125eb271809cebadeb2fe6dace11b867f882899271422b30e29c0fea8",
+  "source_sha256": "d9eed00c1612aed1a093a2ff7d36f9c83b70e7a09e301fa2c4ea1b46ac89d237",
   "original_size_px": [
-    1280,
-    960
+    1024,
+    768
   ],
   "original_metadata_presence": {
     "exif": false,
     "gps": false,
     "comment": false,
-    "icc_color_profile": true
+    "icc_color_profile": false
   },
   "embedded_source_byte_identical": true,
   "embedded_pixel_identical_to_source": true,
-  "embedded_jpeg_sha256": "ab065bf125eb271809cebadeb2fe6dace11b867f882899271422b30e29c0fea8",
+  "embedded_jpeg_sha256": "d9eed00c1612aed1a093a2ff7d36f9c83b70e7a09e301fa2c4ea1b46ac89d237",
   "source_pixel_modification": "none; entire current photograph retained; no crop, retouch, synthesis or pixel re-encoding before embedding",
   "source_privacy_review": "Nonessential JPEG metadata removed losslessly, including EXIF/XMP, comments and Photoshop metadata. JFIF/ICC/Adobe color interpretation retained. Original user file remains untouched.",
   "dimensions_inches": [
     3.45,
-    2.5875
+    2.5875000000000004
   ],
-  "png_resolution_dpi": 371.0144927536232,
+  "png_resolution_dpi": 296.81159420289856,
   "png_native_size_px": [
-    1280,
-    960
+    1024,
+    768
   ],
   "photo_viewport_canvas": [
     0,
     0,
-    1280,
-    960
+    1024,
+    768
   ],
   "photo_bbox_canvas": [
     0,
     0,
-    1280,
-    960
+    1024,
+    768
   ],
   "canvas_viewbox": [
-    1280,
-    960
+    1024,
+    768
   ],
   "compact_layout": true,
   "no_added_canvas": true,
@@ -56,18 +56,18 @@
       "title": "LAPTOP VISUALIZATION",
       "detail": "Optional visualization workstation",
       "anchor": [
-        250,
+        330,
         270
       ],
       "marker": [
-        135,
-        220
+        120,
+        150
       ],
       "color": "#34799c",
       "rationale": "Laptop and robot-monitoring interface are visible; this does not imply offboard ML inference.",
       "anchor_normalized": [
-        0.1953125,
-        0.28125
+        0.322265625,
+        0.3515625
       ]
     },
     {
@@ -75,18 +75,18 @@
       "title": "LIDAR SCANNER",
       "detail": "Rotating ranging head",
       "anchor": [
-        990,
-        235
+        820,
+        180
       ],
       "marker": [
-        1155,
-        150
+        930,
+        100
       ],
       "color": "#16858d",
       "rationale": "Rotating scanner is visible above the robot.",
       "anchor_normalized": [
-        0.7734375,
-        0.24479166666666666
+        0.80078125,
+        0.234375
       ]
     },
     {
@@ -94,18 +94,18 @@
       "title": "ARTICULATED ARM",
       "detail": "Links and pivot joints",
       "anchor": [
-        985,
-        420
+        810,
+        330
       ],
       "marker": [
-        1190,
-        470
+        955,
+        360
       ],
       "color": "#ac5c52",
       "rationale": "Articulated wooden links and joints are visible on the robot's right side.",
       "anchor_normalized": [
-        0.76953125,
-        0.4375
+        0.791015625,
+        0.4296875
       ]
     },
     {
@@ -113,18 +113,18 @@
       "title": "GRIPPER",
       "detail": "Opposing end-effector jaws",
       "anchor": [
-        762,
-        350
+        620,
+        300
       ],
       "marker": [
-        770,
-        215
+        620,
+        150
       ],
       "color": "#ac5c52",
       "rationale": "Open jaw mechanism projects toward the laptop.",
       "anchor_normalized": [
-        0.5953125,
-        0.3645833333333333
+        0.60546875,
+        0.390625
       ]
     },
     {
@@ -132,18 +132,18 @@
       "title": "CSI CAMERA",
       "detail": "Front-mounted camera module",
       "anchor": [
-        854,
-        516
+        690,
+        440
       ],
       "marker": [
-        810,
-        690
+        690,
+        650
       ],
       "color": "#34799c",
       "rationale": "Green camera module with lens and ribbon connector is visible on the front platform.",
       "anchor_normalized": [
-        0.6671875,
-        0.5375
+        0.673828125,
+        0.5729166666666666
       ]
     },
     {
@@ -151,18 +151,18 @@
       "title": "MOBILE BASE",
       "detail": "Robot chassis and support platform",
       "anchor": [
-        1005,
-        553
+        850,
+        480
       ],
       "marker": [
-        1160,
-        650
+        950,
+        570
       ],
       "color": "#a87935",
       "rationale": "Robot base, front platform and support structure are visible; no measured mobility performance is inferred.",
       "anchor_normalized": [
-        0.78515625,
-        0.5760416666666667
+        0.830078125,
+        0.625
       ]
     },
     {
@@ -170,18 +170,18 @@
       "title": "BALL SURROGATE",
       "detail": "Nonhazardous task object",
       "anchor": [
-        532,
-        840
+        420,
+        650
       ],
       "marker": [
-        710,
-        865
+        560,
+        690
       ],
       "color": "#ac5c52",
       "rationale": "Red ball is visible on the floor in front of the robot.",
       "anchor_normalized": [
-        0.415625,
-        0.875
+        0.41015625,
+        0.8463541666666666
       ]
     }
   ],
@@ -192,11 +192,11 @@
     "laptop": "Visible visualization interface; no inference-host claim."
   },
   "evidence_scope": "Visible prototype component identification; no claim of autonomous grasp success or hazardous-material handling follows from the photograph.",
-  "generator_sha256": "8e7be053b96b5dc85dc75fba085d00b442f86299213850faceb9fcdd741a3a66",
+  "generator_sha256": "2f60fad6398eed9ad8711a923cc2e9d8ddedd27263993c3b4ec220690442d78a",
   "sha256": {
-    "svg": "74a1084b43fafcebd261559e7e9e6572e9955c290a7e259e54b9293e0a7960e6",
-    "pdf": "90a01bf3a899b5aabe166399402fc567bd7aebb3b1d15b4ff55b74b2a428ea05",
-    "png": "994e48594d295d917837a26b21b6097aedba31ade097d53d4b2dcef537d2604f"
+    "svg": "e716a6db0686bc04ce035631df792edf2b3e61c25fefd6f93772f90d20b1f7d6",
+    "pdf": "71747d1561bfaa4011ccf49401feee24e7a1af696a525792b8d16d046e230c45",
+    "png": "65be5e9b40ed374e29ba8b06176dd88fe41d7cfe3afa733ae115ba027a61d3da"
   },
   "validation": {
     "one_original_photo": true,

@@ -8663,46 +8663,46 @@
     "renderer": "Python-authored SVG labels and leaders; original JPEG photograph; librsvg PDF/PNG export",
     "source": "photo/bot.jpeg",
     "source_path": "photo/bot.jpeg",
-    "source_sha256": "6aca99fb652ce6a268c17d3527ae635485a7247c28b94a0200d3e833d44dbaee",
+    "source_sha256": "f3a534a612422d9a4f83fc8b5e073c20069dab16b690a26f8ac35e394a6c35f9",
     "original_size_px": [
-      890,
-      1161
+      768,
+      998
     ],
     "original_metadata_presence": {
-      "exif": true,
+      "exif": false,
       "gps": false,
       "comment": false,
       "icc_color_profile": false
     },
-    "embedded_source_byte_identical": false,
+    "embedded_source_byte_identical": true,
     "embedded_pixel_identical_to_source": true,
-    "embedded_jpeg_sha256": "41c8b8139063847982e0bcbed7ea197942261a322654b163c1e40dfe015ecd17",
+    "embedded_jpeg_sha256": "f3a534a612422d9a4f83fc8b5e073c20069dab16b690a26f8ac35e394a6c35f9",
     "source_pixel_modification": "none; entire current photograph retained; no crop, retouch, synthesis or pixel re-encoding before embedding",
     "source_privacy_review": "Nonessential JPEG metadata removed losslessly, including EXIF/XMP, comments and Photoshop metadata. JFIF/ICC/Adobe color interpretation retained. Original user file remains untouched.",
     "dimensions_inches": [
       2.7,
-      3.5221348314606744
+      3.5085937500000006
     ],
-    "png_resolution_dpi": 329.6296296296296,
+    "png_resolution_dpi": 284.4444444444444,
     "png_native_size_px": [
-      890,
-      1161
+      768,
+      998
     ],
     "photo_viewport_canvas": [
       0,
       0,
-      890,
-      1161
+      768,
+      998
     ],
     "photo_bbox_canvas": [
       0,
       0,
-      890,
-      1161
+      768,
+      998
     ],
     "canvas_viewbox": [
-      890,
-      1161
+      768,
+      998
     ],
     "compact_layout": true,
     "no_added_canvas": true,
@@ -8715,8 +8715,8 @@
         "title": "BALL SURROGATE",
         "detail": "Nonhazardous task object",
         "anchor": [
-          510,
-          111
+          432,
+          78
         ],
         "color": "#ac5c52",
         "rationale": "Red spherical object visibly held between the end-effector jaws.",
@@ -8725,8 +8725,8 @@
           100
         ],
         "anchor_normalized": [
-          0.5730337078651685,
-          0.09560723514211886
+          0.5625,
+          0.0781563126252505
         ]
       },
       {
@@ -8734,8 +8734,8 @@
         "title": "GRIPPER",
         "detail": "Opposing end-effector jaws",
         "anchor": [
-          478,
-          165
+          430,
+          112
         ],
         "color": "#ac5c52",
         "rationale": "Wooden opposing jaw mechanism surrounds the ball.",
@@ -8744,8 +8744,8 @@
           210
         ],
         "anchor_normalized": [
-          0.5370786516853933,
-          0.1421188630490956
+          0.5598958333333334,
+          0.11222444889779559
         ]
       },
       {
@@ -8753,8 +8753,8 @@
         "title": "SERVO ACTUATION",
         "detail": "Exposed servo and wiring",
         "anchor": [
-          437,
-          230
+          407,
+          158
         ],
         "color": "#ac5c52",
         "rationale": "Blue servo body and its wiring are visible beneath the jaw assembly.",
@@ -8763,8 +8763,8 @@
           220
         ],
         "anchor_normalized": [
-          0.4910112359550562,
-          0.19810508182601205
+          0.5299479166666666,
+          0.15831663326653306
         ]
       },
       {
@@ -8772,8 +8772,8 @@
         "title": "ARTICULATED LINKAGE",
         "detail": "Arm links and pivot joints",
         "anchor": [
-          352,
-          341
+          315,
+          310
         ],
         "color": "#ac5c52",
         "rationale": "Paired long arm members and pivot fasteners are visible.",
@@ -8782,8 +8782,8 @@
           350
         ],
         "anchor_normalized": [
-          0.3955056179775281,
-          0.29371231696813094
+          0.41015625,
+          0.3106212424849699
         ]
       },
       {
@@ -8791,18 +8791,18 @@
         "title": "RASPBERRY PI + DISPLAY",
         "detail": "GPIO-mounted local screen",
         "anchor": [
-          469,
-          613
+          390,
+          505
         ],
         "color": "#34799c",
         "rationale": "User identifies the Pi behind the screen and confirms the screen is connected directly by GPIO; the marker denotes that assembly.",
         "marker": [
-          690,
-          610
+          650,
+          505
         ],
         "anchor_normalized": [
-          0.5269662921348315,
-          0.5279931093884582
+          0.5078125,
+          0.5060120240480962
         ]
       },
       {
@@ -8810,18 +8810,18 @@
         "title": "LIDAR SCANNER",
         "detail": "Rotating ranging assembly",
         "anchor": [
-          396,
-          827
+          386,
+          735
         ],
         "color": "#16858d",
         "rationale": "Rotating scan head and black scanner housing are visible; brand/model is not inferred from the image.",
         "marker": [
-          690,
-          800
+          650,
+          735
         ],
         "anchor_normalized": [
-          0.4449438202247191,
-          0.7123169681309216
+          0.5026041666666666,
+          0.7364729458917836
         ]
       },
       {
@@ -8829,18 +8829,18 @@
         "title": "WHEEL DRIVE",
         "detail": "Treaded wheel pair",
         "anchor": [
-          233,
-          934
+          205,
+          780
         ],
         "color": "#a87935",
         "rationale": "Left treaded wheel is marked; the corresponding right wheel is also visible.",
         "marker": [
-          115,
-          920
+          90,
+          780
         ],
         "anchor_normalized": [
-          0.26179775280898876,
-          0.8044788975021533
+          0.2669270833333333,
+          0.781563126252505
         ]
       },
       {
@@ -8849,17 +8849,17 @@
         "detail": "Onboard electrical supply",
         "anchor": [
           315,
-          970
+          820
         ],
         "color": "#a87935",
         "rationale": "Cylindrical cells in a holder are visible; cell chemistry, voltage and runtime are not inferred.",
         "marker": [
-          120,
-          1060
+          95,
+          900
         ],
         "anchor_normalized": [
-          0.3539325842696629,
-          0.8354866494401378
+          0.41015625,
+          0.8216432865731463
         ]
       },
       {
@@ -8867,18 +8867,18 @@
         "title": "CONTROL ELECTRONICS",
         "detail": "Exposed boards and wiring",
         "anchor": [
-          513,
-          964
+          450,
+          885
         ],
         "color": "#34799c",
         "rationale": "Lower-platform electronic boards and harness are visible; the marker does not infer a particular board model.",
         "marker": [
-          700,
-          1100
+          650,
+          900
         ],
         "anchor_normalized": [
-          0.5764044943820225,
-          0.830318690783807
+          0.5859375,
+          0.8867735470941884
         ]
       },
       {
@@ -8886,18 +8886,18 @@
         "title": "CAMERA MODULE",
         "detail": "White CSI ribbon to Pi",
         "anchor": [
-          415,
-          432
+          380,
+          350
         ],
         "color": "#34799c",
         "rationale": "User identifies the camera at the far end of the white ribbon from the Pi; zoom inspection locates the small board and lens beside the arm.",
         "marker": [
-          640,
-          420
+          620,
+          350
         ],
         "anchor_normalized": [
-          0.46629213483146065,
-          0.37209302325581395
+          0.4947916666666667,
+          0.35070140280561124
         ]
       }
     ],
@@ -8907,11 +8907,11 @@
       "camera": "User confirms white ribbon from Raspberry Pi terminates at camera; image zoom used to anchor visible board/lens."
     },
     "evidence_scope": "Visible prototype component identification; no claim of autonomous grasp success or hazardous-material handling follows from the photograph.",
-    "generator_sha256": "8e7be053b96b5dc85dc75fba085d00b442f86299213850faceb9fcdd741a3a66",
+    "generator_sha256": "2f60fad6398eed9ad8711a923cc2e9d8ddedd27263993c3b4ec220690442d78a",
     "sha256": {
-      "svg": "bb4a12d3d2ef6dbe0a926629e5c7b84af4460040f69b197e7a57274f82b62748",
-      "pdf": "3770ab0243ccfa170bf0540aacbe5a9719fb2e8c6cae7f04be305e817a10e024",
-      "png": "c2f4b35b95c8d7c7d55424d5ea3853adf334aa91017358473ef04887cac22605"
+      "svg": "b35ae7cad4b1e8820cb78c589b60a882d32cf0d1a7e6a3c4594568096c63594c",
+      "pdf": "9b847442444ce57df3ab3b887a1dcafcfe2a9d6f63077c5a7616ddd6f5972a8b",
+      "png": "6e26031f15e801e376e1b71cb4283c11a65f21c69bc776dee033cb1153fbc219"
     },
     "validation": {
       "one_original_photo": true,
@@ -8929,46 +8929,46 @@
     "renderer": "Python-authored SVG labels and leaders; original JPEG photograph; librsvg PDF/PNG export",
     "source": "photo/laptop_front.jpeg",
     "source_path": "photo/laptop_front.jpeg",
-    "source_sha256": "ab065bf125eb271809cebadeb2fe6dace11b867f882899271422b30e29c0fea8",
+    "source_sha256": "d9eed00c1612aed1a093a2ff7d36f9c83b70e7a09e301fa2c4ea1b46ac89d237",
     "original_size_px": [
-      1280,
-      960
+      1024,
+      768
     ],
     "original_metadata_presence": {
       "exif": false,
       "gps": false,
       "comment": false,
-      "icc_color_profile": true
+      "icc_color_profile": false
     },
     "embedded_source_byte_identical": true,
     "embedded_pixel_identical_to_source": true,
-    "embedded_jpeg_sha256": "ab065bf125eb271809cebadeb2fe6dace11b867f882899271422b30e29c0fea8",
+    "embedded_jpeg_sha256": "d9eed00c1612aed1a093a2ff7d36f9c83b70e7a09e301fa2c4ea1b46ac89d237",
     "source_pixel_modification": "none; entire current photograph retained; no crop, retouch, synthesis or pixel re-encoding before embedding",
     "source_privacy_review": "Nonessential JPEG metadata removed losslessly, including EXIF/XMP, comments and Photoshop metadata. JFIF/ICC/Adobe color interpretation retained. Original user file remains untouched.",
     "dimensions_inches": [
       3.45,
-      2.5875
+      2.5875000000000004
     ],
-    "png_resolution_dpi": 371.0144927536232,
+    "png_resolution_dpi": 296.81159420289856,
     "png_native_size_px": [
-      1280,
-      960
+      1024,
+      768
     ],
     "photo_viewport_canvas": [
       0,
       0,
-      1280,
-      960
+      1024,
+      768
     ],
     "photo_bbox_canvas": [
       0,
       0,
-      1280,
-      960
+      1024,
+      768
     ],
     "canvas_viewbox": [
-      1280,
-      960
+      1024,
+      768
     ],
     "compact_layout": true,
     "no_added_canvas": true,
@@ -8981,18 +8981,18 @@
         "title": "LAPTOP VISUALIZATION",
         "detail": "Optional visualization workstation",
         "anchor": [
-          250,
+          330,
           270
         ],
         "marker": [
-          135,
-          220
+          120,
+          150
         ],
         "color": "#34799c",
         "rationale": "Laptop and robot-monitoring interface are visible; this does not imply offboard ML inference.",
         "anchor_normalized": [
-          0.1953125,
-          0.28125
+          0.322265625,
+          0.3515625
         ]
       },
       {
@@ -9000,18 +9000,18 @@
         "title": "LIDAR SCANNER",
         "detail": "Rotating ranging head",
         "anchor": [
-          990,
-          235
+          820,
+          180
         ],
         "marker": [
-          1155,
-          150
+          930,
+          100
         ],
         "color": "#16858d",
         "rationale": "Rotating scanner is visible above the robot.",
         "anchor_normalized": [
-          0.7734375,
-          0.24479166666666666
+          0.80078125,
+          0.234375
         ]
       },
       {
@@ -9019,18 +9019,18 @@
         "title": "ARTICULATED ARM",
         "detail": "Links and pivot joints",
         "anchor": [
-          985,
-          420
+          810,
+          330
         ],
         "marker": [
-          1190,
-          470
+          955,
+          360
         ],
         "color": "#ac5c52",
         "rationale": "Articulated wooden links and joints are visible on the robot's right side.",
         "anchor_normalized": [
-          0.76953125,
-          0.4375
+          0.791015625,
+          0.4296875
         ]
       },
       {
@@ -9038,18 +9038,18 @@
         "title": "GRIPPER",
         "detail": "Opposing end-effector jaws",
         "anchor": [
-          762,
-          350
+          620,
+          300
         ],
         "marker": [
-          770,
-          215
+          620,
+          150
         ],
         "color": "#ac5c52",
         "rationale": "Open jaw mechanism projects toward the laptop.",
         "anchor_normalized": [
-          0.5953125,
-          0.3645833333333333
+          0.60546875,
+          0.390625
         ]
       },
       {
@@ -9057,18 +9057,18 @@
         "title": "CSI CAMERA",
         "detail": "Front-mounted camera module",
         "anchor": [
-          854,
-          516
+          690,
+          440
         ],
         "marker": [
-          810,
-          690
+          690,
+          650
         ],
         "color": "#34799c",
         "rationale": "Green camera module with lens and ribbon connector is visible on the front platform.",
         "anchor_normalized": [
-          0.6671875,
-          0.5375
+          0.673828125,
+          0.5729166666666666
         ]
       },
       {
@@ -9076,18 +9076,18 @@
         "title": "MOBILE BASE",
         "detail": "Robot chassis and support platform",
         "anchor": [
-          1005,
-          553
+          850,
+          480
         ],
         "marker": [
-          1160,
-          650
+          950,
+          570
         ],
         "color": "#a87935",
         "rationale": "Robot base, front platform and support structure are visible; no measured mobility performance is inferred.",
         "anchor_normalized": [
-          0.78515625,
-          0.5760416666666667
+          0.830078125,
+          0.625
         ]
       },
       {
@@ -9095,18 +9095,18 @@
         "title": "BALL SURROGATE",
         "detail": "Nonhazardous task object",
         "anchor": [
-          532,
-          840
+          420,
+          650
         ],
         "marker": [
-          710,
-          865
+          560,
+          690
         ],
         "color": "#ac5c52",
         "rationale": "Red ball is visible on the floor in front of the robot.",
         "anchor_normalized": [
-          0.415625,
-          0.875
+          0.41015625,
+          0.8463541666666666
         ]
       }
     ],
@@ -9117,11 +9117,11 @@
       "laptop": "Visible visualization interface; no inference-host claim."
     },
     "evidence_scope": "Visible prototype component identification; no claim of autonomous grasp success or hazardous-material handling follows from the photograph.",
-    "generator_sha256": "8e7be053b96b5dc85dc75fba085d00b442f86299213850faceb9fcdd741a3a66",
+    "generator_sha256": "2f60fad6398eed9ad8711a923cc2e9d8ddedd27263993c3b4ec220690442d78a",
     "sha256": {
-      "svg": "74a1084b43fafcebd261559e7e9e6572e9955c290a7e259e54b9293e0a7960e6",
-      "pdf": "90a01bf3a899b5aabe166399402fc567bd7aebb3b1d15b4ff55b74b2a428ea05",
-      "png": "994e48594d295d917837a26b21b6097aedba31ade097d53d4b2dcef537d2604f"
+      "svg": "e716a6db0686bc04ce035631df792edf2b3e61c25fefd6f93772f90d20b1f7d6",
+      "pdf": "71747d1561bfaa4011ccf49401feee24e7a1af696a525792b8d16d046e230c45",
+      "png": "65be5e9b40ed374e29ba8b06176dd88fe41d7cfe3afa733ae115ba027a61d3da"
     },
     "validation": {
       "one_original_photo": true,
@@ -9131,6 +9131,99 @@
       "no_extra_canvas_or_aspect_change": true,
       "embedded_pixels_identical_to_source": true,
       "private_metadata_absent_in_embedded_jpeg": true
+    }
+  },
+  "dashboard": {
+    "available": true,
+    "figure_stem": "hazbot_dashboard",
+    "source": "photo/dashboard_edited.png",
+    "source_sha256": "7c35e4b1699add9ef810400bb32ce581af6697963dab189d54f781076898bd32",
+    "original_size_px": [
+      1366,
+      768
+    ],
+    "dimensions_inches": [
+      7.1,
+      3.9918008784773056
+    ],
+    "media_type": "user-supplied dashboard screenshot with vector annotations",
+    "annotations": [
+      {
+        "id": 1,
+        "title": "CAMERA VIEW",
+        "detail": "Ball-detection panel",
+        "anchor": [
+          175,
+          365
+        ],
+        "marker": [
+          110,
+          120
+        ],
+        "color": "#34799c"
+      },
+      {
+        "id": 2,
+        "title": "LIDAR / SLAM MAP",
+        "detail": "Range-map visualization",
+        "anchor": [
+          585,
+          370
+        ],
+        "marker": [
+          520,
+          120
+        ],
+        "color": "#16858d"
+      },
+      {
+        "id": 3,
+        "title": "WHEEL TELEOP",
+        "detail": "Manual drive controls",
+        "anchor": [
+          1070,
+          150
+        ],
+        "marker": [
+          1180,
+          85
+        ],
+        "color": "#a87935"
+      },
+      {
+        "id": 4,
+        "title": "ARM CONTROL",
+        "detail": "Four-servo interface",
+        "anchor": [
+          1075,
+          500
+        ],
+        "marker": [
+          1180,
+          690
+        ],
+        "color": "#ac5c52"
+      },
+      {
+        "id": 5,
+        "title": "BALL AUTOPILOT",
+        "detail": "Mission-control action",
+        "anchor": [
+          400,
+          710
+        ],
+        "marker": [
+          250,
+          735
+        ],
+        "color": "#ac5c52"
+      }
+    ],
+    "evidence_scope": "Visible software panels only; screenshot does not establish online connectivity, detector accuracy, SLAM quality, or mission success.",
+    "sha256": {
+      "svg": "1a8bdde90e4a8a28107ad298476d111965cce81fcc01283dfe67941986ae6ca6",
+      "pdf": "56f1070de71a96df115a6126119683be1185c66406c8001ab6f6464781f5cd14",
+      "png": "c8a01582646503031146732bc255179720ac4e6cf66b6bed7440768b70a6e111"
     }
   }
 }
