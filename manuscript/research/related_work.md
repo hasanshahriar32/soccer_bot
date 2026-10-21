@@ -1,6 +1,6 @@
 # HazBot related-work map
 
-Active paper: HazBot: A Modular Raspberry Pi-Centered Mobile Manipulator for Hazardous-Object Retrieval.
+Active paper: Hazardous-Object Retrieval: Mobile Manipulation Architecture and Coordination Study.
 
 The detailed primary-source review and verified metadata are in [hazbot_literature.md](hazbot_literature.md). The main bibliography currently cites nine entries:
 

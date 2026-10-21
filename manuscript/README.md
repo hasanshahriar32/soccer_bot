@@ -1,6 +1,6 @@
 # HazBot IEEE paper project
 
-**HazBot: A Modular Raspberry Pi-Centered Mobile Manipulator for Hazardous-Object Retrieval**
+**Hazardous-Object Retrieval: Mobile Manipulation Architecture and Coordination Study**
 
 Start with the [paper PDF](submission/HazBot_IEEE_Anonymous.pdf), [Overleaf ZIP](submission/HazBot_IEEE_Overleaf.zip), [LaTeX entry point](main.tex), and [figure gallery](figures/README.md).
 

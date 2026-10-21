@@ -1,7 +1,7 @@
 {
   "scope": "Local format checks only. Not IEEE PDF eXpress certification, novelty certification, similarity checking, authorship approval, or venue-policy approval.",
   "pdf": "HazBot_IEEE_Anonymous.pdf",
-  "sha256": "7672a9a2a1198dd41a6952ded5301e4a53f4eb4bdc640abbe291f1d41cf41377",
+  "sha256": "309a489ffac114ebbddff324055794be5dc8083b5c24b76219ed8c4a6c1943fc",
   "checks": [
     {
       "check": "maximum_six_pages",
@@ -11,7 +11,7 @@
     {
       "check": "maximum_three_MB",
       "passed": true,
-      "detail": "2803398 bytes"
+      "detail": "2803443 bytes"
     },
     {
       "check": "A4_all_pages",
