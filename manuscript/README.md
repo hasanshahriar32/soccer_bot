@@ -1,6 +1,6 @@
 # HazBot IEEE paper project
 
-**Hazardous-Object Retrieval: Mobile Manipulation Architecture and Coordination Study**
+**HazBot: An Embedded Mobile Manipulation Architecture for Hazardous-Object Retrieval**
 
 Start with the [paper PDF](submission/HazBot_IEEE_Anonymous.pdf), [Overleaf ZIP](submission/HazBot_IEEE_Overleaf.zip), [LaTeX entry point](main.tex), and [figure gallery](figures/README.md).
 

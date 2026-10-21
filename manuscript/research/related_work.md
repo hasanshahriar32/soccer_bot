@@ -1,6 +1,6 @@
 # HazBot related-work map
 
-Active paper: Hazardous-Object Retrieval: Mobile Manipulation Architecture and Coordination Study.
+Active paper: HazBot: An Embedded Mobile Manipulation Architecture for Hazardous-Object Retrieval.
 
 The detailed primary-source review and verified metadata are in [hazbot_literature.md](hazbot_literature.md). The main bibliography currently cites nine entries:
 

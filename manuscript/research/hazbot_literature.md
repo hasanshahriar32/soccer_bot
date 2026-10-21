@@ -4,7 +4,7 @@ Research checked on **21 October 2026**. This note reframes the platform as a Ra
 
 ## Recommended title and contribution
 
-**Hazardous-Object Retrieval: Mobile Manipulation Architecture and Coordination Study**
+**HazBot: An Embedded Mobile Manipulation Architecture for Hazardous-Object Retrieval**
 
 The title identifies the actual platform and application trajectory. “Toward” preserves the distinction between a modular prototype with a ball surrogate and a robot whose hazardous-object recognition and retrieval have been validated. An application-led title using “for Hazardous-Object Retrieval” is also reasonable if the abstract immediately identifies the study as a ball-based surrogate simulation and states the actual evaluation boundary.
 
