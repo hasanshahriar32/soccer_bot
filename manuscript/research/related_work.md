@@ -1,80 +1,21 @@
-# Related work and novelty assessment
+# HazBot related-work map
 
-Research checked on **21 October 2026**. This is an author research note accompanying the anonymous draft; it is not a claim that an exhaustive systematic review has been completed. All technical conclusions below rely on primary papers, author/university copies, or official project documentation. Bibliography keys refer to `../references.bib`.
+Active paper: HazBot: A Modular Raspberry Pi-Centered Mobile Manipulator for Hazardous-Object Retrieval.
 
-## Research question that the repository can support
+The detailed primary-source review and verified metadata are in [hazbot_literature.md](hazbot_literature.md). The main bibliography currently cites nine entries:
 
-**Does a single command supervisor with explicit observation validity and freshness rules reduce unsafe-command exposure in deterministic fault scenarios, compared with this repository's existing ball-chasing logic?**
+| BibTeX key | Relevance | Boundary |
+|---|---|---|
+| bird2022vega | Hazardous-environment ground robotics | Its nuclear-environment engineering does not qualify HazBot |
+| kemp2022stretch | Compact mobile manipulation and reach/design analysis | Different mechanics and physical validation |
+| yenamandra2023homerobot | Full navigation-to-placement task; simulation/real evaluation split | No transfer of recognition or mission capability |
+| macenski2022ros2 | Distributed robotics middleware | Middleware availability is not application success |
+| macenski2020marathon2 | Established navigation orchestration | No borrowed localization or obstacle-avoidance score |
+| macenski2021slamtoolbox | Established mapping component | Map performance requires local measurement |
+| alqahtani2026edge | Model/device inference tradeoffs | No borrowed timing/energy/accuracy for native detector |
+| twistmux | Command authority, priority and timeout precedent | Guarding/arbitration are established techniques |
+| nav2collision | Sensor-dependent command monitoring precedent | No new general collision monitor is claimed |
 
-This question is narrower than a claim about competitive robot soccer. The repository documents a differential-drive robot with a Raspberry Pi sensor/actuation endpoint and laptop ROS 2 hub. The inspected code supports ball detection and approach, reactive scan responses, and several command paths. It does not supply a verified match dataset, controlled physical trials, ball-detection ground truth, calibrated stopping dynamics, or evidence of winning games. Therefore, synthetic control traces can support claims about the tested software rules, but cannot establish physical collision avoidance or detection accuracy.
+Primary source links are retained in references.bib. Source inspection establishes the current native detector as an INT8 TFLite path with tennis/cricket-ball labels; generic MobileNet/SSD citations are not presented as its implemented architecture. The bibliography candidate file retains those entries only as unused alternatives.
 
-## Closest work and overlap
-
-| Source / key | Verified prior contribution and overlap | Consequence for this paper |
-| --- | --- | --- |
-| Kitano et al. (1997), `kitano1997robocup` | Establishes robot soccer as an integration and evaluation problem involving perception, action, and coordination. | Motivate the application; do not claim the soccer testbed itself as new. |
-| Macenski et al. (2022), `macenski2022ros2` | Describes ROS 2 architecture and examples of deployed robotics systems. | Cite the middleware and modular architecture. ROS 2 use alone is not novelty. |
-| Scheunemann and van Dijk (2019), `scheunemann2019ros2` | Implements and benchmarks ROS 2 modules for RoboCup with attention to computational and communication costs. | Direct counterexample to any claim of introducing ROS 2 to robot soccer. |
-| Passault et al. (2022), `passault2022rsk` | Educational soccer kit with omniwheel robots, external tracking, and centralized software. | Affordable, offboard-compute soccer platforms already exist. This repository instead uses an onboard camera and LiDAR streamed to a laptop; that is a system distinction, not proof of a globally new architecture. |
-| Brooks (1986), `brooks1986robust` | Layered robot behaviors coordinate through suppression of outputs. | Priority among reactive behaviors is established. Describe the exact rule order, rather than claiming a new general arbitration method. |
-| Fox et al. (1997), `fox1997dwa` | Searches dynamically reachable, admissible velocities with stopping capability considered. | Useful comparison in methodology. A distance-threshold stop is simpler and does not inherit DWA's dynamic constraints or guarantees. |
-| Yates et al. (2021), `yates2021aoi` | Reviews source-timestamp-based information freshness and networked status updating. | Motivates staleness as a separate variable. A callback receipt age is not equivalent to acquisition-time age of information. |
-| Kaul et al. (2012), `kaul2012status` | Analyzes the time-average age of networked status updates; generation time matters separately from receipt time. | Cite the source-update age concept, without suggesting that a receipt-only timeout measures capture freshness. |
-| Seto et al. (1998), `seto1998simplex` | Describes Simplex switching between application and safety control for safe online upgrades. | A nominal/fallback split has substantial prior art. The draft reference policy does not establish a verified recoverable region or inherit formal assurance. |
-| Ames et al. (2017), `ames2017cbf` | Provides control-barrier-function conditions for forward invariance and controller synthesis. | A timeout and threshold supervisor is not a control barrier function controller and does not establish a formal invariant safe set. |
-| Nav2 Collision Monitor, `nav2collision` | Filters velocity commands using sensor-based stop/slowdown regions and stops when observation sources time out. | Closest existing ROS 2 safety mechanism. Freshness gating and stop precedence must be acknowledged as established functionality. |
-| `twist_mux`, `twistmux` | Official configuration specifies input priorities and timeouts. | Command arbitration with timeouts is established ROS tooling. A future physical implementation should compare with, or configure, this existing component. |
-| ROS 2 QoS design, `ros2qos` | Distinguishes deadline, liveliness, and sample lifespan. | Transport policy is relevant, but does not resolve incompatible message semantics or arbitrate direct motor sockets. |
-| OpenCV HSV tutorial, `opencvhsv` | Demonstrates HSV range thresholding with `inRange`. | HSV segmentation is standard. No novel perception algorithm is established by the repository. |
-
-## What is defensible as a contribution
-
-1. A **repository-grounded audit** that traces actual observation semantics and actuator paths, including cases where an apparently modular ROS graph does not give one component final motor authority.
-2. A **fully specified reference supervisor** whose priority, stale-data behavior, threshold comparisons, and invalid-input rules can be independently executed. It is a manuscript experiment artifact unless separately integrated into the running ROS nodes.
-3. A **reproducible, bounded fault-injection study** comparing that reference policy with faithfully extracted legacy decisions. Report the number of scenarios and evaluated decision instants, trace generation, threshold sensitivity, and metrics. Explicitly distinguish command suppression from a physical collision metric.
-
-These can be presented as an engineering case study. None establishes a globally new safety algorithm. Stronger algorithmic novelty would require a principled treatment beyond existing collision monitors and multiplexers, accompanied by additional baselines and physical validation.
-
-Suitable wording: “We present a reproducible command-supervision case study for a distributed ROS 2 ball-pursuit prototype, isolating the effects of observation freshness and command precedence under controlled software faults.”
-
-Avoid: “first low-cost ROS 2 soccer robot,” “novel HSV–LiDAR fusion,” “guaranteed collision-free navigation,” “real-time performance” without measured deadline evidence, or “high detection accuracy” without annotated images.
-
-## Important implementation and measurement distinctions
-
-- `src/soccer_vision/soccer_vision/ball_tracker_node.py` publishes a **metric** `geometry_msgs/Point`: forward distance, lateral distance, and radial distance. `decision_logic.py` interprets the same fields as **pixels and radius**. An experiment must name the controller tested and must not silently combine these contracts.
-- The tracker uses the latest available scan, an angular window, a distance gate, and a 1.2 s scan-receipt limit. This is asynchronous association, not timestamp-synchronized sensor fusion; an associated range is not physical ground truth.
-- The tracker also receives optional Pi-side AI detections. The manuscript must not characterize the whole system as exclusively HSV, or imply that trained model assets and accuracy data were verified if they were not.
-- `autonomous_ball_chaser_node.py` has a 20 Hz timer and a 1.0 s ball-receipt test, but its cached scan minimum has no timeout. The code also sends direct TCP motor commands as well as publishing `/cmd_vel`. An arbiter on `/cmd_vel` alone cannot control that direct path.
-- `obstacle_avoidance_node.py` publishes to `/obstacle_avoidance/cmd_vel`. Merely publishing there does not demonstrate that its recommendation overrides every motor command source.
-- The existing serial motor bridge's 0.4 s timeout only bounds inactivity at that bridge. It does not by itself prove that fresh commands were generated from fresh sensor data, or that other actuation paths share the watchdog.
-- If a controller uses `t_now - t_received`, call the quantity **receipt age**. Genuine acquisition-time age needs a trustworthy source timestamp and clock assumptions; stale data can be newly received. Held/re-published detections require particular care.
-- For a fixed stop distance, physical stopping also depends on speed, sensing and transport delay, control period, braking, robot footprint, and uncertainty. These were not calibrated during preparation of the draft.
-
-Recommended metrics are the number/fraction of decision instants emitting nonzero motion after an observation deadline, the first stop-command time after a modeled fault, stop-rule violations, and available-motion fraction in clear/fresh scenarios. Do not rename these “collision rate,” “safety guarantee,” “latency measured on hardware,” or “success rate in soccer matches.”
-
-## Primary-source provenance and metadata
-
-All links below were checked or attempted during this research pass; access limitations are reported explicitly. Search snippets alone were not used as technical evidence from non-primary sites.
-
-- **`kitano1997robocup`** — H. Kitano, M. Asada, Y. Kuniyoshi, I. Noda, E. Osawa, and H. Matsubara, “RoboCup: A Challenge Problem for AI,” *AI Magazine*, 18(1), 73–85, 1997. DOI [10.1609/aimag.v18i1.1276](https://doi.org/10.1609/aimag.v18i1.1276). Primary [AAAI citation record](https://ojs.aaai.org/aimagazine/index.php/aimagazine/citationstylelanguage/get/harvard-cite-them-right?publicationId=731&submissionId=1276) and [publisher record](https://onlinelibrary.wiley.com/doi/abs/10.1609/aimag.v18i1.1276). This is a different publication from “The Robot World Cup Initiative”; do not mix their author lists or DOIs.
-- **`macenski2022ros2`** — S. Macenski, T. Foote, B. Gerkey, C. Lalancette, and W. Woodall, “Robot Operating System 2: Design, Architecture, and Uses in the Wild,” *Science Robotics*, 7(66), eabm6074, 2022. DOI [10.1126/scirobotics.abm6074](https://doi.org/10.1126/scirobotics.abm6074). [Author preprint and journal metadata](https://arxiv.org/abs/2211.07752) accessible; publisher full-text request returned 403.
-- **`scheunemann2019ros2`** — M. M. Scheunemann and S. G. van Dijk, “ROS 2 for RoboCup,” *RoboCup 2019: Robot World Cup XXIII*, LNCS 11531, 429–438, 2019. DOI [10.1007/978-3-030-35699-6_34](https://doi.org/10.1007/978-3-030-35699-6_34). [Author university record](https://researchprofiles.herts.ac.uk/en/publications/ros-2-for-robocup/), [author preprint](https://arxiv.org/abs/1907.00282), and [conference PDF](https://2019.robocup.org/downloads/program/ScheunemannvanDijk2019.pdf).
-- **`passault2022rsk`** — G. Passault, C. Gaspard, and O. Ly, “Robot Soccer Kit: Omniwheel Tracked Soccer Robots for Education,” *IEEE ICARSC*, 34–39, 2022. DOI [10.1109/ICARSC55462.2022.9784808](https://doi.org/10.1109/ICARSC55462.2022.9784808). [Author preprint](https://arxiv.org/abs/2510.11552), [author laboratory teaching document showing the original IEEE record](https://dept-info.labri.fr/~baudon/Irem/RSK.pdf), and [official platform description](https://robot-soccer-kit.github.io/). **2025 is the preprint deposit year; cite the original conference year 2022.**
-- **`brooks1986robust`** — R. A. Brooks, “A Robust Layered Control System for a Mobile Robot,” *IEEE Journal on Robotics and Automation*, 2(1), 14–23, 1986. DOI [10.1109/JRA.1986.1087032](https://doi.org/10.1109/JRA.1986.1087032). [Author paper](https://people.csail.mit.edu/brooks/papers/AIM-864.pdf), [MIT report record](https://dspace.mit.edu/entities/publication/362a32d0-a821-4a9d-a5ff-9e2b71c5539d), and [author publication list](https://people.csail.mit.edu/brooks/publications.html). The report is dated 1985; the IEEE article is dated 1986.
-- **`fox1997dwa`** — D. Fox, W. Burgard, and S. Thrun, “The Dynamic Window Approach to Collision Avoidance,” *IEEE Robotics & Automation Magazine*, 4(1), 23–33, 1997. DOI [10.1109/100.580977](https://doi.org/10.1109/100.580977). [Author institute record](https://publications.ri.cmu.edu/the-dynamic-window-approach-to-collision-avoidance) and [paper](https://publications.ri.cmu.edu/storage/publications/pub_files/pub1/fox_dieter_1997_1/fox_dieter_1997_1.pdf); DOI resolved to IEEE but triggered its JavaScript access check.
-- **`yates2021aoi`** — R. D. Yates, Y. Sun, D. R. Brown III, S. K. Kaul, E. Modiano, and S. Ulukus, “Age of Information: An Introduction and Survey,” *IEEE Journal on Selected Areas in Communications*, 39(5), 1183–1210, 2021. DOI [10.1109/JSAC.2021.3065072](https://doi.org/10.1109/JSAC.2021.3065072). [Author preprint](https://arxiv.org/abs/2007.08564), [NSF-hosted author paper](https://par.nsf.gov/servlets/purl/10230984), and [IEEE record](https://ieeexplore.ieee.org/document/9380899). DOI fetch was unavailable; the article landing page was indexed by IEEE. The 2020 preprint date is not the journal year.
-- **`kaul2012status`** — S. Kaul, R. Yates, and M. Gruteser, “Real-Time Status: How Often Should One Update?”, *IEEE INFOCOM*, 2731–2735, 2012. DOI [10.1109/INFCOM.2012.6195689](https://doi.org/10.1109/INFCOM.2012.6195689). [Primary author university record](https://www.researchwithrutgers.org/en/publications/real-time-status-how-often-should-one-update/) confirms metadata; [author paper](https://winlab.rutgers.edu/~gruteser/papers/sanjitnew.pdf).
-- **`seto1998simplex`** — D. Seto, B. Krogh, L. Sha, and A. Chutinan, “The Simplex Architecture for Safe On-Line Control System Upgrades,” *American Control Conference*, vol. 6, 3504–3508, 1998. DOI [10.1109/ACC.1998.703255](https://doi.org/10.1109/ACC.1998.703255). [Primary author university record](https://experts.illinois.edu/en/publications/the-simplex-architecture-for-safe-on-line-control-system-upgrades/) and [author laboratory publication list](https://cps-il.github.io/publications/). This ACC paper is distinct from the same authors’ IEEE Control Systems article with DOI 10.1109/37.710880.
-- **`ames2017cbf`** — A. D. Ames, X. Xu, J. W. Grizzle, and P. Tabuada, “Control Barrier Function Based Quadratic Programs for Safety Critical Systems,” *IEEE Transactions on Automatic Control*, 62(8), 3861–3876, 2017. DOI [10.1109/TAC.2016.2638961](https://doi.org/10.1109/TAC.2016.2638961). [Publisher metadata](https://doi.org/10.1109/TAC.2016.2638961) and [author preprint](https://arxiv.org/abs/1609.06408). The early-online publication is December 2016; the issue year is 2017.
-- **`nav2collision`** — [Official Collision Monitor parameter documentation](https://docs.nav2.org/rolling/configuration_and_development/configuration_guide/core_servers/collision_monitor/configuring_collision_monitor_node/), [official tutorial](https://docs.nav2.org/rolling/tutorials/general_tutorials/using_collision_monitor/using_collision_monitor/), and [Jazzy API source](https://api.nav2.org/nav2-jazzy/html/collision__monitor__node_8hpp_source.html). Rolling documentation is mutable; the bibliography records the access date and does not assert that every rolling feature exists in this repository's Jazzy setup. Jazzy source independently confirms sensor source timeout configuration and input/output command topics.
-- **`twistmux`** — [Official priority and timeout configuration](https://github.com/ros-teleop/twist_mux/blob/rolling/config/twist_mux_topics.yaml) and [ROS package record](https://index.ros.org/p/twist_mux/). These document established functionality; no invented article DOI is assigned.
-- **`ros2qos`** — [Official ROS 2 design: deadline, liveliness, lifespan](https://design.ros2.org/articles/qos_deadline_liveliness_lifespan.html). The general Jazzy documentation page was blocked by its anti-bot layer, so this primary design document is the cited source.
-- **`opencvhsv`** — [Official OpenCV tutorial](https://docs.opencv.org/4.13.0/da/d97/tutorial_threshold_inRange.html). The unversioned 4.x link redirected to 4.13.0 during verification; the reference uses that resolved version and an access date, without claiming the repository installed that release.
-
-## Submission-guideline implications
-
-`../guideline/guide.md` requires an anonymized IEEE double-column **A4 PDF, at most six pages including references, at most 3 MB, embedded fonts, and no Type 3 fonts**. It also requires an LLM-use declaration and author approval of accuracy, originality, and authorship.
-
-The guideline specifically describes permitted LLM use as **“solely for non-intellectual purposes.”** The current preparation request includes literature discovery, research framing, and draft writing. An acknowledgement must truthfully describe the assistance, and must not certify that substantive research assistance was only copyediting. Conference-policy eligibility and final human authorship approval remain author decisions; the artifact is a research draft, not a certified submission.
-
-Anonymization should omit author/affiliation/email information, identifying private file paths, repository usernames/URLs, and identifying acknowledgements. Keep this research log and any local source provenance outside the submitted PDF.
+The contribution is the explicit connection among source-specific gateway behavior, wrist geometry and mission handoffs in a Pi-centered four-subsystem design. The paper separates this engineering study from physical hazardous-object recognition or handling. Historical soccer/replay literature and audit notes remain in the dated previous-project archive rather than setting the new paper's narrative.

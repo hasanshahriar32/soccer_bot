@@ -1,21 +1,24 @@
-# Reproducible command replay
+# HazBot reproducible analyses
 
 Run from the repository root:
 
-```sh
-python3 manuscript/experiments/replay_supervisor.py
+```bash
+python3 manuscript/experiments/characterize_hazbot.py
+python3 manuscript/experiments/verify_hazbot_mission.py
 ```
 
-The standard-library-only experiment executes the original metric controller
-callbacks and decision loop with memory-only ROS/time/output doubles. Its
-constructor and socket transport are bypassed. It never operates the robot.
+Both use the Python standard library and operate offline. Neither imports the runtime servers, starts ROS, opens sockets or serial ports, loads detector weights, or actuates hardware.
 
-The output gate is a proposed reference that is not integrated into the runtime
-nodes. Read [the protocol](../research/evaluation_protocol.md) for the exact
-constructed inputs, contract, metrics, limitations, source hashes, and expected
-results. `--check-only` runs all checks without rewriting artifacts.
+characterize_hazbot.py derives wrist geometry from scripts/robot.urdf, compares analytic FK with a generic homogeneous chain, samples the declared joint bounds, executes the AST-isolated wheel SET branch, and checks the pure arm command mapper. Outputs are hazbot_characterization.json, hazbot_workspace.csv, hazbot_protocol.csv, and hazbot_height_slabs.csv. Its 29 checks establish model/source consistency, not physical accuracy.
 
-Generated data live in `../data/`; LaTeX tables live in `../generated/`. `T`
-counts any constrained motion (including rotation), `F` counts constrained
-forward commands, and `H` counts held clear-scene forward opportunities. These
-are deterministic scenario counts, not empirical robot failure rates.
+verify_hazbot_mission.py defines a new seven-phase reference coordinator, independently checks command admissibility, enumerates all 12-bit observations at every phase for four policies, explores phase reachability, and emits counterexamples and a nominal Boolean witness. Its 109 checks cover the declared abstraction. The full 28,672-case policy has no violating commands; the three guard-removal ablations expose 480, 128, and 288 violating cases. This is not a dynamics or sensor simulation.
+
+The verifier regenerates generated/hazbot_mission_summary.tex from its computed values. Both scripts accept --output-dir to reproduce artifacts in a separate folder. The verifier optionally accepts --generated-dir. A custom output directory defaults to keeping its TeX output under that directory, leaving the active paper table unchanged.
+
+See the [active protocol](../research/evaluation_protocol.md), [mission method](../research/hazbot_mission_method.md), and [claim ledger](../research/claim_evidence.csv). Source and dataset hashes are recorded alongside settings and checks.
+
+The original replay_supervisor.py remains an independent historical supporting experiment. Its 15 behavioral checks concern constructed ball-pursuit command traces and are not counted as HazBot mission trials:
+
+```bash
+python3 manuscript/experiments/replay_supervisor.py --check-only
+```

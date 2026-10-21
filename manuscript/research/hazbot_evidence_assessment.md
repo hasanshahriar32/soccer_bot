@@ -227,3 +227,7 @@ written matrix-chain calculation within 2 × 10⁻¹² m after decimal CSV round
 Those results support reproducible source-model analysis. They add no claim of
 physical payload, safe hazard handling, detection accuracy, mission success,
 runtime latency, or collision-free autonomy.
+
+## Added prototype photograph
+
+The author supplied photo/bot.jpeg during the acknowledgment/figure revision. It shows a physical mobile base, articulated linkage, gripper enclosing a red ball surrogate, servo hardware, display, scanner assembly, wheel pair, battery cells, and lower electronics. The original JPEG is preserved; the annotation renderer records its hash and exact callout anchors. The author confirmed that the screen is mounted directly to the Raspberry Pi through GPIO and that the camera is at the end of the white ribbon emerging from that assembly. These assembly identifications are recorded in the callout provenance. A static photograph documents assembly and visible arrangement, not a timed or independently verified autonomous mission, hazard recognition, or material handling result.

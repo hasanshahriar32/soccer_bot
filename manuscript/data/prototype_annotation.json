@@ -1,0 +1,266 @@
+{
+  "available": true,
+  "figure_stem": "hazbot_prototype",
+  "renderer": "Python-authored SVG labels and leaders; original JPEG photograph; librsvg PDF/PNG export",
+  "source": "photo/bot.jpeg",
+  "source_path": "photo/bot.jpeg",
+  "source_sha256": "6aca99fb652ce6a268c17d3527ae635485a7247c28b94a0200d3e833d44dbaee",
+  "original_size_px": [
+    890,
+    1161
+  ],
+  "original_metadata_presence": {
+    "exif": true,
+    "gps": false,
+    "comment": false,
+    "icc_color_profile": false
+  },
+  "embedded_source_byte_identical": false,
+  "embedded_pixel_identical_to_source": true,
+  "embedded_jpeg_sha256": "41c8b8139063847982e0bcbed7ea197942261a322654b163c1e40dfe015ecd17",
+  "source_pixel_modification": "none; entire current photograph retained; no crop, retouch, synthesis or pixel re-encoding before embedding",
+  "source_privacy_review": "Nonessential JPEG metadata removed losslessly, including EXIF/XMP, comments and Photoshop metadata. JFIF/ICC/Adobe color interpretation retained. Original user file remains untouched.",
+  "dimensions_inches": [
+    2.7,
+    3.5221348314606744
+  ],
+  "png_resolution_dpi": 329.6296296296296,
+  "png_native_size_px": [
+    890,
+    1161
+  ],
+  "photo_viewport_canvas": [
+    0,
+    0,
+    890,
+    1161
+  ],
+  "photo_bbox_canvas": [
+    0,
+    0,
+    890,
+    1161
+  ],
+  "canvas_viewbox": [
+    890,
+    1161
+  ],
+  "compact_layout": true,
+  "no_added_canvas": true,
+  "layout": "Native-aspect full-frame photograph; numbered circles and short leaders only; component key belongs in paper caption.",
+  "font": "Noto Sans",
+  "media_type": "real photograph with vector annotations; not an all-vector illustration",
+  "annotations": [
+    {
+      "id": 1,
+      "title": "BALL SURROGATE",
+      "detail": "Nonhazardous task object",
+      "anchor": [
+        510,
+        111
+      ],
+      "color": "#ac5c52",
+      "rationale": "Red spherical object visibly held between the end-effector jaws.",
+      "marker": [
+        650,
+        100
+      ],
+      "anchor_normalized": [
+        0.5730337078651685,
+        0.09560723514211886
+      ]
+    },
+    {
+      "id": 2,
+      "title": "GRIPPER",
+      "detail": "Opposing end-effector jaws",
+      "anchor": [
+        478,
+        165
+      ],
+      "color": "#ac5c52",
+      "rationale": "Wooden opposing jaw mechanism surrounds the ball.",
+      "marker": [
+        650,
+        210
+      ],
+      "anchor_normalized": [
+        0.5370786516853933,
+        0.1421188630490956
+      ]
+    },
+    {
+      "id": 3,
+      "title": "SERVO ACTUATION",
+      "detail": "Exposed servo and wiring",
+      "anchor": [
+        437,
+        230
+      ],
+      "color": "#ac5c52",
+      "rationale": "Blue servo body and its wiring are visible beneath the jaw assembly.",
+      "marker": [
+        260,
+        220
+      ],
+      "anchor_normalized": [
+        0.4910112359550562,
+        0.19810508182601205
+      ]
+    },
+    {
+      "id": 4,
+      "title": "ARTICULATED LINKAGE",
+      "detail": "Arm links and pivot joints",
+      "anchor": [
+        352,
+        341
+      ],
+      "color": "#ac5c52",
+      "rationale": "Paired long arm members and pivot fasteners are visible.",
+      "marker": [
+        150,
+        350
+      ],
+      "anchor_normalized": [
+        0.3955056179775281,
+        0.29371231696813094
+      ]
+    },
+    {
+      "id": 5,
+      "title": "RASPBERRY PI + DISPLAY",
+      "detail": "GPIO-mounted local screen",
+      "anchor": [
+        469,
+        613
+      ],
+      "color": "#34799c",
+      "rationale": "User identifies the Pi behind the screen and confirms the screen is connected directly by GPIO; the marker denotes that assembly.",
+      "marker": [
+        690,
+        610
+      ],
+      "anchor_normalized": [
+        0.5269662921348315,
+        0.5279931093884582
+      ]
+    },
+    {
+      "id": 6,
+      "title": "LIDAR SCANNER",
+      "detail": "Rotating ranging assembly",
+      "anchor": [
+        396,
+        827
+      ],
+      "color": "#16858d",
+      "rationale": "Rotating scan head and black scanner housing are visible; brand/model is not inferred from the image.",
+      "marker": [
+        690,
+        800
+      ],
+      "anchor_normalized": [
+        0.4449438202247191,
+        0.7123169681309216
+      ]
+    },
+    {
+      "id": 7,
+      "title": "WHEEL DRIVE",
+      "detail": "Treaded wheel pair",
+      "anchor": [
+        233,
+        934
+      ],
+      "color": "#a87935",
+      "rationale": "Left treaded wheel is marked; the corresponding right wheel is also visible.",
+      "marker": [
+        115,
+        920
+      ],
+      "anchor_normalized": [
+        0.26179775280898876,
+        0.8044788975021533
+      ]
+    },
+    {
+      "id": 8,
+      "title": "BATTERY CELLS",
+      "detail": "Onboard electrical supply",
+      "anchor": [
+        315,
+        970
+      ],
+      "color": "#a87935",
+      "rationale": "Cylindrical cells in a holder are visible; cell chemistry, voltage and runtime are not inferred.",
+      "marker": [
+        120,
+        1060
+      ],
+      "anchor_normalized": [
+        0.3539325842696629,
+        0.8354866494401378
+      ]
+    },
+    {
+      "id": 9,
+      "title": "CONTROL ELECTRONICS",
+      "detail": "Exposed boards and wiring",
+      "anchor": [
+        513,
+        964
+      ],
+      "color": "#34799c",
+      "rationale": "Lower-platform electronic boards and harness are visible; the marker does not infer a particular board model.",
+      "marker": [
+        700,
+        1100
+      ],
+      "anchor_normalized": [
+        0.5764044943820225,
+        0.830318690783807
+      ]
+    },
+    {
+      "id": 10,
+      "title": "CAMERA MODULE",
+      "detail": "White CSI ribbon to Pi",
+      "anchor": [
+        415,
+        432
+      ],
+      "color": "#34799c",
+      "rationale": "User identifies the camera at the far end of the white ribbon from the Pi; zoom inspection locates the small board and lens beside the arm.",
+      "marker": [
+        640,
+        420
+      ],
+      "anchor_normalized": [
+        0.46629213483146065,
+        0.37209302325581395
+      ]
+    }
+  ],
+  "unidentified_components": [],
+  "identification_provenance": {
+    "Pi_display_assembly": "User confirms screen is directly connected to Raspberry Pi through GPIO.",
+    "camera": "User confirms white ribbon from Raspberry Pi terminates at camera; image zoom used to anchor visible board/lens."
+  },
+  "evidence_scope": "Visible prototype component identification; no claim of autonomous grasp success or hazardous-material handling follows from the photograph.",
+  "generator_sha256": "8e7be053b96b5dc85dc75fba085d00b442f86299213850faceb9fcdd741a3a66",
+  "sha256": {
+    "svg": "bb4a12d3d2ef6dbe0a926629e5c7b84af4460040f69b197e7a57274f82b62748",
+    "pdf": "3770ab0243ccfa170bf0540aacbe5a9719fb2e8c6cae7f04be305e817a10e024",
+    "png": "c2f4b35b95c8d7c7d55424d5ea3853adf334aa91017358473ef04887cac22605"
+  },
+  "validation": {
+    "one_original_photo": true,
+    "all_callout_ids_unique": true,
+    "all_anchor_coordinates_in_source_bounds": true,
+    "png_matches_native_photo_dimensions": true,
+    "no_extra_canvas_or_aspect_change": true,
+    "embedded_pixels_identical_to_source": true,
+    "private_metadata_absent_in_embedded_jpeg": true
+  }
+}

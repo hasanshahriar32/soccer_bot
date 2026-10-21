@@ -21,6 +21,7 @@ from matplotlib.patches import Circle, Rectangle
 import numpy as np
 
 from render_hazbot_figures import render as render_diagrams
+from annotate_prototype import render as render_prototype, render_front
 
 BASE = Path(__file__).resolve().parents[1]
 ROOT = BASE.parent
@@ -53,6 +54,9 @@ def save(fig,name):
         elif extension == 'svg':
             metadata = {'Date':None,'Creator':'HazBot reproducible source-derived figure renderer'}
         fig.savefig(OUT/f'{name}.{extension}',dpi=300,facecolor='white',metadata=metadata)
+        if extension == 'svg':
+            path = OUT/f'{name}.svg'
+            path.write_text('\n'.join(line.rstrip() for line in path.read_text().splitlines())+'\n')
     plt.close(fig)
 
 
@@ -70,7 +74,7 @@ def workspace_plot(characterization):
     reach = (geometry['upper_link_length_m']+geometry['forearm_length_m'])*1000
     assert np.max(np.hypot(x-shoulder[0],z-shoulder[2])) <= reach+1e-8
 
-    fig = plt.figure(figsize=(3.45,2.25))
+    fig = plt.figure(figsize=(3.45,2.55))
     # A square metric panel preserves the physical circular link bound; an
     # adjacent annotation column keeps text off the sampled envelope.
     ax = fig.add_axes([.16,.22,.55,.68])
@@ -121,41 +125,6 @@ def workspace_plot(characterization):
             'interpretation':'Joint-space samples of ideal source wrist-origin geometry; not a Cartesian density, safe grasp workspace, trajectory, tool-centre-point reach, or measured physical performance.'}
 
 
-def protocol_plot(characterization):
-    wheel = characterization['protocols']['wheel']
-    counts = wheel['exhaustive_output_counts']
-    assert sum(counts.values()) == wheel['exhaustive_cases'] == 511**2
-    assert [counts[k] for k in ('F','B','L','R')] == [255**2]*4
-    assert counts['NO_COMMAND'] == 4*255 and counts['S'] == 1
-    fig = plt.figure(figsize=(3.45,2.40))
-    ax = fig.add_axes([.19,.27,.61,.61])
-    ax.set_aspect('equal',adjustable='box')
-    quadrants = [(-255,0,'L','#edf3f8'),(0,0,'F','#e9f5f2'),
-                 (-255,-255,'B','#f3f0e8'),(0,-255,'R','#f8ece8')]
-    for x0,y0,command,color in quadrants:
-        ax.add_patch(Rectangle((x0,y0),255,255,facecolor=color,edgecolor='none',zorder=1))
-        cx,cy = x0+127.5,y0+127.5
-        ax.text(cx,cy+18,command,ha='center',va='center',fontsize=12,fontweight='bold')
-        ax.text(cx,cy-51,f'{counts[command]:,}',ha='center',va='center',fontsize=7.4,color=MUTED)
-    ax.axvline(0,color=GOLD,lw=1.1,zorder=3)
-    ax.axhline(0,color=GOLD,lw=1.1,zorder=3)
-    ax.plot(0,0,'o',color=INK,markeredgecolor='white',markeredgewidth=.7,ms=4,zorder=5)
-    ax.set(xlim=(-255,255),ylim=(-255,255),xticks=[-255,0,255],yticks=[-255,0,255],
-           xlabel='Left signed input',ylabel='Right signed input')
-    ax.tick_params(length=2.3,pad=2)
-    fig.text(.035,.965,'WHEEL GATEWAY / EXACT SIGN PARTITION',fontsize=8.1,fontweight='bold',va='top')
-    fig.text(.035,.085,'Axes except origin: 1,020 silent input pairs',fontsize=7,color=GOLD)
-    fig.text(.035,.025,'Origin: S (stop) · nonzero magnitudes discarded',fontsize=7,color=MUTED)
-    save(fig,'hazbot_protocol')
-    return {'source':'protocols.wheel in data/hazbot_characterization.json',
-            'input_interval_each_wheel':wheel['exhaustive_input_interval_each_wheel'],
-            'exhaustive_cases':wheel['exhaustive_cases'],'output_counts':counts,
-            'quadrants':{'left<0,right>0':'L','left>0,right>0':'F',
-                         'left<0,right<0':'B','left>0,right<0':'R'},
-            'axis_cases':'Exactly one zero input: NO_COMMAND; both zero: S',
-            'interpretation':'Isolated gateway code semantics; not motor-speed, physical braking, or robot trajectory measurements.'}
-
-
 def main():
     OUT.mkdir(exist_ok=True)
     characterization = json.loads((DATA/'hazbot_characterization.json').read_text())
@@ -168,42 +137,51 @@ def main():
         'semantics':'Source-derived component architecture and ideal wrist geometry; constructed reference mission. No live robot, inference, collision feasibility, hazardous-object recognition or physical handling evaluation.',
         'diagrams':render_diagrams(),
         'workspace':workspace_plot(characterization),
-        'protocol':protocol_plot(characterization),
+        'prototype':render_prototype(),
+        'front':render_front(),
     }
     (DATA/'figure_data.json').write_text(json.dumps(records,indent=2)+'\n')
     stems = {'hazbot_architecture':True,'hazbot_mission':True,'hazbot_arm_geometry':True,
-             'hazbot_workspace':True,'hazbot_protocol':False}
-    dimensions = {'hazbot_architecture':[7.1,3.6],'hazbot_mission':[7.1,1.62],
-                  'hazbot_arm_geometry':[3.45,2.25],'hazbot_workspace':[3.45,2.25],
-                  'hazbot_protocol':[3.45,2.4]}
+             'hazbot_workspace':False,'hazbot_prototype':True,'hazbot_front':True}
+    dimensions = {name: records['diagrams']['figures'][name]['dimensions_inches']
+                  for name in ('hazbot_architecture','hazbot_mission','hazbot_arm_geometry')}
+    dimensions['hazbot_workspace'] = [3.45,2.55]
+    dimensions['hazbot_prototype'] = records['prototype']['dimensions_inches']
+    dimensions['hazbot_front'] = records['front']['dimensions_inches']
     inputs = [DATA/name for name in ('hazbot_characterization.json','hazbot_workspace.csv',
-                                    'hazbot_protocol.csv','hazbot_height_slabs.csv')]
-    scripts = [Path(__file__).resolve(),BASE/'scripts/render_hazbot_figures.py',
+                                    'hazbot_height_slabs.csv')]
+    scripts = [Path(__file__).resolve(),BASE/'scripts/render_hazbot_figures.py',BASE/'scripts/annotate_prototype.py',
                BASE/'scripts/hazbot_icons.py',BASE/'scripts/export_drawio.py']
     exports = [OUT/f'{stem}.{suffix}' for stem in stems for suffix in ('pdf','svg','png')]
     exports += [OUT/f'{stem}.drawio' for stem in ('hazbot_architecture','hazbot_mission','hazbot_arm_geometry')]
-    exports += [DATA/'figure_data.json']
+    exports += [DATA/'figure_data.json', DATA/'prototype_annotation.json', DATA/'front_annotation.json']
     source_bindings = {record['path']:record['sha256'] for record in characterization['source_bindings'].values()}
     source_bindings.update(records['diagrams']['source_sha256'])
+    assert records['prototype']['available'], 'Source prototype photo is required to refresh its annotation.'
+    source_bindings[records['prototype']['source_path']] = records['prototype']['source_sha256']
+    assert records['front']['available'], 'Front-view source photo is required.'
+    source_bindings[records['front']['source_path']] = records['front']['source_sha256']
     manifest = {
-        'generator':'Original Python-authored SVG + librsvg diagrams; Matplotlib native-vector source-derived plots',
+        'generator':'Original Python-authored technical SVG + librsvg; Matplotlib source plots; original JPEG with vector annotations',
         'study':'HazBot source-derived architecture and geometric/interface characterization',
         'python_version':platform.python_version(),'matplotlib_version':matplotlib.__version__,
         'numpy_version':np.__version__,
         'librsvg_version':subprocess.check_output(['rsvg-convert','--version'],text=True).strip(),
-        'settings':{'preview_dpi':300,'pdf_plot_fonttype':42,'svg_plot_fonttype':'none',
+        'settings':{'technical_preview_dpi':300,'photo_preview':'native input dimensions','pdf_plot_fonttype':42,'svg_plot_fonttype':'none',
                     'svg_hashsalt':'hazbot-source-figures-v1','rasterized_plot_artists':False,
                     'diagram_primary_font':'Noto Sans','plot_primary_font':'DejaVu Sans',
                     'creation_and_modification_metadata':'Fixed diagram SOURCE_DATE_EPOCH; omitted plot timestamps'},
-        'figures':{name:{'in_paper':paper,'dimensions_inches':dimensions[name]} for name,paper in stems.items()},
+        'figures':{name:{'in_paper':paper,'dimensions_inches':dimensions[name],
+                        'media_type':'real photograph with vector annotations' if name in ('hazbot_prototype','hazbot_front') else 'vector technical figure'}
+                   for name,paper in stems.items()},
         'inputs_sha256':{str(path.relative_to(BASE)):digest(path) for path in inputs},
         'source_evidence_sha256':source_bindings,
         'scripts_sha256':{str(path.relative_to(BASE)):digest(path) for path in scripts},
         'outputs_sha256':{str(path.relative_to(BASE)):digest(path) for path in exports},
     }
     (DATA/'figure_manifest.json').write_text(json.dumps(manifest,indent=2)+'\n')
-    print('Generated five active HazBot PDF/SVG/PNG figure sets and three editable diagrams.')
-    print('Main paper: architecture, reference mission, arm geometry and sagittal wrist envelope.')
+    print('Generated four technical vector sets, two compact photo annotations, and three editable diagrams.')
+    print('Main paper: architecture, reference mission, arm with small wrist inset, and two compact annotated photographs.')
     print('Bound figure inputs, source evidence, generators and exports: manuscript/data/figure_manifest.json')
 
 

@@ -1,116 +1,78 @@
-# IEEE paper project
+# HazBot IEEE paper project
 
-**Freshness and Interface Contracts for Distributed ROS 2 Ball Pursuit: An Executable Case Study**
+**HazBot: A Modular Raspberry Pi-Centered Mobile Manipulator for Hazardous-Object Retrieval**
 
-The paper is grounded in this repository, uses IEEE conference two-column A4
-format, and defaults to anonymous review. The GOAD example informed the modular
-project layout; none of its ADCS research, authorship, results, or prose is reused.
-The requirements in `guideline/guide.md` take precedence over the example's
-single-column manuscript style.
+Start with the [paper PDF](submission/HazBot_IEEE_Anonymous.pdf), [Overleaf ZIP](submission/HazBot_IEEE_Overleaf.zip), [LaTeX entry point](main.tex), and [figure gallery](figures/README.md).
 
-Start with [the PDF](submission/SoccerBot_IEEE_Anonymous.pdf),
-[main.tex](main.tex), and [submission readiness](submission/READINESS.md).
-The [figure gallery](figures/README.md) includes technical component diagrams,
-replay analysis plots, vector exports and editable draw.io files.
-This is a complete research draft with reproducible **constructed offline**
-evidence. It is not an assertion of conference eligibility or a field-validated
-soccer system.
+The paper has been rebuilt around a Raspberry Pi and four subsystems: navigation/LiDAR, wheel control, native camera inference, and a robotic arm/gripper. It connects these components to a seven-phase retrieval mission, with hazardous-object retrieval as the application objective and ball-based simulated control as the nonhazardous surrogate context.
 
-## Structure
+## Evidence and results
+
+The reported results come from three reproducible offline studies:
+
+| Study | Scope | Computed results |
+|---|---|---|
+| Wrist geometry | URDF chain, analytical and independently implemented transforms | 68,921 sampled poses; 0.200 m shoulder–wrist link bound; 2,747 below-ground samples; 1,013 FK comparison poses |
+| Gateway semantics | Actual isolated wheel branch and pure arm mapper | 261,121 wheel pairs; 1,020 mixed-zero pairs emit no command; 2,255 arm mapping cases; 29 characterization checks pass |
+| Reference coordination | Seven phases, 12 Boolean observations, independent command-admissibility oracle | 28,672 cases per policy; 0 full-policy violations; ablation counts 480/128/288; 109 checks pass |
+
+These are source geometry, software behavior, and bounded reference-model results. They are not physical mission success, hazardous-material identification, detector accuracy, payload, or endurance measurements. See the [evaluation protocol](research/evaluation_protocol.md), [claim ledger](research/claim_evidence.csv), and [resource assessment](research/hazbot_evidence_assessment.md).
+
+## Layout
 
 ```text
 manuscript/
-├── main.tex                    # IEEEtran, A4, anonymous author block
-├── references.bib              # Primary literature and official software docs
-├── sections/                   # Abstract through conclusion
-├── figures/                    # PDF/SVG/PNG diagrams, plots and draw.io sources
-├── generated/                  # Tables regenerated from the replay
-├── data/                       # Per-tick CSV, summaries, JSON, source hashes
-├── experiments/                # Standard-library source-execution harness
-├── research/                   # Source audit, claim ledger, related work, plan
-├── guideline/                  # Original supplied instructions, preserved
-├── scripts/                    # Figure, PDF-check, and source-package tools
-├── compile.sh                  # Tectonic / latexmk / pdfLaTeX + BibTeX
-├── Makefile
-├── build/                      # Local compiler intermediates, ignored
-└── submission/                 # PDF, Overleaf ZIP, format report, readiness
+├── main.tex, references.bib       # Anonymous IEEEtran A4 paper
+├── sections/                     # Abstract through conclusion
+├── figures/                      # HazBot vector figures, previews, editable diagrams
+├── experiments/                  # Source characterization and reference verifier
+├── data/                         # CSV datasets, results, provenance, validation
+├── generated/                    # Computed LaTeX summary and table
+├── research/                     # Literature, evidence ledger, methods, roadmap
+├── guideline/                    # Original supplied requirements, preserved
+├── scripts/                      # Render, compile-check, package tools
+├── compile.sh, Makefile
+├── archive/                      # Previous ball-pursuit paper snapshot
+└── submission/                   # Current PDF, Overleaf ZIP, validation, readiness
 ```
-
-## What is actually claimed
-
-The original source contains metric/pixel ball-coordinate inconsistencies and
-an alternative metric pursuit controller with no scan timeout. The study
-executes that controller's actual methods with in-memory substitutes, then
-compares receipt-age and payload-validity gates on 12 deterministic scenarios.
-The full proposed gate runs only in the research harness. Robot runtime files
-and launchers were not changed, and no hardware scripts were operated.
-
-The experiment measures requested commands, not perception accuracy, networking
-latency, actual velocity, collision avoidance, scoring, SLAM accuracy, or power.
-Existing Nav2 and `twist_mux` mechanisms are acknowledged as close prior art;
-the contribution is a bounded executable integration study, not a new general
-control architecture. See `research/novelty_and_validation_plan.md` for stronger
-follow-up research and the evidence it would need.
 
 ## Reproduce
 
-Run from the repository root:
+From the repository root:
 
 ```bash
-# Standard library only; does not import ROS, connect sockets, or move motors.
-python3 manuscript/experiments/replay_supervisor.py
-python3 manuscript/experiments/replay_supervisor.py --check-only
+# Python standard library; no ROS, sockets, serial connections, or motor operation.
+python3 manuscript/experiments/characterize_hazbot.py
+python3 manuscript/experiments/verify_hazbot_mission.py
 
-# Optional: regenerate figures; needs the pinned Python and system dependencies.
+# Regenerate technical figures and both compact annotated photographs.
 python3 -m pip install -r manuscript/requirements-figures.txt
 python3 manuscript/scripts/build_figures.py
 
-# Compile existing figures/tables; requires Tectonic or TeX Live + IEEEtran.
+# Existing PDF figures and computed table are sufficient for LaTeX compilation.
 bash manuscript/compile.sh
-
-# Poppler tools pdfinfo, pdffonts, pdftotext are needed for format checks.
 python3 manuscript/scripts/check_submission.py
 python3 manuscript/scripts/package_sources.py
 ```
 
-Tectonic downloads missing TeX resources on its first build. In a restricted
-environment, point `XDG_CACHE_HOME` to a writable cache directory and seed it
-with an existing Tectonic cache if available. The local verified build used
-`/tmp/soccer-paper-tex-cache`. That host-specific path is not needed on Overleaf.
-Tables and pre-rendered PDF figures are included, so compiling the paper does
-not require Python, ROS, or robot hardware. The Overleaf ZIP contains only
-the manuscript and figure assets, including optional vector illustrations and
-editable SVG/draw.io sources; choose `main.tex` and pdfLaTeX.
+Tectonic or TeX Live with IEEEtran and BibTeX is required. Figure regeneration additionally uses librsvg's rsvg-convert and Noto Sans fonts; plotting dependencies are pinned in requirements-figures.txt. Poppler's pdfinfo, pdffonts, and pdftotext support the format checks. On this machine the verified Tectonic cache is /tmp/soccer-paper-tex-cache; this path is not required by the source package.
 
-## Technical figures
+The ZIP contains main.tex, sections, bibliography, IEEE template files, the computed HazBot table, vector PDF/SVG figures, and editable draw.io diagrams. It does not include runtime configuration, credentials, private research notes, or source provenance. Choose main.tex and pdfLaTeX on Overleaf. Full experimental reproducibility uses this local repository.
 
-The paper uses an illustrated component topology, paired command traces for
-scan silence versus fresh invalid payloads, and the saved timeout sweep.
-The contract illustration and complete 12-scenario matrix remain optional
-figures outside the paper. All five sets have PDF/SVG/PNG exports; both diagrams
-also have editable draw.io files. See the [gallery and source map](figures/README.md).
+## Figures
 
-The architecture uses original Python-authored SVG robotics symbols and
-librsvg's `rsvg-convert`, with Noto Sans. Statistical figures use the versions in
-[requirements-figures.txt](requirements-figures.txt). The renderer reads frozen
-replay outputs and never imports ROS or operates the robot. Source inputs,
-runtime evidence, generator modules and exports are hash-bound in
-[figure_manifest.json](data/figure_manifest.json); selected exact plotted values
-are retained in [figure_data.json](data/figure_data.json). Draw.io structure is
-checked programmatically; editor font placement has not been visually verified.
+Three technical vector figures and two compact annotated photographs form five numbered figures. The architecture and mission show interfaces and handoffs; the arm carries a small wrist-envelope inset. The original photos retain their proportions with small numbered markers and caption keys. The wheel sign-partition diagram and full-size wrist plot are excluded from the paper and source ZIP. See the [gallery](figures/README.md), [manifest](data/figure_manifest.json), and [validation](data/figure_validation.json).
 
-## Editing and responsible submission
+The original photographs are photo/bot.jpeg and photo/laptop_front.jpeg. The annotation script preserves its pixels and adds compact numbered vector markers with a caption key identifying hardware. The paper includes hazbot_prototype.pdf and hazbot_front.pdf through sections/03_prototype_photo.tex. No image generation or synthetic hardware is used. Refresh the annotations and recheck the six-page/3 MB limits when replacing the photograph.
 
-Keep the author block anonymous for the initial double-blind submission.
-Replace it with verified author information only when the venue requests it;
-do not copy authors from the GOAD example. Keep evidence provenance in the
-local research folder, outside an anonymous source upload. Rerun the format
-checks after every paper change, especially changes affecting page count.
+The acknowledgment names ChatGPT and describes the assistance actually used. It assigns content responsibility to the authors without claiming that human review is already complete. The supplied guideline's non-intellectual-only restriction remains an author/venue review item.
 
-The supplied guideline states that LLM use must be solely non-intellectual.
-This task included AI-assisted research design, literature synthesis, coding,
-and drafting, so the draft discloses that use accurately. It cannot truthfully
-certify the guideline's narrower condition or human approval. See
-`submission/READINESS.md`; this question must be resolved before submission.
-No plagiarism/similarity percentage, author approval, original-contribution
-certification, or IEEE PDF eXpress approval is claimed.
+The source arm has three positioning axes and a separately actuated gripper. Direct camera acquisition/native inference, LiDAR controller communication, and separate drive/arm Arduino paths are shown explicitly. Differing proposal revisions and unsubstantiated slide performance figures are reconciled in the private resource assessment rather than combined as measured results.
+
+## Current and historical files
+
+HazBot_IEEE_Anonymous.pdf and HazBot_IEEE_Overleaf.zip are the canonical outputs. The compile/package scripts also refresh the old SoccerBot filenames as compatibility copies for existing local links; they contain the same current paper, not a second manuscript.
+
+The [previous case study ZIP](archive/SoccerBot_Previous_Case_Study_2026-10-21.zip) preserves the earlier ball-pursuit manuscript and its original diagrams. Unprefixed figures, replay data, replay_supervisor.py, and repository_audit.md remain historical supporting material. They are excluded from the active source ZIP and are not the results of the HazBot reference mission. The legacy replay can still be checked with python3 manuscript/experiments/replay_supervisor.py --check-only.
+
+The paper remains anonymous under the supplied guideline. [Submission readiness](submission/READINESS.md) distinguishes completed mechanical checks from author review and venue-policy decisions. No submission or publication action has been taken.

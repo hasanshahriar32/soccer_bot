@@ -1,6 +1,8 @@
 \section{System Architecture}
 \subsection{Central Computer and Physical Interfaces}
-Figure~\ref{fig:architecture} places the Raspberry Pi at the computational center. It receives images and range observations, hosts native visual inference, and exchanges commands with the low-level actuator controllers. A workstation may support visualization or development, but is not required to host the native detector. The evaluated configuration uses a Pi Camera V2, YDLIDAR X4 ranging path, differential drive with an L298N bridge, and a servo arm. Table~\ref{tab:interfaces} distinguishes physical connections from logical responsibilities.
+Figure~\ref{fig:architecture} places the Raspberry Pi at the computational center. It receives images and range observations, hosts native visual inference, and exchanges commands with the low-level actuator controllers. A workstation may support visualization or development, but is not required to host the native detector. The source configuration analyzed here specifies a Pi Camera V2, YDLIDAR X4 ranging path, differential drive with an L298N bridge, and a servo arm. Table~\ref{tab:interfaces} distinguishes physical connections from logical responsibilities. The physical prototype views in Figs.~\ref{fig:prototype} and~\ref{fig:front} identify the components and laptop visualization; its local display is mounted on the Pi through GPIO, and the camera connects by a white CSI ribbon.
+
+\input{sections/03_prototype_photo}
 
 \begin{table}[t]
 \caption{Four Subsystems and Their Pi Interfaces}

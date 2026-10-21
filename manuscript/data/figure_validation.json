@@ -1,72 +1,123 @@
 {
   "date": "2026-10-21",
   "timezone": "Asia/Dhaka",
-  "study": "HazBot technical figures",
+  "study": "HazBot revised technical figures and annotated physical prototype",
   "checks": {
     "all_bound_hashes_match": true,
+    "technical_pdf_exports_are_vectors": true,
+    "each_real_photo_pdf_has_one_raster_with_vector_labels": true,
+    "hazbot_prototype_pixels_preserved": true,
+    "hazbot_prototype_private_metadata_removed": true,
+    "hazbot_prototype_embedding_hash_matches": true,
+    "hazbot_prototype_source_hash_current": true,
+    "hazbot_prototype_callout_ids_unique": true,
+    "hazbot_prototype_anchors_in_source_bounds": true,
+    "hazbot_prototype_native_preview_dimensions": true,
+    "hazbot_front_pixels_preserved": true,
+    "hazbot_front_private_metadata_removed": true,
+    "hazbot_front_embedding_hash_matches": true,
+    "hazbot_front_source_hash_current": true,
+    "hazbot_front_callout_ids_unique": true,
+    "hazbot_front_anchors_in_source_bounds": true,
+    "hazbot_front_native_preview_dimensions": true,
+    "workspace_arrays_match_frozen_csv": true,
+    "workspace_1681poses_67belowground": true,
+    "small_arm_inset_matches_source_poses": true,
+    "editable_diagram_structure_and_labels_valid": true,
+    "retired_wheel_figure_excluded_from_active_outputs": true,
     "repeat_render_byte_identical": true,
-    "all_five_pdf_exports_vector_with_embedded_fonts": true,
-    "drawio_xml_structure_and_labels_valid": true,
-    "workspace_slice_has1681poses_and67belowground": true,
-    "protocol_counts_conserve261121inputs": true
+    "SVG_output_whitespace_normalized": true
   },
   "all_checks_pass": true,
-  "hash_bindings_checked": 40,
-  "tracked_exports_and_records": 19,
-  "paper_asset_count": 4,
-  "total_figure_sets": 5,
+  "hash_bindings_checked": 47,
+  "tracked_exports_and_records": 24,
+  "total_generated_sets": 6,
+  "paper_asset_count": 5,
+  "paper_numbered_figure_count": 5,
+  "technical_vector_asset_count": 3,
+  "real_photo_asset_count": 2,
   "pdf_figures": {
     "hazbot_architecture": {
       "font_count": 3,
       "all_fonts_embedded": true,
       "no_type_3": true,
-      "raster_image_objects": 0
+      "raster_image_objects": 0,
+      "media_type": "vector technical figure"
     },
     "hazbot_mission": {
-      "font_count": 3,
+      "font_count": 2,
       "all_fonts_embedded": true,
       "no_type_3": true,
-      "raster_image_objects": 0
+      "raster_image_objects": 0,
+      "media_type": "vector technical figure"
     },
     "hazbot_arm_geometry": {
       "font_count": 2,
       "all_fonts_embedded": true,
       "no_type_3": true,
-      "raster_image_objects": 0
+      "raster_image_objects": 0,
+      "media_type": "vector technical figure"
     },
     "hazbot_workspace": {
       "font_count": 3,
       "all_fonts_embedded": true,
       "no_type_3": true,
-      "raster_image_objects": 0
+      "raster_image_objects": 0,
+      "media_type": "vector technical figure"
     },
-    "hazbot_protocol": {
-      "font_count": 2,
+    "hazbot_prototype": {
+      "font_count": 1,
       "all_fonts_embedded": true,
       "no_type_3": true,
-      "raster_image_objects": 0
+      "raster_image_objects": 1,
+      "media_type": "real photograph with vector annotations"
+    },
+    "hazbot_front": {
+      "font_count": 1,
+      "all_fonts_embedded": true,
+      "no_type_3": true,
+      "raster_image_objects": 1,
+      "media_type": "real photograph with vector annotations"
     }
   },
   "editable_diagrams": {
     "hazbot_architecture": {
-      "cells": 68,
+      "cells": 84,
       "unique_ids_and_resolving_connectors": true,
       "all_svg_labels_retained": true,
       "interactive_editor_render_checked": false
     },
     "hazbot_mission": {
-      "cells": 49,
+      "cells": 58,
       "unique_ids_and_resolving_connectors": true,
       "all_svg_labels_retained": true,
       "interactive_editor_render_checked": false
     },
     "hazbot_arm_geometry": {
-      "cells": 36,
+      "cells": 62,
       "unique_ids_and_resolving_connectors": true,
       "all_svg_labels_retained": true,
       "interactive_editor_render_checked": false
     }
   },
-  "visual_inspection": "All five PNG previews inspected; equal workspace axis scaling; no interactive editor rendering check.",
-  "scope": "Source-derived wrist geometry, software protocol semantics, schematic system roles, and abstract reference mission. No physical or hazard experiments."
+  "photo_records": {
+    "hazbot_prototype": {
+      "source_sha256": "6aca99fb652ce6a268c17d3527ae635485a7247c28b94a0200d3e833d44dbaee",
+      "callout_count": 10,
+      "native_size_px": [
+        890,
+        1161
+      ]
+    },
+    "hazbot_front": {
+      "source_sha256": "ab065bf125eb271809cebadeb2fe6dace11b867f882899271422b30e29c0fea8",
+      "callout_count": 7,
+      "native_size_px": [
+        1280,
+        960
+      ]
+    }
+  },
+  "visual_inspection": "Publication previews inspected; photo callouts checked against the current photograph and author-confirmed Pi/display/camera positions; interactive draw.io rendering untested.",
+  "scope": "Source/model-derived technical figures and a real prototype photograph. Photograph documents visible assembly; no independent physical mission or hazard-handling benchmark."
 }

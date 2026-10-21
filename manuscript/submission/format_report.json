@@ -1,7 +1,7 @@
 {
   "scope": "Local format checks only. Not IEEE PDF eXpress certification, novelty certification, similarity checking, authorship approval, or venue-policy approval.",
   "pdf": "HazBot_IEEE_Anonymous.pdf",
-  "sha256": "c61d78d2fd15ae26c50ce0768bc64452e303d178a98eac4b406748fd3806428a",
+  "sha256": "57a02061088ed95360d0da5aca33bdfccd71ff167ae4ab0c4404ce653870199f",
   "checks": [
     {
       "check": "maximum_six_pages",
@@ -11,7 +11,7 @@
     {
       "check": "maximum_three_MB",
       "passed": true,
-      "detail": "180279 bytes"
+      "detail": "2819178 bytes"
     },
     {
       "check": "A4_all_pages",
@@ -21,7 +21,7 @@
     {
       "check": "embedded_fonts",
       "passed": true,
-      "detail": "22 font entries"
+      "detail": "20 font entries"
     },
     {
       "check": "no_Type_3_fonts",
@@ -64,6 +64,26 @@
       "detail": "Compiler log inspected; underfull spacing warnings are permitted"
     },
     {
+      "check": "LLM_acknowledgment_present",
+      "passed": true,
+      "detail": "Explicit model name and assistance disclosure in acknowledgment"
+    },
+    {
+      "check": "retired_wheel_plot_absent",
+      "passed": true,
+      "detail": "Retired sign-partition figure excluded"
+    },
+    {
+      "check": "prototype_photograph_present",
+      "passed": true,
+      "detail": "Annotated real photograph asset and caption present"
+    },
+    {
+      "check": "front_view_photograph_present",
+      "passed": true,
+      "detail": "Compact annotated front-view photograph and caption present"
+    },
+    {
       "check": "citation_keys_exist",
       "passed": true,
       "detail": "9 cited keys; missing []"
@@ -71,7 +91,7 @@
   ],
   "all_mechanical_checks_pass": true,
   "pending_author_decisions": [
-    "The supplied guideline restricts LLM use to non-intellectual purposes and requires acknowledgment. The current draft uses a neutral acknowledgment at the author's request. Assistance-policy compliance is unresolved; mechanical passes do not establish eligibility.",
+    "The manuscript acknowledges substantive ChatGPT assistance. The supplied guideline restricts LLM use to non-intellectual purposes; eligibility under that restriction and human approval remain unresolved. Mechanical passes do not establish eligibility.",
     "Human verification and approval of research, source interpretations, bibliography, and submission are required.",
     "No similarity service, IEEE PDF eXpress, originality certification, or simultaneous-submission check was run.",
     "Results concern source geometry, isolated command execution and a new abstract mission reference model, not physical hazard handling."

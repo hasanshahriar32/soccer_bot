@@ -1,12 +1,13 @@
 {
-  "generator": "Original Python-authored SVG + librsvg diagrams; Matplotlib native-vector source-derived plots",
+  "generator": "Original Python-authored technical SVG + librsvg; Matplotlib source plots; original JPEG with vector annotations",
   "study": "HazBot source-derived architecture and geometric/interface characterization",
   "python_version": "3.14.8",
   "matplotlib_version": "3.11.2",
   "numpy_version": "2.5.4",
   "librsvg_version": "rsvg-convert version 2.63.3\n\nlibraries used:\n  cairo 1.18.6\n  pango 1.58.2\n  harfbuzz 14.6.0\n  fontconfig 2.18.3",
   "settings": {
-    "preview_dpi": 300,
+    "technical_preview_dpi": 300,
+    "photo_preview": "native input dimensions",
     "pdf_plot_fonttype": 42,
     "svg_plot_fonttype": "none",
     "svg_hashsalt": "hazbot-source-figures-v1",
@@ -20,42 +21,54 @@
       "in_paper": true,
       "dimensions_inches": [
         7.1,
-        3.6
-      ]
+        4.0
+      ],
+      "media_type": "vector technical figure"
     },
     "hazbot_mission": {
       "in_paper": true,
       "dimensions_inches": [
         7.1,
-        1.62
-      ]
+        1.9
+      ],
+      "media_type": "vector technical figure"
     },
     "hazbot_arm_geometry": {
       "in_paper": true,
       "dimensions_inches": [
         3.45,
-        2.25
-      ]
+        2.55
+      ],
+      "media_type": "vector technical figure"
     },
     "hazbot_workspace": {
-      "in_paper": true,
-      "dimensions_inches": [
-        3.45,
-        2.25
-      ]
-    },
-    "hazbot_protocol": {
       "in_paper": false,
       "dimensions_inches": [
         3.45,
-        2.4
-      ]
+        2.55
+      ],
+      "media_type": "vector technical figure"
+    },
+    "hazbot_prototype": {
+      "in_paper": true,
+      "dimensions_inches": [
+        2.7,
+        3.5221348314606744
+      ],
+      "media_type": "real photograph with vector annotations"
+    },
+    "hazbot_front": {
+      "in_paper": true,
+      "dimensions_inches": [
+        3.45,
+        2.5875
+      ],
+      "media_type": "real photograph with vector annotations"
     }
   },
   "inputs_sha256": {
     "data/hazbot_characterization.json": "aa98e31de0b2c5bb5e21de76825e3a4103451c8d9241e70d0576482c22964042",
     "data/hazbot_workspace.csv": "e967655ec72b73bb85f791185ca554205b93db318394a67e7c5214da79d51395",
-    "data/hazbot_protocol.csv": "78d39bcdbbf88a8f582248905e6292bdfe127f1949ded353b2277d9db1ae8705",
     "data/hazbot_height_slabs.csv": "0dc0861709e1b405758285a95f8fe81eb5d26bee24bd426bef9c6ec9ebb65ed4"
   },
   "source_evidence_sha256": {
@@ -71,33 +84,41 @@
     "scripts/detect_live_picamera2.py": "09409f0f30da02c54c96a31887c646947e3ec7af2b1931502880a19b95560ee9",
     "motor_control/README.md": "365711c094bebdb91d6e8f0f084ef6e34af5e50f5d889b5a3efde44ed8d50748",
     "proposal_resources/Autonomous-Mobile-Manipulator-Engineering-Exam-Report.pdf": "c9aebf99f1dc36cf938772488dc404226ce76cb312e24016a35b45833046bec2",
-    "proposal_resources/HazBot_Presentation.pptx.pdf": "f649cad5b23d8e20d54c6c0baefd247465a4f6c8a78a7d4f6d126dcfc1f5ee47"
+    "proposal_resources/HazBot_Presentation.pptx.pdf": "f649cad5b23d8e20d54c6c0baefd247465a4f6c8a78a7d4f6d126dcfc1f5ee47",
+    "photo/bot.jpeg": "6aca99fb652ce6a268c17d3527ae635485a7247c28b94a0200d3e833d44dbaee",
+    "photo/laptop_front.jpeg": "ab065bf125eb271809cebadeb2fe6dace11b867f882899271422b30e29c0fea8"
   },
   "scripts_sha256": {
-    "scripts/build_figures.py": "42b4987bcfa5ebf63df10027ca568fdfda5b5672e39fa2205d79dcc44bded00b",
-    "scripts/render_hazbot_figures.py": "d918ef0bccc72ca5034f041f488e76fe1df00fc03a3679be00c914b2b373ff24",
+    "scripts/build_figures.py": "0d88694c78d37e6ec6ddd89d35de033866ae185ea39744defe82b5b701a3f5e6",
+    "scripts/render_hazbot_figures.py": "a2136373f51a005b577103016e8a6f0eae4e1b16542d907cfe0eb82cede332ab",
+    "scripts/annotate_prototype.py": "8e7be053b96b5dc85dc75fba085d00b442f86299213850faceb9fcdd741a3a66",
     "scripts/hazbot_icons.py": "5a564d7dd737f84f154dddff1fc899698fa8e52b2d9bc7a7f24b6da2c0935a96",
     "scripts/export_drawio.py": "5b9e1f77cd6bd38b9aaa16157d5e091d3def13beb07fee15288e5c6b4f2159b1"
   },
   "outputs_sha256": {
-    "figures/hazbot_architecture.pdf": "7174cac7e6aa19b4d626fb40e5dd6c29073b352de7e4e52e418be4309d8eef1a",
-    "figures/hazbot_architecture.svg": "c84d1f89776a12bedc63e61edbb67d9ecb94e8a429c9ceb3526947caf84441b5",
-    "figures/hazbot_architecture.png": "5edbdc05d6059f3b2aa7fb16fe88aba97846ed038613c0620352a47e97570955",
-    "figures/hazbot_mission.pdf": "39444cf055247a5ed28c88120a47bdec14b3aafdfe60759acb5f77510b598c8c",
-    "figures/hazbot_mission.svg": "094225e24e8951639771e46c644a1e403c120bd114b2836680710791deea190d",
-    "figures/hazbot_mission.png": "6a92041d868d47b3a51ed6afdcf66382743a82b00d662a813cff602c0baa8d93",
-    "figures/hazbot_arm_geometry.pdf": "1f1779ec4b290baa52e6e1b6704ca0620a88c8565a49cda3588950e580f2e3ce",
-    "figures/hazbot_arm_geometry.svg": "6232ce01a30c75e1eee2d41ee21d2fc618eee16c7865cc13eff38a42fc8b5f2a",
-    "figures/hazbot_arm_geometry.png": "0322706c7b88cded90d1deb38a4a784ec5770a54f94fb64bdde5a592eb7d5c2a",
-    "figures/hazbot_workspace.pdf": "78a04782511c57b2704914c255f645d1494f71a648098b0b287b8345e6e973b9",
-    "figures/hazbot_workspace.svg": "351561e9ce818b0f8989bbef8d3215413a63dee1dcbf4b6ec258c2574656acde",
-    "figures/hazbot_workspace.png": "a482b2d69f7d9ba67a978211cf0ec62c44aab03868c4105defe6e4a57919d9da",
-    "figures/hazbot_protocol.pdf": "3a68979c09fe763125bdc3107d01f7446f1cefd005ab32a69d811d08246336da",
-    "figures/hazbot_protocol.svg": "80ee774178400110f8b5e780c79dffce85c0fa3e068a3ae2e4901dc86a5ca894",
-    "figures/hazbot_protocol.png": "8d10dab814ee82563290ca8f561146c9d66e737aa4e617a03285d85d48f07893",
-    "figures/hazbot_architecture.drawio": "24fef8c17bf08934cd6e0ea43a67c5b2198a7e5b72f75786f2de1ac56574768f",
-    "figures/hazbot_mission.drawio": "2bbbf4aae07563f375cbbaaeca47d890b7e994f88c69838691384428286493b1",
-    "figures/hazbot_arm_geometry.drawio": "2be646b8fff2b48f3d2a3d70bb8d9e51c488c4f410b40d87392cde6b48c1d6f3",
-    "data/figure_data.json": "fc406594dcaef079987487cbc0a37580b910dba4369d0aeba67a44e24414a960"
+    "figures/hazbot_architecture.pdf": "f3df0eca3440a71c86df534df97ccaeafb5f4cb602c986b85cf045648ba8d32d",
+    "figures/hazbot_architecture.svg": "10efc6abc85c46d01fbe79daddc1141e14f05d91c14795680c2f6787ca3e605e",
+    "figures/hazbot_architecture.png": "54f53edec6a0fad4af2856ed8594c371eb174ecd463044df4d19129aec7b674f",
+    "figures/hazbot_mission.pdf": "0b030f8b4c9241b3095915acc8b04ae6d22ed027caaa3874ee0c55197b02bddc",
+    "figures/hazbot_mission.svg": "a04ea968e341ef5fdd9f75869964977feca97125eb96afdb69c47536acc2790c",
+    "figures/hazbot_mission.png": "1b3b5d10545d65403a39d6e986dbfb482b36622759514b4d34cd84b525cdceec",
+    "figures/hazbot_arm_geometry.pdf": "2ec972477468129c5993f40d3c3dac63d7d7bec6fa43878f23be82c2a971d46c",
+    "figures/hazbot_arm_geometry.svg": "3f69d7a82a3d9e5d732b65608cf050413ce0af01c8a3d2339c588843bff037d0",
+    "figures/hazbot_arm_geometry.png": "f46072fa7de3a250eb8cd2646b450df1a03f3e828b76f31d167f506171aef41b",
+    "figures/hazbot_workspace.pdf": "75be3dc4ccf8feb16301c9eb52ba035c9b458b56a963e0a161bc15649e0a4d3b",
+    "figures/hazbot_workspace.svg": "d3a618a0e94749caa2c6bdb05682776f9f499323962a7017648ad43a3abf2e5d",
+    "figures/hazbot_workspace.png": "336139ab7360f65cd360fdcaebf8bda88aeb3d7271aeb140eb8c76566d3eaa3b",
+    "figures/hazbot_prototype.pdf": "3770ab0243ccfa170bf0540aacbe5a9719fb2e8c6cae7f04be305e817a10e024",
+    "figures/hazbot_prototype.svg": "bb4a12d3d2ef6dbe0a926629e5c7b84af4460040f69b197e7a57274f82b62748",
+    "figures/hazbot_prototype.png": "c2f4b35b95c8d7c7d55424d5ea3853adf334aa91017358473ef04887cac22605",
+    "figures/hazbot_front.pdf": "90a01bf3a899b5aabe166399402fc567bd7aebb3b1d15b4ff55b74b2a428ea05",
+    "figures/hazbot_front.svg": "74a1084b43fafcebd261559e7e9e6572e9955c290a7e259e54b9293e0a7960e6",
+    "figures/hazbot_front.png": "994e48594d295d917837a26b21b6097aedba31ade097d53d4b2dcef537d2604f",
+    "figures/hazbot_architecture.drawio": "fcfb6bbfdd003f3f1713054b0bcb0768025c7dd30fd72754dd9140137142b40b",
+    "figures/hazbot_mission.drawio": "b9963c6053379f241d2d88160141f11d9db857aa854898231ed460d28dc10b27",
+    "figures/hazbot_arm_geometry.drawio": "12c8700378ad1bedc2cd8f3c6dc4f7c321f89ed45acc979ce4cf7811a125cdd9",
+    "data/figure_data.json": "b81334b0bcfa4d5a6ece9ff712e8978ddea70a6f09b258691c63881ac64cc43b",
+    "data/prototype_annotation.json": "558f9c2b3c9ee4222ca0a7c52cd8c9a667344e6478a38761418e8c74bc8081f3",
+    "data/front_annotation.json": "ce415e646eb16e955426b7ad08dc8fa122f8dabc6294c993ecdbae17f42d4ecb"
   }
 }

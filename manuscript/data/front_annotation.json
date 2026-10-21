@@ -1,0 +1,210 @@
+{
+  "available": true,
+  "figure_stem": "hazbot_front",
+  "renderer": "Python-authored SVG labels and leaders; original JPEG photograph; librsvg PDF/PNG export",
+  "source": "photo/laptop_front.jpeg",
+  "source_path": "photo/laptop_front.jpeg",
+  "source_sha256": "ab065bf125eb271809cebadeb2fe6dace11b867f882899271422b30e29c0fea8",
+  "original_size_px": [
+    1280,
+    960
+  ],
+  "original_metadata_presence": {
+    "exif": false,
+    "gps": false,
+    "comment": false,
+    "icc_color_profile": true
+  },
+  "embedded_source_byte_identical": true,
+  "embedded_pixel_identical_to_source": true,
+  "embedded_jpeg_sha256": "ab065bf125eb271809cebadeb2fe6dace11b867f882899271422b30e29c0fea8",
+  "source_pixel_modification": "none; entire current photograph retained; no crop, retouch, synthesis or pixel re-encoding before embedding",
+  "source_privacy_review": "Nonessential JPEG metadata removed losslessly, including EXIF/XMP, comments and Photoshop metadata. JFIF/ICC/Adobe color interpretation retained. Original user file remains untouched.",
+  "dimensions_inches": [
+    3.45,
+    2.5875
+  ],
+  "png_resolution_dpi": 371.0144927536232,
+  "png_native_size_px": [
+    1280,
+    960
+  ],
+  "photo_viewport_canvas": [
+    0,
+    0,
+    1280,
+    960
+  ],
+  "photo_bbox_canvas": [
+    0,
+    0,
+    1280,
+    960
+  ],
+  "canvas_viewbox": [
+    1280,
+    960
+  ],
+  "compact_layout": true,
+  "no_added_canvas": true,
+  "layout": "Native-aspect full-frame photograph; numbered circles and short leaders only; component key belongs in paper caption.",
+  "font": "Noto Sans",
+  "media_type": "real photograph with vector annotations; not an all-vector illustration",
+  "annotations": [
+    {
+      "id": 1,
+      "title": "LAPTOP VISUALIZATION",
+      "detail": "Optional visualization workstation",
+      "anchor": [
+        250,
+        270
+      ],
+      "marker": [
+        135,
+        220
+      ],
+      "color": "#34799c",
+      "rationale": "Laptop and robot-monitoring interface are visible; this does not imply offboard ML inference.",
+      "anchor_normalized": [
+        0.1953125,
+        0.28125
+      ]
+    },
+    {
+      "id": 2,
+      "title": "LIDAR SCANNER",
+      "detail": "Rotating ranging head",
+      "anchor": [
+        990,
+        235
+      ],
+      "marker": [
+        1155,
+        150
+      ],
+      "color": "#16858d",
+      "rationale": "Rotating scanner is visible above the robot.",
+      "anchor_normalized": [
+        0.7734375,
+        0.24479166666666666
+      ]
+    },
+    {
+      "id": 3,
+      "title": "ARTICULATED ARM",
+      "detail": "Links and pivot joints",
+      "anchor": [
+        985,
+        420
+      ],
+      "marker": [
+        1190,
+        470
+      ],
+      "color": "#ac5c52",
+      "rationale": "Articulated wooden links and joints are visible on the robot's right side.",
+      "anchor_normalized": [
+        0.76953125,
+        0.4375
+      ]
+    },
+    {
+      "id": 4,
+      "title": "GRIPPER",
+      "detail": "Opposing end-effector jaws",
+      "anchor": [
+        762,
+        350
+      ],
+      "marker": [
+        770,
+        215
+      ],
+      "color": "#ac5c52",
+      "rationale": "Open jaw mechanism projects toward the laptop.",
+      "anchor_normalized": [
+        0.5953125,
+        0.3645833333333333
+      ]
+    },
+    {
+      "id": 5,
+      "title": "CSI CAMERA",
+      "detail": "Front-mounted camera module",
+      "anchor": [
+        854,
+        516
+      ],
+      "marker": [
+        810,
+        690
+      ],
+      "color": "#34799c",
+      "rationale": "Green camera module with lens and ribbon connector is visible on the front platform.",
+      "anchor_normalized": [
+        0.6671875,
+        0.5375
+      ]
+    },
+    {
+      "id": 6,
+      "title": "MOBILE BASE",
+      "detail": "Robot chassis and support platform",
+      "anchor": [
+        1005,
+        553
+      ],
+      "marker": [
+        1160,
+        650
+      ],
+      "color": "#a87935",
+      "rationale": "Robot base, front platform and support structure are visible; no measured mobility performance is inferred.",
+      "anchor_normalized": [
+        0.78515625,
+        0.5760416666666667
+      ]
+    },
+    {
+      "id": 7,
+      "title": "BALL SURROGATE",
+      "detail": "Nonhazardous task object",
+      "anchor": [
+        532,
+        840
+      ],
+      "marker": [
+        710,
+        865
+      ],
+      "color": "#ac5c52",
+      "rationale": "Red ball is visible on the floor in front of the robot.",
+      "anchor_normalized": [
+        0.415625,
+        0.875
+      ]
+    }
+  ],
+  "unidentified_components": [],
+  "identification_provenance": {
+    "front_view": "User supplies the front-view photograph with laptop and requests the same component annotation style.",
+    "camera": "Visible green camera board, lens and ribbon connector.",
+    "laptop": "Visible visualization interface; no inference-host claim."
+  },
+  "evidence_scope": "Visible prototype component identification; no claim of autonomous grasp success or hazardous-material handling follows from the photograph.",
+  "generator_sha256": "8e7be053b96b5dc85dc75fba085d00b442f86299213850faceb9fcdd741a3a66",
+  "sha256": {
+    "svg": "74a1084b43fafcebd261559e7e9e6572e9955c290a7e259e54b9293e0a7960e6",
+    "pdf": "90a01bf3a899b5aabe166399402fc567bd7aebb3b1d15b4ff55b74b2a428ea05",
+    "png": "994e48594d295d917837a26b21b6097aedba31ade097d53d4b2dcef537d2604f"
+  },
+  "validation": {
+    "one_original_photo": true,
+    "all_callout_ids_unique": true,
+    "all_anchor_coordinates_in_source_bounds": true,
+    "png_matches_native_photo_dimensions": true,
+    "no_extra_canvas_or_aspect_change": true,
+    "embedded_pixels_identical_to_source": true,
+    "private_metadata_absent_in_embedded_jpeg": true
+  }
+}

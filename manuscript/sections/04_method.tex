@@ -25,7 +25,7 @@ We enumerate every observation valuation at every phase: $7\times2^{12}=28{,}672
 The enumeration includes observation combinations that may be physically inconsistent. Consequently, counts describe the complete Boolean specification domain rather than probabilities or frequencies of robot failure. A nominal abstract trace checks that admissible observations permit progression to COMPLETE. Neither this trace nor phase reachability measures physical mission success.
 
 \subsection{Source-Derived Wrist Geometry}
-Figure~\ref{fig:workspace} connects arm geometry to the docking prerequisite. From the URDF chain, the shoulder lies at $(0.100,0,0.155)$\,m in the base frame and both positioning links have length $L_1=L_2=0.100$\,m. The zero pose has a vertical upper link and horizontal forearm. For yaw $q_b$, shoulder angle $q_s$, and elbow angle $q_e$, the wrist origin is
+Figure~\ref{fig:workspace} connects arm geometry to the docking prerequisite. From the URDF chain, the shoulder lies at $(0.100,0,0.155)$\,m in the base frame and both positioning links have length $L_1=L_2=0.100$\,m. The zero pose has a vertical upper link and horizontal forearm. The figure uses $q_1=q_b$, $q_2=q_s$, and $q_3=q_e$. For yaw $q_b$, shoulder angle $q_s$, and elbow angle $q_e$, the wrist origin is
 \begin{align}
 r &=L_1\sin q_s+L_2\cos(q_s+q_e),\\
 x &=0.100+r\cos q_b,\quad y=r\sin q_b,\\

@@ -50,6 +50,17 @@ def main():
         unresolved = re.search(r"(?:Citation|Reference)[^\n]*undefined|There were undefined", log_text, re.I)
         require("resolved_TeX_references", not unresolved, "Compiler log inspected")
         require("no_overfull_boxes", "Overfull \\hbox" not in log_text and "Overfull \\vbox" not in log_text, "Compiler log inspected; underfull spacing warnings are permitted")
+    normalized = re.sub(r"\s+", " ", text)
+    require("LLM_acknowledgment_present", "ChatGPT" in normalized and "large language model" in normalized,
+            "Explicit model name and assistance disclosure in acknowledgment")
+    require("retired_wheel_plot_absent", "WHEEL GATEWAY / EXACT SIGN PARTITION" not in normalized,
+            "Retired sign-partition figure excluded")
+    require("prototype_photograph_present", (BASE/"figures/hazbot_prototype.pdf").exists()
+            and "Physical HazBot prototype" in normalized,
+            "Annotated real photograph asset and caption present")
+    require("front_view_photograph_present", (BASE/"figures/hazbot_front.pdf").exists()
+            and "Front view with laptop visualization" in normalized,
+            "Compact annotated front-view photograph and caption present")
     source = "\n".join(p.read_text() for p in [BASE/"main.tex", *sorted((BASE/"sections").glob("*.tex"))])
     cites = {k.strip() for group in re.findall(r"\\cite\{([^}]+)\}", source) for k in group.split(",")}
     bib_keys = set(re.findall(r"@\w+\s*\{\s*([^,]+),", (BASE/"references.bib").read_text()))
@@ -59,7 +70,7 @@ def main():
         "pdf": PDF.name, "sha256": hashlib.sha256(PDF.read_bytes()).hexdigest(),
         "checks": checks, "all_mechanical_checks_pass": all(c["passed"] for c in checks),
         "pending_author_decisions": [
-            "The supplied guideline restricts LLM use to non-intellectual purposes and requires acknowledgment. The current draft uses a neutral acknowledgment at the author's request. Assistance-policy compliance is unresolved; mechanical passes do not establish eligibility.",
+            "The manuscript acknowledges substantive ChatGPT assistance. The supplied guideline restricts LLM use to non-intellectual purposes; eligibility under that restriction and human approval remain unresolved. Mechanical passes do not establish eligibility.",
             "Human verification and approval of research, source interpretations, bibliography, and submission are required.",
             "No similarity service, IEEE PDF eXpress, originality certification, or simultaneous-submission check was run.",
             "Results concern source geometry, isolated command execution and a new abstract mission reference model, not physical hazard handling."

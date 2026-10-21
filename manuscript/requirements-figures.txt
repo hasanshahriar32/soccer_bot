@@ -4,3 +4,6 @@ numpy==2.5.4
 # System dependencies for diagram regeneration (not pip packages):
 # rsvg-convert from librsvg (tested 2.63.3), plus Noto Sans fonts.
 # Committed vector PDFs allow LaTeX compilation without figure-generation tools.
+
+# Photo metadata inspection; photo pixels are preserved; metadata is removed in the derived embedding.
+Pillow==12.3.0

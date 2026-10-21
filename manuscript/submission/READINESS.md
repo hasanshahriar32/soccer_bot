@@ -1,63 +1,29 @@
-# Submission readiness
+# HazBot submission readiness
 
-This is a mechanically checked **anonymous research draft**, not a submission
-approved by the authors or conference. The requirements were read from the
-original `../guideline/guide.md`; no authorship information is copied from GOAD.
+The current artifact is an anonymous IEEE-format research draft. The supplied guideline/guide.md is the working specification. Mechanical passes do not constitute author approval, conference acceptance, or application qualification.
 
-## Implemented and checked locally
+## Completed locally
 
-- Standard IEEEtran conference mode, double column, A4, default IEEE typography.
-- At most six pages including figures, tables, acknowledgment, and references.
-- PDF no larger than 3,000,000 bytes; embedded fonts; no Type 3 fonts.
-- Anonymous author block and empty PDF author metadata.
-- PDF text checked for known local paths, private network identifiers,
-  credentials, and local author details; this is a bounded identifier scan.
-- Resolved citations and references, no overfull boxes, source ZIP allowlist.
-- Reproducible source-execution experiment with raw constructed trace data.
-- Three integrated technical figures and two optional figure sets, with PDF/SVG/PNG exports and two editable draw.io diagrams. Figure provenance and rendering checks are recorded in `../data/figure_manifest.json` and `../data/figure_validation.json`.
-- Explicit limitations and truthful AI disclosure.
+- IEEEtran conference format, two columns, A4, at most six pages including references.
+- PDF below 3,000,000 bytes, all fonts embedded, no Type 3 fonts.
+- Anonymous author block and empty author metadata.
+- Resolved references, no overfull boxes, bounded scan for local identifiers.
+- Three technical vector figures plus two compact real photographs with numbered vector markers, five numbered figures, and three editable diagrams. The wheel partition is excluded.
+- Source-isolated characterization, analytical wrist geometry, bounded reference-coordinator verification, saved CSV/JSON evidence, and generated results table.
+- Independent source ZIP compilation and packaging inspection are recorded in package_validation.json after the final build.
 
-`format_report.json` records the actual result, PDF hash, page count, byte size,
-and checked font count. These local checks do not replace IEEE PDF eXpress or
-manual review of the final venue template and anonymity requirements.
+The format_report.json records the PDF hash and actual check outcomes. The current paper acknowledges open-source robotics communities and explicitly identifies ChatGPT assistance in literature work, study design, code, analysis, drafting, and editing.
 
-## Unresolved venue restriction: substantive AI assistance
+## Author review and evidence scope
 
-The supplied `guideline/guide.md` says:
+Authors must review the manuscript, source interpretations, model assumptions, bibliography, and contribution. Results establish source geometry, gateway behavior, and command admissibility/phase reachability within a finite model. They do not establish physical obstacle avoidance, payload, hazardous-object recognition, or successful hazardous-material handling. The stated application is hazardous-object retrieval; the task context is a nonhazardous ball surrogate.
 
-> “such models were employed solely for non-intellectual purposes”
+Confirm authorship and order, originality, appropriate attribution, similarity requirements, concurrent-submission rules, presentation availability, and the final venue instructions. IEEE PDF eXpress and similarity certification have not been performed. No account, submission, upload, or external communication was made.
 
-The user's requested work includes research synthesis, novelty investigation,
-experimental design, coding, and manuscript drafting. Those activities exceed
-copyediting. The paper's acknowledgment accurately identifies them; it does
-not falsely certify non-intellectual-only use or human author approval.
-Consequently **eligibility under this requirement is unresolved**. Authors
-must obtain an applicable venue determination or choose an appropriate venue
-before submitting this draft. Merely replacing the disclosure with a narrower
-statement would not fix the underlying provenance.
+## Unresolved assistance-policy requirement
 
-## Author and scientific decisions before any submission
+The supplied guideline requires LLM acknowledgment and states that such use is “solely for non-intellectual purposes.” Assistance in this project included literature synthesis, study design, code, analysis, and drafting. The manuscript now acknowledges this actual assistance scope. The acknowledgment does not certify non-intellectual-only use or completed human review. Its responsibility statement assigns review and approval to the authors. Venue-policy eligibility remains unresolved for author review.
 
-1. Independently review and approve the source audit, implemented experiment,
-   generated tables, citations, contribution framing, and all manuscript text.
-2. Decide whether the bounded offline case study is sufficient for the chosen
-   track. No physical robot benchmark or deployed supervisor is available;
-   stronger robotics claims need the planned measurements.
-3. Confirm originality, appropriate attribution, accurate contribution and
-   authorship order, no concurrent submission, and the venue's similarity
-   criterion using an authorized process. None was certified here.
-4. Verify the current conference template, deadlines, policies, and review
-   requirements with the venue. The supplied guide is the local working spec;
-   this work does not establish that an online 2027 policy page is final.
-5. Run the conference's IEEE PDF eXpress workflow if required and inspect the
-   final upload. Create the required CMT accounts and confirm presentation
-   availability. No account, upload, publication, or communication was made.
+## Anonymous package boundary
 
-## Artifact anonymity
-
-The PDF and Overleaf source package omit repository links, source hashes,
-machine paths, hardware screenshots, personal names, and runtime sources.
-The local `research/`, `data/`, and experiment provenance retain paths and
-commit fingerprints for reproducibility and should not automatically be sent
-to anonymous reviewers. The full local repository is not claimed to be
-anonymized. Do not upload runtime configuration or credential-bearing files.
+The PDF and Overleaf ZIP omit author identities, deployment configuration, private paths, source hashes, raw resource PDFs, and local audit notes. The complete local repository is not anonymized. The ZIP is a paper source package; reproduce experiments using the local research workspace. Review the final upload against the venue's current double-blind instructions before submission.
