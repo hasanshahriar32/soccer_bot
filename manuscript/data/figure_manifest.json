@@ -77,9 +77,9 @@
       "in_paper": true,
       "dimensions_inches": [
         3.45,
-        2.5555555555555554
+        3.0
       ],
-      "media_type": "single-column vector reflow of supplied diagram",
+      "media_type": "compact vector figure matching the paper design",
       "source_pdf": "figures/worflow-methodology-arch/hazbot_methodology.pdf",
       "path": "figures/worflow-methodology-arch/hazbot_methodology_column.pdf",
       "minimum_label_size_pt": 6.5
@@ -90,7 +90,7 @@
         3.45,
         2.7222222222222223
       ],
-      "media_type": "single-column vector reflow of supplied diagram",
+      "media_type": "compact vector figure matching the paper design",
       "source_pdf": "figures/worflow-methodology-arch/hazbot_workflow.pdf",
       "path": "figures/worflow-methodology-arch/hazbot_workflow_column.pdf",
       "minimum_label_size_pt": 6.5
@@ -101,7 +101,7 @@
         3.45,
         2.4444444444444446
       ],
-      "media_type": "single-column vector reflow of supplied diagram",
+      "media_type": "compact vector figure matching the paper design",
       "source_pdf": "figures/worflow-methodology-arch/hazbot_verification.pdf",
       "path": "figures/worflow-methodology-arch/hazbot_verification_column.pdf",
       "minimum_label_size_pt": 6.5
@@ -133,12 +133,12 @@
     "photo/laptop_front.jpeg": "d9eed00c1612aed1a093a2ff7d36f9c83b70e7a09e301fa2c4ea1b46ac89d237"
   },
   "scripts_sha256": {
-    "scripts/build_figures.py": "5c7198bd518d7284fc4edeb19bae8e2d99fc6ca4a762df261638d8cf468499ac",
+    "scripts/build_figures.py": "e856b0d0f68c6f090277b803d05c44f0dad666d9eebb961207908f8ab7a51d56",
     "scripts/render_hazbot_figures.py": "a2136373f51a005b577103016e8a6f0eae4e1b16542d907cfe0eb82cede332ab",
     "scripts/annotate_prototype.py": "2f60fad6398eed9ad8711a923cc2e9d8ddedd27263993c3b4ec220690442d78a",
     "scripts/hazbot_icons.py": "5a564d7dd737f84f154dddff1fc899698fa8e52b2d9bc7a7f24b6da2c0935a96",
     "scripts/export_drawio.py": "5b9e1f77cd6bd38b9aaa16157d5e091d3def13beb07fee15288e5c6b4f2159b1",
-    "scripts/build_compact_study_figures.py": "1d38a77da17eade294b12c73e30db6f1241c1a28e1925b65c5fe8bf423960fd7"
+    "scripts/build_compact_study_figures.py": "715bfe2ce36cad5c55d5f8f5eba5e7dea2bf50832dde769f90e2d2545fe0788d"
   },
   "outputs_sha256": {
     "figures/hazbot_architecture.pdf": "f3df0eca3440a71c86df534df97ccaeafb5f4cb602c986b85cf045648ba8d32d",
@@ -168,8 +168,8 @@
     "data/figure_data.json": "601eff6a7663f347d939bcbb79ca6166488af2cc5c99313e1001be741885d122",
     "data/prototype_annotation.json": "7c33afb25e5f4fc07b121fdccfb32d3d6e73d39fc5be367eb73a56560156cb3f",
     "data/front_annotation.json": "065923d828a81d7377bf70243e421eeed4ea2260b45fe2d7f7e1d696c1180274",
-    "figures/worflow-methodology-arch/hazbot_methodology_column.pdf": "4f9ee987662ba5cdee8eb64de587487a05645cc4baf65d7bc56f1b32865bfcbf",
-    "figures/worflow-methodology-arch/hazbot_workflow_column.pdf": "8e63fcd1b18f1ebf2d8e21f039809f285e603d76101afc22898b86c835a9ebad",
-    "figures/worflow-methodology-arch/hazbot_verification_column.pdf": "8b9197d7417b2ec6b5b8e234a3831a73869c41aaf713cb060e6b9c59944509ae"
+    "figures/worflow-methodology-arch/hazbot_methodology_column.pdf": "94fcf69c21dfd79fb5c24c2e2779f4cced856615f0e55f88adb89639654b2736",
+    "figures/worflow-methodology-arch/hazbot_workflow_column.pdf": "f5d0e4df6495f0c2e61dcf529ce08cca514277d33560c09ef18a1c5b6d6a2c7c",
+    "figures/worflow-methodology-arch/hazbot_verification_column.pdf": "061180107989ccf2e30f30a59da487a9936c0a6bb4d5d985d28f50daa3e8bbec"
   }
 }

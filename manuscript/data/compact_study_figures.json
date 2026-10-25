@@ -2,8 +2,23 @@
   "date": "2026-10-25",
   "column_width_inches": 3.45,
   "minimum_label_size_pt": 6.5,
-  "description": "Single-column vector reflows of supplied diagrams; supplied wide PDFs preserved.",
-  "generator_sha256": "1d38a77da17eade294b12c73e30db6f1241c1a28e1925b65c5fe8bf423960fd7",
+  "description": "Compact diagrams with connected methodology flow, uniform row spacing, bounded panel text and consistent paper styling.",
+  "panel_padding_pt": 3,
+  "methodology_height_pt": 216,
+  "style_reference": "scripts/render_hazbot_figures.py",
+  "style_reference_sha256": "a2136373f51a005b577103016e8a6f0eae4e1b16542d907cfe0eb82cede332ab",
+  "primary_font": "Noto Sans",
+  "symbol_fallback": "DejaVu Sans",
+  "palette": {
+    "ink": "#253748",
+    "muted": "#627483",
+    "blue": "#34799c",
+    "teal": "#16858d",
+    "gold": "#a87935",
+    "red": "#ac5c52",
+    "arrows": "#9aaab6"
+  },
+  "generator_sha256": "715bfe2ce36cad5c55d5f8f5eba5e7dea2bf50832dde769f90e2d2545fe0788d",
   "inputs_sha256": {
     "data/hazbot_mission_results.json": "457b4492e1bf0e8502a22dbe745dc2b87998dff6af2299b14ff3e774a59908dd",
     "data/hazbot_characterization.json": "aa98e31de0b2c5bb5e21de76825e3a4103451c8d9241e70d0576482c22964042",
@@ -12,8 +27,8 @@
     "figures/worflow-methodology-arch/hazbot_verification.pdf": "bf56525502cb61615ea0935b059f11358a216cc4e68a468ed228ab686048721a"
   },
   "outputs_sha256": {
-    "figures/worflow-methodology-arch/hazbot_verification_column.pdf": "8b9197d7417b2ec6b5b8e234a3831a73869c41aaf713cb060e6b9c59944509ae",
-    "figures/worflow-methodology-arch/hazbot_methodology_column.pdf": "4f9ee987662ba5cdee8eb64de587487a05645cc4baf65d7bc56f1b32865bfcbf",
-    "figures/worflow-methodology-arch/hazbot_workflow_column.pdf": "8e63fcd1b18f1ebf2d8e21f039809f285e603d76101afc22898b86c835a9ebad"
+    "figures/worflow-methodology-arch/hazbot_verification_column.pdf": "061180107989ccf2e30f30a59da487a9936c0a6bb4d5d985d28f50daa3e8bbec",
+    "figures/worflow-methodology-arch/hazbot_methodology_column.pdf": "94fcf69c21dfd79fb5c24c2e2779f4cced856615f0e55f88adb89639654b2736",
+    "figures/worflow-methodology-arch/hazbot_workflow_column.pdf": "f5d0e4df6495f0c2e61dcf529ce08cca514277d33560c09ef18a1c5b6d6a2c7c"
   }
 }

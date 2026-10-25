@@ -8,7 +8,7 @@ The current artifact is an anonymous IEEE-format research draft. The supplied gu
 - PDF below 3,000,000 bytes, all fonts embedded, no Type 3 fonts.
 - Anonymous author block and empty author metadata.
 - Resolved references, no overfull boxes, bounded scan for local identifiers.
-- Nine numbered figures: original hardware architecture and seven-phase mission, three compact single-column study diagrams, arm geometry, two annotated photographs and dashboard. Architecture, mission and arm retain editable diagrams; supplied wide study PDFs are preserved alongside the compact vector derivatives.
+- Nine numbered figures: original hardware architecture and seven-phase mission, three compact single-column study diagrams matching the original paper design, arm geometry, two annotated photographs and dashboard. Architecture, mission and arm retain editable diagrams; the supplied study PDFs are preserved alongside styled compact vector derivatives, with embedded labels at least 6.5 pt.
 - Source-isolated characterization, analytical wrist geometry, bounded reference-coordinator verification, saved CSV/JSON evidence, and generated results prose. Numerical tables that duplicate the study diagrams are excluded from print.
 - Independent source ZIP compilation and packaging inspection are recorded in package_validation.json after the final build.
 

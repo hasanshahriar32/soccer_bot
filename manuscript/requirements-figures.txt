@@ -8,5 +8,5 @@ numpy==2.5.4
 # Photo metadata inspection; photo pixels are preserved; metadata is removed in the derived embedding.
 Pillow==12.3.0
 
-# Compact single-column vector diagrams; DejaVu Sans system fonts are required.
+# Compact vector figures share Noto Sans; DejaVu Sans supplies math symbols.
 reportlab==5.0.0

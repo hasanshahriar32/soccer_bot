@@ -182,16 +182,16 @@ def main():
         'scripts_sha256':{str(path.relative_to(BASE)):digest(path) for path in scripts},
         'outputs_sha256':{str(path.relative_to(BASE)):digest(path) for path in exports},
     }
-    # Supplied wide PDFs stay intact; regenerate the active single-column reflows.
+    # Compact diagrams reuse the architecture/mission palette and typography.
     from build_compact_study_figures import main as build_compact
     build_compact()
     supplied = OUT/'worflow-methodology-arch'
-    for stem, height in (("methodology",184), ("workflow",196), ("verification",176)):
+    for stem, height in (("methodology",216), ("workflow",196), ("verification",176)):
         original = supplied/f"hazbot_{stem}.pdf"
         column = supplied/f"hazbot_{stem}_column.pdf"
         manifest['figures'][f"hazbot_{stem}_column"] = {
             'in_paper':True, 'dimensions_inches':[3.45,height/72],
-            'media_type':'single-column vector reflow of supplied diagram',
+            'media_type':'compact vector figure matching the paper design',
             'source_pdf':str(original.relative_to(BASE)),
             'path':str(column.relative_to(BASE)), 'minimum_label_size_pt':6.5}
         manifest['inputs_sha256'][str(original.relative_to(BASE))] = digest(original)
@@ -200,7 +200,7 @@ def main():
     manifest['scripts_sha256'][str(compact_script.relative_to(BASE))] = digest(compact_script)
     (DATA/'figure_manifest.json').write_text(json.dumps(manifest,indent=2)+'\n')
     print('Generated four technical vector sets, two compact photo annotations, and three editable diagrams.')
-    print('Main paper: original architecture and mission, three single-column study diagrams, arm geometry, two photographs and dashboard.')
+    print('Main paper: original architecture and mission, three compact single-column diagrams matching the paper style, arm geometry, two photographs and dashboard.')
     print('Bound figure inputs, source evidence, generators and exports: manuscript/data/figure_manifest.json')
 
 

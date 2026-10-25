@@ -3,12 +3,12 @@
   "timezone": "Asia/Dhaka",
   "archive": "HazBot_IEEE_Overleaf.zip",
   "file_count": 40,
-  "archive_bytes": 3855054,
-  "archive_sha256": "249e825e26ca03513aa4d077fd5a562f821bc221e4a02d734af0a4c8a93eb08d",
-  "current_pdf_sha256": "3b307eaab63a119d48569dae297acc8647af5891e18f24e9e1219ec901e61c65",
+  "archive_bytes": 3874869,
+  "archive_sha256": "c9d45976b7ceeb5bfbce9ccae716e88d054b988a29ae904ed4cf83eab57fd8e8",
+  "current_pdf_sha256": "75dc17686a81c5396882dfeca0c44fbf509c204cff7343c3014a72a2d644fb50",
   "independent_compiler": "Tectonic 0.17.0, freshly extracted source package",
   "independent_pdf_pages": 6,
-  "independent_pdf_bytes": 2923314,
+  "independent_pdf_bytes": 2943228,
   "checks": {
     "archive_integrity": true,
     "safe_relative_paths": true,
@@ -23,5 +23,5 @@
     "compatibility_pdf_identical": true
   },
   "all_checks_pass": true,
-  "scope": "Six-page anonymous IEEE draft; all six original figures plus three compact single-column study diagrams. No venue eligibility or author-approval certification."
+  "scope": "Six-page IEEE draft: all original figures plus three compact single-column diagrams matching the architecture design. Sources independently compiled; no venue eligibility certification."
 }

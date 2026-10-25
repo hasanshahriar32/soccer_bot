@@ -1,18 +1,23 @@
 {
   "date": "2026-10-25",
-  "author_preference": "Retain all six original figures; add three single-column figures; at most six pages.",
+  "author_preference": "Restore compact single-column figures with a persistent design matching the paper; retain all original figures; at most six pages.",
   "checks": {
-    "repeat_compact_render_byte_identical": true,
-    "compact_vectors_fonts_and_bounds_pass": true,
-    "compact_source_and_output_hashes_match": true,
-    "all_figure_manifest_hashes_match": true,
-    "original_architecture_pdf_unchanged": true,
+    "original_architecture_and_mission_unchanged": true,
+    "nine_figure_labels_resolved": true,
+    "three_new_figures_single_column": true,
+    "shared_architecture_palette_and_Noto_Sans": true,
+    "numbered_badges_and_panel_style_visually_reviewed": true,
+    "labels_at_least_6_5_pt": true,
+    "vector_fonts_and_horizontal_bounds_pass": true,
+    "repeat_render_byte_identical": true,
+    "all_source_style_and_output_hashes_match": true,
     "six_A4_pages": true,
     "paper_under_three_MB": true,
-    "supplied_wide_pdfs_preserved": true,
-    "three_new_figures_single_column": true,
-    "nine_figure_labels_resolved": true,
-    "original_mission_pdf_unchanged": true
+    "methodology_source_analysis_evidence_needs_connected": true,
+    "methodology_equal_row_heights_and_panel_padding": true,
+    "workflow_arrows_terminate_at_panel_boundaries": true,
+    "verification_values_aligned_and_zero_bar_removed": true,
+    "all_asset_text_within_page_bounds": true
   },
   "all_checks_pass": true,
   "figures": {
@@ -20,28 +25,28 @@
       "width_inches": 3.4499999152289496,
       "height_inches": 2.4444444444444446,
       "minimum_label_size_pt": 6.5,
-      "raster_image_objects": 0,
       "all_fonts_embedded": true,
-      "horizontal_text_bounds_pass": true,
-      "sha256": "8b9197d7417b2ec6b5b8e234a3831a73869c41aaf713cb060e6b9c59944509ae"
+      "raster_image_objects": 0,
+      "text_bounds_pass": true,
+      "sha256": "061180107989ccf2e30f30a59da487a9936c0a6bb4d5d985d28f50daa3e8bbec"
     },
     "hazbot_methodology_column.pdf": {
       "width_inches": 3.4499999152289496,
-      "height_inches": 2.5555555555555554,
+      "height_inches": 3.0,
       "minimum_label_size_pt": 6.5,
-      "raster_image_objects": 0,
       "all_fonts_embedded": true,
-      "horizontal_text_bounds_pass": true,
-      "sha256": "4f9ee987662ba5cdee8eb64de587487a05645cc4baf65d7bc56f1b32865bfcbf"
+      "raster_image_objects": 0,
+      "text_bounds_pass": true,
+      "sha256": "94fcf69c21dfd79fb5c24c2e2779f4cced856615f0e55f88adb89639654b2736"
     },
     "hazbot_workflow_column.pdf": {
       "width_inches": 3.4499999152289496,
       "height_inches": 2.7222222222222223,
       "minimum_label_size_pt": 6.5,
-      "raster_image_objects": 0,
       "all_fonts_embedded": true,
-      "horizontal_text_bounds_pass": true,
-      "sha256": "8e63fcd1b18f1ebf2d8e21f039809f285e603d76101afc22898b86c835a9ebad"
+      "raster_image_objects": 0,
+      "text_bounds_pass": true,
+      "sha256": "f5d0e4df6495f0c2e61dcf529ce08cca514277d33560c09ef18a1c5b6d6a2c7c"
     }
   },
   "numbering_and_pages": {
@@ -82,7 +87,8 @@
       "page": 5
     }
   },
-  "current_pdf_sha256": "3b307eaab63a119d48569dae297acc8647af5891e18f24e9e1219ec901e61c65",
-  "current_pdf_bytes": 2923314,
-  "scope": "Vector assets, source bindings and current paper layout; not physical mission validation."
+  "current_pdf_sha256": "75dc17686a81c5396882dfeca0c44fbf509c204cff7343c3014a72a2d644fb50",
+  "current_pdf_bytes": 2943228,
+  "scope": "Figure design, vector assets, source bindings and paper layout; not physical mission validation.",
+  "layout_fixes": "Connected source fan-out and evidence collector; 3 pt panel text padding; equal methodology rows; corrected workflow arrow ends and output-label spacing; aligned verification values with no bar for zero."
 }

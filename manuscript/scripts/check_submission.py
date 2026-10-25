@@ -6,6 +6,7 @@ from pathlib import Path
 import re
 import subprocess
 import sys
+import unicodedata
 
 BASE = Path(__file__).resolve().parents[1]
 PDF = BASE / "submission/HazBot_IEEE_Anonymous.pdf"
@@ -50,7 +51,7 @@ def main():
         unresolved = re.search(r"(?:Citation|Reference)[^\n]*undefined|There were undefined", log_text, re.I)
         require("resolved_TeX_references", not unresolved, "Compiler log inspected")
         require("no_overfull_boxes", "Overfull \\hbox" not in log_text and "Overfull \\vbox" not in log_text, "Compiler log inspected; underfull spacing warnings are permitted")
-    normalized = re.sub(r"\s+", " ", text)
+    normalized = re.sub(r"\s+", " ", unicodedata.normalize("NFKC", text))
     require("LLM_acknowledgment_present", "ChatGPT" in normalized and "large language model" in normalized,
             "Explicit model name and assistance disclosure in acknowledgment")
     require("retired_wheel_plot_absent", "WHEEL GATEWAY / EXACT SIGN PARTITION" not in normalized,
@@ -69,10 +70,10 @@ def main():
     require("original_mission_figure_present", "Seven-phase reference retrieval mission" in normalized,
             "Original seven-phase mission figure retained")
     for stem, title in (("workflow", "Retrieval workflow"), ("methodology", "Study methodology"),
-                        ("verification", "Bounded coordination verification")):
+                        ("verification", "Bounded verification")):
         asset = BASE/"figures/worflow-methodology-arch"/f"hazbot_{stem}_column.pdf"
         require(f"compact_{stem}_present", asset.exists() and title in normalized,
-                "Single-column vector figure and text present")
+                "Compact single-column vector figure and caption present")
     source = "\n".join(p.read_text() for p in [BASE/"main.tex", *sorted((BASE/"sections").glob("*.tex"))])
     cites = {k.strip() for group in re.findall(r"\\cite\{([^}]+)\}", source) for k in group.split(",")}
     bib_keys = set(re.findall(r"@\w+\s*\{\s*([^,]+),", (BASE/"references.bib").read_text()))

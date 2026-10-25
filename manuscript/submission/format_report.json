@@ -1,7 +1,7 @@
 {
   "scope": "Local format checks only. Not IEEE PDF eXpress certification, novelty certification, similarity checking, authorship approval, or venue-policy approval.",
   "pdf": "HazBot_IEEE_Anonymous.pdf",
-  "sha256": "3b307eaab63a119d48569dae297acc8647af5891e18f24e9e1219ec901e61c65",
+  "sha256": "75dc17686a81c5396882dfeca0c44fbf509c204cff7343c3014a72a2d644fb50",
   "checks": [
     {
       "check": "maximum_six_pages",
@@ -11,7 +11,7 @@
     {
       "check": "maximum_three_MB",
       "passed": true,
-      "detail": "2923314 bytes"
+      "detail": "2943228 bytes"
     },
     {
       "check": "A4_all_pages",
@@ -21,7 +21,7 @@
     {
       "check": "embedded_fonts",
       "passed": true,
-      "detail": "27 font entries"
+      "detail": "30 font entries"
     },
     {
       "check": "no_Type_3_fonts",
@@ -101,17 +101,17 @@
     {
       "check": "compact_workflow_present",
       "passed": true,
-      "detail": "Single-column vector figure and text present"
+      "detail": "Compact single-column vector figure and caption present"
     },
     {
       "check": "compact_methodology_present",
       "passed": true,
-      "detail": "Single-column vector figure and text present"
+      "detail": "Compact single-column vector figure and caption present"
     },
     {
       "check": "compact_verification_present",
       "passed": true,
-      "detail": "Single-column vector figure and text present"
+      "detail": "Compact single-column vector figure and caption present"
     },
     {
       "check": "citation_keys_exist",

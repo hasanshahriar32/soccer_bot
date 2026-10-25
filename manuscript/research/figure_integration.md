@@ -1,6 +1,6 @@
 # Figure integration, 25 October 2026
 
-The author requests that the original architecture and seven-phase mission be retained and the three supplied study diagrams be compact single-column figures, while the full manuscript stays within six A4 pages.
+The author requests that the original architecture and seven-phase mission be retained and the three study diagrams use compact single-column layouts with a consistent visual design, while the full manuscript stays within six A4 pages.
 
 | Figure | First discussion | Role |
 | --- | --- | --- |
@@ -15,14 +15,20 @@ All prototype photographs and the dashboard remain in the paper. The mission str
 
 ## Evidence audit
 
-The supplied methodology and verification diagrams were compared with data/hazbot_characterization.json and data/hazbot_mission_results.json and the two executable studies. They describe offline source/model evidence, not physical task trials. The compact renderer checks the source counts and captures source/output SHA-256 hashes in data/compact_study_figures.json.
+The supplied methodology and verification diagrams were compared with data/hazbot_characterization.json and data/hazbot_mission_results.json and the two executable studies. They describe offline source/model evidence, not physical task trials. The compact renderer checks the study counts and records current source, style and output hashes in data/compact_study_figures.json.
 
-The workflow's old “Feedback (B)” label mixed base rest with grip and release. The compact caption states that these are separate planned observations. The drawing gates arm motion on B and drive motion on S, C and A; authorization T remains part of the coordinator's contracts. The two serial paths remain separate. No claim of deployed end-to-end autonomy is added.
+The workflow's old “Feedback (B)” label mixed base rest with grip and release. The manuscript caption states that these are separate planned observations. The manuscript states the arm/base guards and authorization contracts. The two serial paths remain separate. No claim of deployed end-to-end autonomy is added.
 
-The original supplied wide PDFs are preserved byte-for-byte. The _column.pdf derivatives reflow their content rather than halve the original 6.5 pt labels. The derivatives are 3.45 inches wide, use embedded DejaVu Sans at 6.5 pt or above, and contain vector drawing/text. Regeneration: python3 manuscript/scripts/build_compact_study_figures.py.
+The compact _column.pdf diagrams retain the readable compact organization and match the architecture/mission design. The renderer imports the existing palette directly from scripts/render_hazbot_figures.py, uses Noto Sans, and applies the same numbered badges, pale blue/teal/gold/red panels, slim borders and directional arrows. The verification figure retains small red bars alongside the counts. DejaVu Sans supplies only unsupported mathematical glyphs; all fonts are embedded. Labels remain at least 6.5 pt at the nominal 3.45-inch column width.
+
+The supplied wide PDFs remain unchanged and are included in the source package as references. Figure data and visual style provenance are recorded in data/compact_study_figures.json. The current layout and font checks are in data/figure_integration_validation.json. Regenerate with python3 manuscript/scripts/build_compact_study_figures.py; the main figure builder also calls it.
 
 ## Layout reference
 
 IEEE conference template guidance places figures near their discussion, uses captions below figures and permits large figures across both columns. The specific choice of single-column study diagrams follows the author's preference; the paper retains the IEEEtran conference class, standard body font and margins. Reference: [IEEE conference template](https://www.overleaf.com/latex/templates/ieee-conference-template/grfzhhncsfqn), published by IEEE. Final page count, embedding, anonymity and references are checked on the compiled PDF, rather than inferred from the source layout.
 
 Current results are recorded in data/figure_integration_validation.json and submission/format_report.json; the packaged sources are independently compiled before package_validation.json is refreshed.
+
+## Layout correction
+
+The methodology diagram now connects its source panel to the three analysis rows and joins the evidence outputs into a framed needs panel. Equal row heights and gutters keep the flow legible. Text rendering asserts at least 3 pt of padding within the methodology panels. Workflow arrows end exactly at panel borders and the output labels have more vertical space. Verification values and prefixes align to the right; zero violations has no misleading bar. The shared typography, palette and single-column widths are retained.
