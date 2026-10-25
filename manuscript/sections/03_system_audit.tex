@@ -1,6 +1,8 @@
 \section{System Architecture}
 \subsection{Central Computer and Physical Interfaces}
-Figure~\ref{fig:architecture} places the Raspberry Pi at the computational center. It receives images and range observations, hosts native visual inference, and exchanges commands with the low-level actuator controllers. A workstation may support visualization or development, but is not required to host the native detector. The source configuration analyzed here specifies a Pi Camera V2, YDLIDAR X4 ranging path, differential drive with an L298N bridge, and a servo arm. Table~\ref{tab:interfaces} distinguishes physical connections from logical responsibilities. The physical prototype views in Figs.~\ref{fig:prototype} and~\ref{fig:front} identify the components and laptop visualization; its local display is mounted on the Pi through GPIO, and the camera connects by a white CSI ribbon. Figure~\ref{fig:dashboard} records the corresponding monitoring and command surfaces without treating a static screenshot as a live-system measurement.
+Figure~\ref{fig:architecture} shows the hardware interfaces; Fig.~\ref{fig:workflow} connects sensing and Pi processing to command generation through the reference coordinator. The analyzed configuration comprises a Pi Camera V2, YDLIDAR X4, L298N differential drive and servo arm; Table~\ref{tab:interfaces} lists the interfaces. A workstation supports visualization without hosting the native detector. Figures~\ref{fig:prototype} and~\ref{fig:front} show the prototype and laptop; the local display uses GPIO and the camera a white CSI ribbon. Figure~\ref{fig:dashboard} documents the command surfaces, not live-system performance.
+
+\HazBotWorkflowFigure
 
 \input{sections/03_prototype_photo}
 
@@ -21,7 +23,7 @@ Manipulator & Separate USB serial, 115200 baud, to arm Arduino; four servo chann
 \end{table}
 
 \subsection{Navigation and Wheel Control}
-The scanner's built-in controller acquires range samples; its USB interface carries scan packets to the Pi. Navigation logic therefore remains on the central computer rather than on the scanner controller. Range observations support route-clearance decisions and target-distance association. Mapping and navigation components can be connected through ROS 2, but the present evaluation measures neither map quality nor localization error.
+The LiDAR controller acquires ranges and sends packets to the Pi over USB. Host navigation uses scans for route clearance and target-distance association. ROS 2 mapping components are available, but map quality and localization error are not measured here.
 
 The wheel Arduino drives the motor bridge independently of the arm controller. For an ideal differential base, wheel radius $R$ and track $b$ relate desired body velocity $(v,\omega)$ to wheel angular rates:
 \begin{equation}
@@ -29,12 +31,12 @@ The wheel Arduino drives the motor bridge independently of the arm controller. F
 \dot\phi_R=\frac{v+b\omega/2}{R}.
 \label{eq:drive}
 \end{equation}
-The geometric model uses $R=0.033$\,m and $b=0.210$\,m. Equation~\ref{eq:drive} describes the intended kinematic relationship; a gateway must preserve appropriate command meaning to realize it. Our characterization explicitly tests this condition instead of assuming that a pair of numeric inputs produces calibrated wheel velocities.
+The model uses $R=0.033$\,m and $b=0.210$\,m. Realizing Eq.~\ref{eq:drive} requires a gateway that preserves wheel-rate semantics; the command study tests this condition.
 
 \subsection{Vision and Native Inference}
-The camera acquires RGB images through the Pi's CSI interface. The native path configures a $640\times480$ image stream and a two-thread TFLite interpreter for an INT8 detector. Its current label set contains tennis and cricket balls, providing task surrogates. The architecture permits replacing the model and label set, but any extension to designated hazardous objects requires a corresponding dataset and evaluation. Model weights are not part of the analyzed artifacts, so detector accuracy and execution time are outside the reported results.
+The direct CSI path configures $640\times480$ RGB capture and a two-thread TFLite interpreter for an INT8 detector. Its tennis- and cricket-ball labels provide task surrogates. Hazard-related classes require a corresponding dataset and evaluation. Model weights are absent from the analyzed artifacts; accuracy and execution time are not reported.
 
-A detection record should carry its class, confidence, image position, and observation age. Metric approach control additionally requires a range estimate associated with the same target and coordinate frame. Class acceptance and freshness are separate predicates: a confident but stale record cannot authorize a current approach. The task authority supplies the handling policy; visual confidence alone supplies neither material identification nor permission to manipulate an object.
+A detection record should carry class, confidence, image position and age. Metric approach also requires range associated with the same target and frame. Class acceptance and freshness are distinct: a confident stale record cannot authorize approach. Task authority supplies handling permission; confidence establishes neither material identity nor authorization.
 
 \subsection{Robotic Hand and Arm}
-The manipulator uses three positioning axes---base yaw, shoulder pitch, and elbow pitch---plus a separately actuated gripper. Its modeled wrist is fixed. The arm Arduino therefore drives four servo channels, rather than four independent positioning joints. Existing arm commands include a preset pickup sequence; the general seven-phase coordinator introduced below is a separate executable reference model. Keeping the drive and arm Arduino paths distinct also avoids conflating their serial protocols and pin assignments.
+The arm has base yaw, shoulder pitch and elbow pitch, a fixed wrist and a separately actuated gripper. Its dedicated Arduino drives four servo channels, not four positioning joints. Existing commands include a preset pickup sequence; the seven-phase coordinator is a separate executable reference model. Separate drive and arm boards retain distinct serial protocols and pin assignments.

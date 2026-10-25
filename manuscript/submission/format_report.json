@@ -1,7 +1,7 @@
 {
   "scope": "Local format checks only. Not IEEE PDF eXpress certification, novelty certification, similarity checking, authorship approval, or venue-policy approval.",
   "pdf": "HazBot_IEEE_Anonymous.pdf",
-  "sha256": "5a85f249824b612e05aee9f5743a2006b157fbe877ec945b0ac3f8fc91c76db6",
+  "sha256": "3b307eaab63a119d48569dae297acc8647af5891e18f24e9e1219ec901e61c65",
   "checks": [
     {
       "check": "maximum_six_pages",
@@ -11,7 +11,7 @@
     {
       "check": "maximum_three_MB",
       "passed": true,
-      "detail": "2803456 bytes"
+      "detail": "2923314 bytes"
     },
     {
       "check": "A4_all_pages",
@@ -21,7 +21,7 @@
     {
       "check": "embedded_fonts",
       "passed": true,
-      "detail": "21 font entries"
+      "detail": "27 font entries"
     },
     {
       "check": "no_Type_3_fonts",
@@ -87,6 +87,31 @@
       "check": "dashboard_figure_present",
       "passed": true,
       "detail": "Annotated dashboard screenshot and caption present"
+    },
+    {
+      "check": "original_architecture_present",
+      "passed": true,
+      "detail": "Original hardware architecture figure retained"
+    },
+    {
+      "check": "original_mission_figure_present",
+      "passed": true,
+      "detail": "Original seven-phase mission figure retained"
+    },
+    {
+      "check": "compact_workflow_present",
+      "passed": true,
+      "detail": "Single-column vector figure and text present"
+    },
+    {
+      "check": "compact_methodology_present",
+      "passed": true,
+      "detail": "Single-column vector figure and text present"
+    },
+    {
+      "check": "compact_verification_present",
+      "passed": true,
+      "detail": "Single-column vector figure and text present"
     },
     {
       "check": "citation_keys_exist",

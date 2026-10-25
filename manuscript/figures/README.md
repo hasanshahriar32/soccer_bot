@@ -1,10 +1,13 @@
 # HazBot figures
 
-The paper uses three technical vector figures, two compact real photographs, and an annotated dashboard screenshot. Supplied images remain in photo/bot.png, photo/laptop_front.png, and photo/dashboard_edited.png; compact JPEG derivatives feed the paper renderer, which adds small numbered markers with component and interface keys in the captions.
+The paper uses six technical vector figures, two compact real photographs, and an annotated dashboard screenshot (nine numbered figures). The original hardware architecture is retained. Workflow, methodology and verification are reflowed to single-column vector diagrams; their supplied wide PDFs remain intact. Supplied images remain in photo/bot.png, photo/laptop_front.png, and photo/dashboard_edited.png; compact JPEG derivatives feed the paper renderer, which adds small numbered markers with component and interface keys in the captions.
 
 | Paper asset | Exports | Content |
 |---|---|---|
 | Hardware interfaces and native compute | [PDF](hazbot_architecture.pdf) · [SVG](hazbot_architecture.svg) · [PNG](hazbot_architecture.png) · [draw.io](hazbot_architecture.drawio) | Four Pi subsystems, native processing, physical interfaces, data flow and command direction. |
+| Retrieval workflow | [Compact PDF](worflow-methodology-arch/hazbot_workflow_column.pdf) · [supplied wide PDF](worflow-methodology-arch/hazbot_workflow.pdf) | Sensing, observation records, authority, reference coordinator and separate actuator boards. |
+| Study methodology | [Compact PDF](worflow-methodology-arch/hazbot_methodology_column.pdf) · [supplied wide PDF](worflow-methodology-arch/hazbot_methodology.pdf) | Sources, three offline studies, evidence and integration needs. |
+| Bounded verification | [Compact PDF](worflow-methodology-arch/hazbot_verification_column.pdf) · [supplied wide PDF](worflow-methodology-arch/hazbot_verification.pdf) | Enumeration, oracle, ablations, counterexample prefixes and reachability. |
 | Compact prototype photograph | [PDF](hazbot_prototype.pdf) · [SVG](hazbot_prototype.svg) · [PNG](hazbot_prototype.png) | Original portrait proportions; ten small component markers, including the author-confirmed Pi/GPIO display and CSI camera. |
 | Compact front view with laptop | [PDF](hazbot_front.pdf) · [SVG](hazbot_front.svg) · [PNG](hazbot_front.png) | Native landscape proportions; laptop visualization and robot hardware with numbered markers. |
 | Reference mission | [PDF](hazbot_mission.pdf) · [SVG](hazbot_mission.svg) · [PNG](hazbot_mission.png) · [draw.io](hazbot_mission.drawio) | Transition prerequisites and commands distinguish stopping, reaching, stowing and observed state. |
@@ -35,7 +38,8 @@ Three draw.io exports retain editable technical labels/connectors and movable de
 
 - [Manifest](../data/figure_manifest.json): input, source, renderer and output hashes.
 - [Figure data](../data/figure_data.json): exact selected wrist data and diagram/photo metadata.
-- [Validation](../data/figure_validation.json): repeat rendering, embedded fonts, media types and source matching.
+- [Current integration validation](../data/figure_integration_validation.json): active layout, vector fonts, figure widths and source matching.
+- [Earlier figure validation](../data/figure_validation.json): historical rendering and original photo validation.
 - [Photo instructions](photos/README.md): source files and manuscript insertion.
 - [Previous paper archive](../archive/SoccerBot_Previous_Case_Study_2026-10-21.zip): historical figures.
 

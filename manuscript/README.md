@@ -1,6 +1,6 @@
 # HazBot IEEE paper project
 
-**HazBot: An Embedded Mobile Manipulation Architecture for Hazardous-Object Retrieval**
+**HazBot: Architecture and Coordination Verification of A Raspberry Pi-Based Mobile Manipulator for Hazardous-Object Retrieval**
 
 Start with the [paper PDF](submission/HazBot_IEEE_Anonymous.pdf), [Overleaf ZIP](submission/HazBot_IEEE_Overleaf.zip), [LaTeX entry point](main.tex), and [figure gallery](figures/README.md).
 
@@ -57,15 +57,19 @@ python3 manuscript/scripts/package_sources.py
 
 Tectonic or TeX Live with IEEEtran and BibTeX is required. Figure regeneration additionally uses librsvg's rsvg-convert and Noto Sans fonts; plotting dependencies are pinned in requirements-figures.txt. Poppler's pdfinfo, pdffonts, and pdftotext support the format checks. On this machine the verified Tectonic cache is /tmp/soccer-paper-tex-cache; this path is not required by the source package.
 
-The ZIP contains main.tex, sections, bibliography, IEEE template files, the computed HazBot table, vector PDF/SVG figures, and editable draw.io diagrams. It does not include runtime configuration, credentials, private research notes, or source provenance. Choose main.tex and pdfLaTeX on Overleaf. Full experimental reproducibility uses this local repository.
+The ZIP contains main.tex, sections, bibliography, IEEE template files, computed HazBot prose, vector figures, the supplied study diagrams and their compact derivatives, and editable architecture/mission/arm draw.io diagrams. It does not include runtime configuration, credentials, private research notes, or source provenance. Choose main.tex and pdfLaTeX on Overleaf. Full experimental reproducibility uses this local repository.
 
 ## Figures
 
-Three technical vector figures, two compact annotated photographs, and one annotated dashboard screenshot form the active figure set. The architecture and mission show interfaces and handoffs; the arm carries a small wrist-envelope inset. The supplied images retain their proportions with small numbered markers and caption keys. The wheel sign-partition diagram and full-size wrist plot are excluded from the paper and source ZIP. See the [gallery](figures/README.md), [manifest](data/figure_manifest.json), and [validation](data/figure_validation.json).
+The active paper has nine numbered figures: the original full-width hardware architecture and seven-phase mission; three compact single-column workflow, methodology and verification diagrams; arm geometry; two annotated prototype photographs; and the operator dashboard. The three supplied wide PDFs in figures/worflow-methodology-arch remain intact. Their _column.pdf derivatives reflow the content with embedded vector text at a minimum nominal 6.5 pt, rather than scaling the wide diagrams to unreadable text.
+
+The workflow is discussed in System Architecture, the methodology opens the analysis method, and verification accompanies the bounded-model procedure and results. The original mission strip is retained to show phase-specific transitions. Duplicate numerical tables are excluded from print; their numerical findings remain in the figures and text. Captions distinguish the reference coordinator from deployed hardware and planned feedback. See [placement rationale](research/figure_integration.md) and [current layout validation](data/figure_integration_validation.json).
+
+Regenerate only the compact diagrams with `python3 manuscript/scripts/build_compact_study_figures.py`; `build_figures.py` also calls this renderer. ReportLab and DejaVu Sans fonts are required only for regeneration. Pre-rendered PDFs suffice for compiling the paper. The [gallery](figures/README.md) lists the active assets.
 
 The supplied photographs are retained as photo/bot.png and photo/laptop_front.png; compact publication derivatives photo/bot.jpeg and photo/laptop_front.jpeg feed the paper, and the supplied dashboard is photo/dashboard_edited.png. The annotation script adds compact numbered vector markers with caption keys identifying hardware and interface panels. The paper includes hazbot_prototype.pdf, hazbot_front.pdf, and hazbot_dashboard.pdf through sections/03_prototype_photo.tex. No image generation or synthetic hardware is used. Refresh the annotations and recheck the six-page/3 MB limits when replacing the images.
 
-The acknowledgment names ChatGPT and describes the assistance actually used. It assigns content responsibility to the authors without claiming that human review is already complete. The supplied guideline's non-intellectual-only restriction remains an author/venue review item.
+The acknowledgment briefly credits ChatGPT (OpenAI) for assistance with manuscript preparation. The broader assistance history and the supplied guideline's non-intellectual-only restriction remain recorded in the local submission-readiness notes.
 
 The source arm has three positioning axes and a separately actuated gripper. Direct camera acquisition/native inference, LiDAR controller communication, and separate drive/arm Arduino paths are shown explicitly. Differing proposal revisions and unsubstantiated slide performance figures are reconciled in the private resource assessment rather than combined as measured results.
 

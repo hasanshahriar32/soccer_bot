@@ -14,13 +14,13 @@
     "generated_tex_hashes_verified": 1,
     "generated_tex_regenerated_from_computed_results": true
   },
-  "date": "2026-10-21",
+  "date": "2026-10-25",
   "limits": "Abstract command admissibility and existential phase reachability; no physical safety or actual mission success claim.",
   "output_sha256": {
-    "hazbot_mission_results.json": "e890b7d821d9aa57bcf4af8d53312dc904eadddfeb650abf09965de82421715a",
+    "hazbot_mission_results.json": "457b4492e1bf0e8502a22dbe745dc2b87998dff6af2299b14ff3e774a59908dd",
     "hazbot_mission_counterexamples.csv": "b0d96d4e26a9c3a0f07e71e04ab31be713cec21286c7fc723c70f78f7a52137a",
     "hazbot_mission_counterexamples.json": "fa88e23e1722e021486d1b5213a93f8a8b12d87582156b9f3ecb45f829efbd5f",
-    "generated/hazbot_mission_summary.tex": "6e3ea58f8dc51c0ff5dc80bf656f32b3301fb3a8f0cb5fb567bd98cef51c9200"
+    "generated/hazbot_mission_summary.tex": "a6c30bb11e763abb13c5fa712ba827ee93160b3efcc5bbc501b726cc7e776948"
   },
   "passed": true
 }

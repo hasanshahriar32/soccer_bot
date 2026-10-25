@@ -72,12 +72,48 @@
         3.9918008784773056
       ],
       "media_type": "vector technical figure"
+    },
+    "hazbot_methodology_column": {
+      "in_paper": true,
+      "dimensions_inches": [
+        3.45,
+        2.5555555555555554
+      ],
+      "media_type": "single-column vector reflow of supplied diagram",
+      "source_pdf": "figures/worflow-methodology-arch/hazbot_methodology.pdf",
+      "path": "figures/worflow-methodology-arch/hazbot_methodology_column.pdf",
+      "minimum_label_size_pt": 6.5
+    },
+    "hazbot_workflow_column": {
+      "in_paper": true,
+      "dimensions_inches": [
+        3.45,
+        2.7222222222222223
+      ],
+      "media_type": "single-column vector reflow of supplied diagram",
+      "source_pdf": "figures/worflow-methodology-arch/hazbot_workflow.pdf",
+      "path": "figures/worflow-methodology-arch/hazbot_workflow_column.pdf",
+      "minimum_label_size_pt": 6.5
+    },
+    "hazbot_verification_column": {
+      "in_paper": true,
+      "dimensions_inches": [
+        3.45,
+        2.4444444444444446
+      ],
+      "media_type": "single-column vector reflow of supplied diagram",
+      "source_pdf": "figures/worflow-methodology-arch/hazbot_verification.pdf",
+      "path": "figures/worflow-methodology-arch/hazbot_verification_column.pdf",
+      "minimum_label_size_pt": 6.5
     }
   },
   "inputs_sha256": {
     "data/hazbot_characterization.json": "aa98e31de0b2c5bb5e21de76825e3a4103451c8d9241e70d0576482c22964042",
     "data/hazbot_workspace.csv": "e967655ec72b73bb85f791185ca554205b93db318394a67e7c5214da79d51395",
-    "data/hazbot_height_slabs.csv": "0dc0861709e1b405758285a95f8fe81eb5d26bee24bd426bef9c6ec9ebb65ed4"
+    "data/hazbot_height_slabs.csv": "0dc0861709e1b405758285a95f8fe81eb5d26bee24bd426bef9c6ec9ebb65ed4",
+    "figures/worflow-methodology-arch/hazbot_methodology.pdf": "00e4d6d3c13281703df61bd5f53ad3220ae1a387f9ea39bb79462f47205ccb25",
+    "figures/worflow-methodology-arch/hazbot_workflow.pdf": "02acf137e12ca068a0457621e6e8381abd849c652dfe41c8de52301682753b67",
+    "figures/worflow-methodology-arch/hazbot_verification.pdf": "bf56525502cb61615ea0935b059f11358a216cc4e68a468ed228ab686048721a"
   },
   "source_evidence_sha256": {
     "scripts/arduino_arm_controller/arduino_arm_controller.ino": "1eb9a4e6a07490c8dd2838019d3a8a04f9dbf257933d68086ee1aa3915c77ac7",
@@ -97,11 +133,12 @@
     "photo/laptop_front.jpeg": "d9eed00c1612aed1a093a2ff7d36f9c83b70e7a09e301fa2c4ea1b46ac89d237"
   },
   "scripts_sha256": {
-    "scripts/build_figures.py": "edd1e5f2f4c11c82e49c37dc4efaae25e55848ab081295f5c8e8cdc3c1f8bd3b",
+    "scripts/build_figures.py": "5c7198bd518d7284fc4edeb19bae8e2d99fc6ca4a762df261638d8cf468499ac",
     "scripts/render_hazbot_figures.py": "a2136373f51a005b577103016e8a6f0eae4e1b16542d907cfe0eb82cede332ab",
     "scripts/annotate_prototype.py": "2f60fad6398eed9ad8711a923cc2e9d8ddedd27263993c3b4ec220690442d78a",
     "scripts/hazbot_icons.py": "5a564d7dd737f84f154dddff1fc899698fa8e52b2d9bc7a7f24b6da2c0935a96",
-    "scripts/export_drawio.py": "5b9e1f77cd6bd38b9aaa16157d5e091d3def13beb07fee15288e5c6b4f2159b1"
+    "scripts/export_drawio.py": "5b9e1f77cd6bd38b9aaa16157d5e091d3def13beb07fee15288e5c6b4f2159b1",
+    "scripts/build_compact_study_figures.py": "1d38a77da17eade294b12c73e30db6f1241c1a28e1925b65c5fe8bf423960fd7"
   },
   "outputs_sha256": {
     "figures/hazbot_architecture.pdf": "f3df0eca3440a71c86df534df97ccaeafb5f4cb602c986b85cf045648ba8d32d",
@@ -130,6 +167,9 @@
     "figures/hazbot_arm_geometry.drawio": "12c8700378ad1bedc2cd8f3c6dc4f7c321f89ed45acc979ce4cf7811a125cdd9",
     "data/figure_data.json": "601eff6a7663f347d939bcbb79ca6166488af2cc5c99313e1001be741885d122",
     "data/prototype_annotation.json": "7c33afb25e5f4fc07b121fdccfb32d3d6e73d39fc5be367eb73a56560156cb3f",
-    "data/front_annotation.json": "065923d828a81d7377bf70243e421eeed4ea2260b45fe2d7f7e1d696c1180274"
+    "data/front_annotation.json": "065923d828a81d7377bf70243e421eeed4ea2260b45fe2d7f7e1d696c1180274",
+    "figures/worflow-methodology-arch/hazbot_methodology_column.pdf": "4f9ee987662ba5cdee8eb64de587487a05645cc4baf65d7bc56f1b32865bfcbf",
+    "figures/worflow-methodology-arch/hazbot_workflow_column.pdf": "8e63fcd1b18f1ebf2d8e21f039809f285e603d76101afc22898b86c835a9ebad",
+    "figures/worflow-methodology-arch/hazbot_verification_column.pdf": "8b9197d7417b2ec6b5b8e234a3831a73869c41aaf713cb060e6b9c59944509ae"
   }
 }

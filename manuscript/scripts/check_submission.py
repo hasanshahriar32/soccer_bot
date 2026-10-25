@@ -64,6 +64,15 @@ def main():
     require("dashboard_figure_present", (BASE/"figures/hazbot_dashboard.pdf").exists()
             and "Annotated operator dashboard" in normalized,
             "Annotated dashboard screenshot and caption present")
+    require("original_architecture_present", "HazBot's four-subsystem architecture" in normalized.replace("’", "'"),
+            "Original hardware architecture figure retained")
+    require("original_mission_figure_present", "Seven-phase reference retrieval mission" in normalized,
+            "Original seven-phase mission figure retained")
+    for stem, title in (("workflow", "Retrieval workflow"), ("methodology", "Study methodology"),
+                        ("verification", "Bounded coordination verification")):
+        asset = BASE/"figures/worflow-methodology-arch"/f"hazbot_{stem}_column.pdf"
+        require(f"compact_{stem}_present", asset.exists() and title in normalized,
+                "Single-column vector figure and text present")
     source = "\n".join(p.read_text() for p in [BASE/"main.tex", *sorted((BASE/"sections").glob("*.tex"))])
     cites = {k.strip() for group in re.findall(r"\\cite\{([^}]+)\}", source) for k in group.split(",")}
     bib_keys = set(re.findall(r"@\w+\s*\{\s*([^,]+),", (BASE/"references.bib").read_text()))

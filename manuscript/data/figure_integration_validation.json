@@ -1,0 +1,88 @@
+{
+  "date": "2026-10-25",
+  "author_preference": "Retain all six original figures; add three single-column figures; at most six pages.",
+  "checks": {
+    "repeat_compact_render_byte_identical": true,
+    "compact_vectors_fonts_and_bounds_pass": true,
+    "compact_source_and_output_hashes_match": true,
+    "all_figure_manifest_hashes_match": true,
+    "original_architecture_pdf_unchanged": true,
+    "six_A4_pages": true,
+    "paper_under_three_MB": true,
+    "supplied_wide_pdfs_preserved": true,
+    "three_new_figures_single_column": true,
+    "nine_figure_labels_resolved": true,
+    "original_mission_pdf_unchanged": true
+  },
+  "all_checks_pass": true,
+  "figures": {
+    "hazbot_verification_column.pdf": {
+      "width_inches": 3.4499999152289496,
+      "height_inches": 2.4444444444444446,
+      "minimum_label_size_pt": 6.5,
+      "raster_image_objects": 0,
+      "all_fonts_embedded": true,
+      "horizontal_text_bounds_pass": true,
+      "sha256": "8b9197d7417b2ec6b5b8e234a3831a73869c41aaf713cb060e6b9c59944509ae"
+    },
+    "hazbot_methodology_column.pdf": {
+      "width_inches": 3.4499999152289496,
+      "height_inches": 2.5555555555555554,
+      "minimum_label_size_pt": 6.5,
+      "raster_image_objects": 0,
+      "all_fonts_embedded": true,
+      "horizontal_text_bounds_pass": true,
+      "sha256": "4f9ee987662ba5cdee8eb64de587487a05645cc4baf65d7bc56f1b32865bfcbf"
+    },
+    "hazbot_workflow_column.pdf": {
+      "width_inches": 3.4499999152289496,
+      "height_inches": 2.7222222222222223,
+      "minimum_label_size_pt": 6.5,
+      "raster_image_objects": 0,
+      "all_fonts_embedded": true,
+      "horizontal_text_bounds_pass": true,
+      "sha256": "8e63fcd1b18f1ebf2d8e21f039809f285e603d76101afc22898b86c835a9ebad"
+    }
+  },
+  "numbering_and_pages": {
+    "architecture": {
+      "number": 1,
+      "page": 2
+    },
+    "workflow": {
+      "number": 2,
+      "page": 2
+    },
+    "prototype": {
+      "number": 3,
+      "page": 3
+    },
+    "front": {
+      "number": 4,
+      "page": 3
+    },
+    "dashboard": {
+      "number": 5,
+      "page": 3
+    },
+    "methodology": {
+      "number": 6,
+      "page": 4
+    },
+    "mission": {
+      "number": 7,
+      "page": 5
+    },
+    "verification": {
+      "number": 8,
+      "page": 5
+    },
+    "workspace": {
+      "number": 9,
+      "page": 5
+    }
+  },
+  "current_pdf_sha256": "3b307eaab63a119d48569dae297acc8647af5891e18f24e9e1219ec901e61c65",
+  "current_pdf_bytes": 2923314,
+  "scope": "Vector assets, source bindings and current paper layout; not physical mission validation."
+}

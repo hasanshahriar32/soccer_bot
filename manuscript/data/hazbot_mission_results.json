@@ -134,7 +134,7 @@
   "generated_documents": {
     "hazbot_mission_summary.tex": {
       "path": "manuscript/generated/hazbot_mission_summary.tex",
-      "sha256": "6e3ea58f8dc51c0ff5dc80bf656f32b3301fb3a8f0cb5fb567bd98cef51c9200"
+      "sha256": "a6c30bb11e763abb13c5fa712ba827ee93160b3efcc5bbc501b726cc7e776948"
     }
   },
   "limitations": [
@@ -1275,7 +1275,7 @@
   },
   "source_binding": {
     "path": "manuscript/experiments/verify_hazbot_mission.py",
-    "sha256": "f669498cc4ab6cc0a302e97c20c72f7b7bbb78704e85c2ee5d66daa4a10c7623"
+    "sha256": "6b840b2db89cd6f538adbf002e9e877b0ae625108ac4bbded0745243a9862408"
   },
   "validation": {
     "check_count": 109,

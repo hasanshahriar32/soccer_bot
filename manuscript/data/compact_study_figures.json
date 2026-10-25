@@ -1,0 +1,19 @@
+{
+  "date": "2026-10-25",
+  "column_width_inches": 3.45,
+  "minimum_label_size_pt": 6.5,
+  "description": "Single-column vector reflows of supplied diagrams; supplied wide PDFs preserved.",
+  "generator_sha256": "1d38a77da17eade294b12c73e30db6f1241c1a28e1925b65c5fe8bf423960fd7",
+  "inputs_sha256": {
+    "data/hazbot_mission_results.json": "457b4492e1bf0e8502a22dbe745dc2b87998dff6af2299b14ff3e774a59908dd",
+    "data/hazbot_characterization.json": "aa98e31de0b2c5bb5e21de76825e3a4103451c8d9241e70d0576482c22964042",
+    "figures/worflow-methodology-arch/hazbot_methodology.pdf": "00e4d6d3c13281703df61bd5f53ad3220ae1a387f9ea39bb79462f47205ccb25",
+    "figures/worflow-methodology-arch/hazbot_workflow.pdf": "02acf137e12ca068a0457621e6e8381abd849c652dfe41c8de52301682753b67",
+    "figures/worflow-methodology-arch/hazbot_verification.pdf": "bf56525502cb61615ea0935b059f11358a216cc4e68a468ed228ab686048721a"
+  },
+  "outputs_sha256": {
+    "figures/worflow-methodology-arch/hazbot_verification_column.pdf": "8b9197d7417b2ec6b5b8e234a3831a73869c41aaf713cb060e6b9c59944509ae",
+    "figures/worflow-methodology-arch/hazbot_methodology_column.pdf": "4f9ee987662ba5cdee8eb64de587487a05645cc4baf65d7bc56f1b32865bfcbf",
+    "figures/worflow-methodology-arch/hazbot_workflow_column.pdf": "8e63fcd1b18f1ebf2d8e21f039809f285e603d76101afc22898b86c835a9ebad"
+  }
+}

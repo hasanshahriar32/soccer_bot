@@ -21,6 +21,10 @@ def main():
             asset = BASE/"figures"/f"{stem}.{extension}"
             if asset.exists():
                 selected.append(asset)
+    supplied = BASE/"figures/worflow-methodology-arch"
+    selected.append(supplied/"figures_latex.tex")
+    selected.extend(supplied/f"{stem}{suffix}.pdf" for suffix in ("", "_column") for stem in
+                    ("hazbot_workflow", "hazbot_methodology", "hazbot_verification"))
     photo_dir = BASE/"figures/photos"
     if photo_dir.exists():
         selected.extend(sorted(p for p in photo_dir.iterdir()
@@ -30,7 +34,7 @@ def main():
     with ZipFile(DEST, "w", ZIP_DEFLATED) as archive:
         for path in selected:
             archive.write(path, path.relative_to(BASE).as_posix())
-        archive.writestr("OVERLEAF_README.txt", "HazBot: A Modular Raspberry Pi-Centered Mobile Manipulator for Hazardous-Object Retrieval\nCompile main.tex with pdfLaTeX (TeX Live + IEEEtran) and BibTeX, or run bash compile.sh.\nPre-rendered vector PDFs need no Python, ROS or robot hardware.\nEditable SVG and draw.io diagram assets are included.\nThe annotated real prototype photograph is included as figures/hazbot_prototype.pdf.\nThe retired wheel partition diagram is excluded.\nReported evidence is model-based and source-derived, with a ball-based nonhazardous surrogate context.\nThis is an anonymous research draft. Authors must review evidence and venue requirements before submission.\nRuntime sources, private paths, credentials, source hashes, and local research notes are excluded.\n")
+        archive.writestr("OVERLEAF_README.txt", "HazBot: Architecture and Coordination Verification of A Raspberry Pi-Based Mobile Manipulator for Hazardous-Object Retrieval\nCompile main.tex with pdfLaTeX (TeX Live + IEEEtran) and BibTeX, or run bash compile.sh.\nPre-rendered vector PDFs need no Python, ROS or robot hardware.\nEditable SVG and draw.io diagram assets are included.\nThe annotated real prototype photograph is included as figures/hazbot_prototype.pdf.\nThe retired wheel partition diagram is excluded.\nReported evidence is model-based and source-derived, with a ball-based nonhazardous surrogate context.\nThis is an anonymous research draft. Authors must review evidence and venue requirements before submission.\nRuntime sources, private paths, credentials, source hashes, and local research notes are excluded.\n")
     shutil.copyfile(DEST, BASE/"submission/SoccerBot_IEEE_Overleaf.zip")
     print(f"Created {DEST.relative_to(BASE)} ({DEST.stat().st_size} bytes; {len(selected)+1} files)")
 

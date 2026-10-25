@@ -1,42 +1,19 @@
 \section{Results}
 \subsection{Mission Handoffs}
+Figure~\ref{fig:verification} combines the verification procedure, ablation counts and phase-reachability results.
 \input{generated/hazbot_mission_summary}
 
+
 \subsection{Geometric Envelope and Docking}
-The $41^3$ grid contains 68,921 wrist configurations. The shoulder-to-wrist distance is bounded by the link sum, $L_1+L_2=0.200$\,m. The sampled wrist height spans $-0.0316$ to $0.3549$\,m in the base frame. Of the samples, 2,747 lie below the modeled $z=0$ ground plane and 66,174 lie on or above it. These counts are joint-grid counts, not Cartesian workspace volumes; an above-ground sample may still violate self-collision or stability constraints.
+The $41^3$ grid contains 68,921 wrist poses with a link-sum bound of $0.200$\,m. Sampled height spans $-0.0316$ to $0.3549$\,m: 2,747 poses lie below modeled ground and 66,174 on or above it. These are joint-grid counts, not Cartesian volumes; above-ground poses may still violate collision or stability constraints.
 
-\begin{figure}[t]
-\centering
-\includegraphics[width=\columnwidth]{hazbot_arm_geometry.pdf}
-\caption{Source-derived arm geometry at zero joint coordinates, with joint axes and fixed wrist origin. The small inset shows 1,681 zero-yaw wrist samples, the link-sum bound, and modeled ground exclusions. Samples describe ideal geometry rather than calibrated contact positions or collision-free grasps.}
-\label{fig:workspace}
-\end{figure}
 
-Independent forward-kinematics implementations agree over 1,013 validation poses with maximum positional difference $6.8\times10^{-17}$\,m. This near-machine-precision agreement supports the analytical implementation, not mechanical accuracy. The actionable implication is that docking must use a calibrated contact workspace and target pose, rather than a generic visual stopping distance. The wrist envelope provides a reproducible geometric starting point for that calibration.
+
+Independent forward kinematics agrees over 1,013 poses within $6.8\times10^{-17}$\,m, validating numerical implementation rather than mechanical accuracy. Docking requires calibrated contact geometry and target pose; the ideal wrist envelope is a starting point for that calibration.
 
 \subsection{Wheel and Arm Command Semantics}
-All 261,121 wheel input pairs match the independent sign partition. Each nonzero sign quadrant contains 65,025 pairs and produces one of four direction commands. Magnitudes within a quadrant are discarded. Exactly one pair, $(0,0)$, emits a stop command; the 1,020 mixed-zero pairs emit no new command. Thus, commanding one stationary wheel and one moving wheel through this branch does not produce the requested wheel pair. No new command must also be distinguished from a stop: the experiment records emitted messages, not subsequent actuator behavior.
+All 261,121 wheel pairs match the sign partition. Each nonzero quadrant maps 65,025 pairs to one direction command, discarding magnitude. Only $(0,0)$ sends stop; 1,020 mixed-zero pairs send nothing. Thus, a stationary-wheel/moving-wheel request is not preserved. No new command is distinct from stop; this study observes messages, not subsequent actuator behavior.
 
-This interface behavior directly qualifies Eq.~\ref{eq:drive}. A continuous differential-drive command cannot be assumed to survive a direction-only gateway. Either the upstream controller must deliberately use discrete motion primitives, or the gateway and low-level control must preserve calibrated wheel-rate semantics. This is an integration requirement for controlled approach and docking, not a measured speed error.
+This qualifies Eq.~\ref{eq:drive}: approach and docking require deliberate discrete primitives or a magnitude-preserving, calibrated wheel-rate path. No physical speed error is measured.
 
-The arm mapping matches an independent clamp/reversal specification for all 2,255 evaluated cases. Base commands retain direction, shoulder and elbow conventions are reversed, and the gripper uses its declared command range. These are software command conventions; translating them to the modeled joint angles requires physical calibration. Across geometry, wheel semantics, arm mapping, and schema extraction, all 29 characterization checks pass. The current detector's two named classes confirm the surrogate task configuration; no recognition score is inferred from those labels.
-
-\begin{table}[t]
-\caption{Reproducible Characterization Results}
-\label{tab:results}
-\centering\footnotesize
-\begin{tabularx}{\columnwidth}{@{}Xr@{}}
-\toprule
-Quantity & Computed result \\
-\midrule
-Joint-grid wrist poses & 68,921 \\
-Modeled shoulder--wrist bound & 0.200\,m \\
-Poses below modeled ground & 2,747 \\
-Independent FK validation poses & 1,013 \\
-Exhaustive wheel input pairs & 261,121 \\
-Mixed-zero pairs with no command & 1,020 \\
-Arm mapping cases / physical channels & 2,255 / 4 \\
-Characterization checks passed & 29 / 29 \\
-\bottomrule
-\end{tabularx}
-\end{table}
+All 2,255 arm cases match the independent clamp/reversal specification. Base direction is retained, shoulder and elbow conventions reversed, and the gripper clamped to its range. Mapping commands to modeled angles still requires calibration. All 29 geometry/interface checks pass. The two detector labels confirm only the surrogate configuration, not recognition accuracy.
