@@ -45,7 +45,7 @@ BFS explores phase transitions under arbitrary next observations. Each policy re
 
 HOLD is an abstract actuation inhibit. Blocked guards preserve phase; acquisition and completion may advance logical phase while emitting HOLD. Hardware needs explicit stop, cancellation, arbitration and feedback semantics. Inputs such as stopped-base, grip, release, authorization and reachability are assumed facts here. The oracle does not prove all transition correctness, physical safety, sensing validity or hazard containment.
 
-The model runs 109 checks. Data, source bindings, counterexamples and validation records are in hazbot_mission_*.json/csv; the paper table is generated/hazbot_mission_summary.tex. See hazbot_mission_method.md for exact predicates, independent cube counts and witnesses.
+The model runs 109 checks. Data, source bindings, counterexamples and validation records are in hazbot_mission_*.json/csv; the paper summary prose is generated/hazbot_mission_summary.tex. See hazbot_mission_method.md for exact predicates, independent cube counts and witnesses.
 
 ## Reporting boundary
 

@@ -3,17 +3,14 @@
 Figure~\ref{fig:verification} combines the verification procedure, ablation counts and phase-reachability results.
 \input{generated/hazbot_mission_summary}
 
-
 \subsection{Geometric Envelope and Docking}
 The $41^3$ grid contains 68,921 wrist poses with a link-sum bound of $0.200$\,m. Sampled height spans $-0.0316$ to $0.3549$\,m: 2,747 poses lie below modeled ground and 66,174 on or above it. These are joint-grid counts, not Cartesian volumes; above-ground poses may still violate collision or stability constraints.
 
-
-
-Independent forward kinematics agrees over 1,013 poses within $6.8\times10^{-17}$\,m, validating numerical implementation rather than mechanical accuracy. Docking requires calibrated contact geometry and target pose; the ideal wrist envelope is a starting point for that calibration.
+Independent forward-kinematics implementations agree over 1,013 poses within $6.8\times10^{-17}$\,m, validating numerical implementation rather than mechanical accuracy. Docking requires calibrated contact geometry and target pose; the ideal wrist envelope is a starting point for that calibration.
 
 \subsection{Wheel and Arm Command Semantics}
-All 261,121 wheel pairs match the sign partition. Each nonzero quadrant maps 65,025 pairs to one direction command, discarding magnitude. Only $(0,0)$ sends stop; 1,020 mixed-zero pairs send nothing. Thus, a stationary-wheel/moving-wheel request is not preserved. No new command is distinct from stop; this study observes messages, not subsequent actuator behavior.
+All 261,121 wheel pairs match the sign partition. Each nonzero sign quadrant maps 65,025 pairs to one direction request, discarding magnitude. Only $(0,0)$ requests stop; 1,020 mixed-zero pairs make no sender call. Thus, a stationary-wheel/moving-wheel request is not preserved. The absence of a command request is distinct from a stop request; neither establishes subsequent actuator behavior.
 
-This qualifies Eq.~\ref{eq:drive}: approach and docking require deliberate discrete primitives or a magnitude-preserving, calibrated wheel-rate path. No physical speed error is measured.
+This limits the realization of Eq.~\ref{eq:drive}: approach and docking require deliberate discrete primitives or a magnitude-preserving, calibrated wheel-rate path. No physical speed error is measured.
 
-All 2,255 arm cases match the independent clamp/reversal specification. Base direction is retained, shoulder and elbow conventions reversed, and the gripper clamped to its range. Mapping commands to modeled angles still requires calibration. All 29 geometry/interface checks pass. The two detector labels confirm only the surrogate configuration, not recognition accuracy.
+All 2,255 arm cases match the independent clamp/reversal specification. The base-yaw command retains direction, shoulder and elbow mappings reverse direction, and gripper commands are clamped to their declared range. Mapping commands to modeled angles still requires calibration. All 29 geometry/interface checks pass. The two detector labels confirm only the surrogate configuration, not recognition accuracy.

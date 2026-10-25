@@ -3,8 +3,7 @@ Figure~\ref{fig:methodology} links the mission specification, URDF chain and act
 
 \HazBotMethodologyFigure
 \subsection{Mission and Evidence Contracts}
-The reference mission has seven phases (Fig.~\ref{fig:mission}): SEARCH authorizes a candidate; APPROACH reaches its pickup region; DOCK transfers control from base to arm; GRASP secures the object; CARRY transports it with the arm stowed; PLACE releases it at the deposit region; and COMPLETE requires a release indication.
-
+The reference mission has seven phases (Fig.~\ref{fig:mission}): SEARCH accepts an authorized candidate; APPROACH reaches its pickup region; DOCK transfers control from base to arm; GRASP secures the object; CARRY transports it with the arm stowed; PLACE releases it at the deposit region; and COMPLETE requires a release indication.
 
 \begin{figure*}[t]
 \centering
@@ -19,14 +18,14 @@ Let $T$ denote an authorized, fresh target; $S$ a fresh, usable scan; $C$ a clea
 \text{target approach} &\Rightarrow T,\\
 \text{arm motion} &\Rightarrow B.\label{eq:armguard}
 \end{align}
-Reach and closure additionally require $T$ and wrist reachability; release requires the deposit region and a grip indication. The controller also requires scan health during docking, grasping and placement. A failed prerequisite emits HOLD without advancement. HOLD inhibits active motion and needs an explicit actuator-boundary stop. Target acquisition and release may advance phase while emitting HOLD. A stop request does not establish $B$: deployment requires measured base-rest feedback and a defined confirmation rule.
+Reach and closure additionally require $T$ and wrist reachability; transport requires a grip indication, and release additionally requires the deposit region. The controller also requires scan health during docking, grasping and placement. A failed coordination prerequisite emits HOLD without phase advancement. HOLD inhibits active motion and needs an explicit actuator-boundary stop. Target acquisition and release may advance phase while emitting HOLD. A stop request does not establish $B$: deployment requires measured base-rest feedback and a defined confirmation rule.
 
 The abstract observations comprise twelve Boolean values: target authorization and freshness; scan freshness and usability; route clearance; arm stowage; base stopped; wrist reachability; pickup-region arrival; grip confirmation; deposit-region arrival and release confirmation. Each has a specific role in the interface but this discrete model does not generate these observations from physical sensors. In particular, grip and release indications are input assumptions, not inferred force or contact measurements.
 
 \subsection{Bounded Reference-Model Verification}
-The verification procedure in Fig.~\ref{fig:verification} enumerates every observation valuation at every phase: $7\times2^{12}=28{,}672$ phase--observation pairs per policy. No valuations are pruned. A separate admissibility oracle checks the output action against Eqs.~\ref{eq:baseguard}--\ref{eq:armguard} and the target, reach and placement conditions. Breadth-first exploration establishes phase reachability and extracts shortest-prefix counterexamples. Three ablations remove the base--arm interlock, target authorization or scan-age requirement from the controller while retaining the full oracle. This design tests whether each omitted condition creates a concrete contract violation.
+The verification procedure in Fig.~\ref{fig:verification} enumerates every observation valuation at every phase: $7\times2^{12}=28{,}672$ phase--observation pairs per policy. No valuations are pruned. A separate admissibility oracle checks the output action against Eqs.~\ref{eq:baseguard}--\ref{eq:armguard} and the target, reach, grip and placement conditions. It checks selected command and command-to-phase obligations, not every transition condition. Breadth-first exploration establishes phase reachability and extracts shortest-prefix counterexamples. Three ablations remove the base--arm interlock, target authorization or scan-age requirement from the controller while retaining the full oracle. This design tests whether each omitted condition creates a concrete contract violation.
 
-All Boolean valuations are retained, including physically inconsistent combinations. Counts therefore describe the specification domain, not robot failure probabilities. A nominal trace checks progression to COMPLETE under admissible observations; neither it nor existential phase reachability establishes physical mission success.
+All Boolean valuations are retained, including combinations that may be physically inconsistent. Counts therefore describe the specification domain, not robot failure probabilities. A nominal trace checks progression to COMPLETE under admissible observations; neither it nor existential phase reachability establishes physical mission success.
 
 \HazBotVerificationFigure
 
@@ -38,7 +37,7 @@ x &=0.100+r\cos q_b,\quad y=r\sin q_b,\\
 z &=0.155+L_1\cos q_s-L_2\sin(q_s+q_e).
 \label{eq:fk}
 \end{align}
-We sample 41 values, including both bounds, for each positioning joint. The declared bounds are $q_b\in[-1.5708,1.5708]$, $q_s\in[-0.5,2.6179]$, and $q_e\in[-1.5708,2.6179]$\,rad. An independent homogeneous-transform implementation evaluates the URDF chain at 1,000 seeded random poses and 13 special poses. Agreement checks numerical implementation, while the grid characterizes the ideal wrist envelope. The wrist origin is not a calibrated grasp contact point; collision, load, compliance and stability constraints are not represented.
+We sample 41 equally spaced values, including both bounds, for each positioning joint. The declared bounds are $q_b\in[-1.5708,1.5708]$, $q_s\in[-0.5,2.6179]$, and $q_e\in[-1.5708,2.6179]$\,rad. An independent homogeneous-transform implementation evaluates the URDF chain at 1,000 random poses (seed 20261021) and 13 special poses. Agreement checks numerical implementation, while the grid characterizes the ideal wrist envelope. The wrist origin is not a calibrated grasp contact point; collision, load, compliance and stability constraints are not represented.
 
 \begin{figure}[t]
 \centering
@@ -48,4 +47,4 @@ We sample 41 values, including both bounds, for each positioning joint. The decl
 \end{figure}
 
 \subsection{Command-Interface Characterization}
-Using Python's abstract syntax tree, we isolate the \code{SET:} branch of the actual wheel gateway and replace only the transport sender with an in-memory recorder. All integer pairs $(l,r)\in[-255,255]^2$ are executed and compared with an independently specified sign partition. The arm gateway's pure angle mapper is evaluated for five accepted aliases over 451 inputs from $-90$ to $360$, checking clamps and reversals. The elbow has two aliases, so this represents four actuator channels. No ROS constructors, sockets, motor servers or hardware launchers are executed. Source hashes, settings, CSV outputs and validation records bind the results to the analyzed implementation.
+Using Python's abstract syntax tree, we isolate the \code{SET:} branch of the actual wheel gateway and replace only the transport sender with an in-memory recorder. Counts describe calls to this recorder; the actual sender's duplicate suppression, connection state and serial delivery are outside the experiment. All integer pairs $(l,r)\in[-255,255]^2$ are executed and compared with an independently specified sign partition. The arm gateway's pure angle mapper is evaluated for five accepted aliases over 451 integer inputs from $-90$ to $360$, checking clamps and reversals. The elbow has two aliases, so this represents four actuator channels. No ROS constructors, sockets, motor servers or hardware launchers are executed. Source hashes, settings, CSV outputs and validation records bind the results to the analyzed implementation.

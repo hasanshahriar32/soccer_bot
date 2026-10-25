@@ -1,10 +1,4 @@
 \section{System Architecture}
-\subsection{Central Computer and Physical Interfaces}
-Figure~\ref{fig:architecture} shows the hardware interfaces; Fig.~\ref{fig:workflow} connects sensing and Pi processing to command generation through the reference coordinator. The analyzed configuration comprises a Pi Camera V2, YDLIDAR X4, L298N differential drive and servo arm; Table~\ref{tab:interfaces} lists the interfaces. A workstation supports visualization without hosting the native detector. Figures~\ref{fig:prototype} and~\ref{fig:front} show the prototype and laptop; the local display uses GPIO and the camera a white CSI ribbon. Figure~\ref{fig:dashboard} documents the command surfaces, not live-system performance.
-
-\HazBotWorkflowFigure
-
-\input{sections/03_prototype_photo}
 
 \begin{table}[t]
 \caption{Four Subsystems and Their Pi Interfaces}
@@ -21,6 +15,13 @@ Manipulator & Separate USB serial, 115200 baud, to arm Arduino; four servo chann
 \bottomrule
 \end{tabularx}
 \end{table}
+
+\subsection{Central Computer and Physical Interfaces}
+Figure~\ref{fig:architecture} shows the hardware interfaces; Fig.~\ref{fig:workflow} connects sensing and Pi processing to command generation through the reference coordinator. The analyzed configuration comprises a Pi Camera V2, YDLIDAR X4, L298N differential drive and servo arm; Table~\ref{tab:interfaces} lists the interfaces. A workstation supports visualization without hosting the native detector. Figures~\ref{fig:prototype} and~\ref{fig:front} show the prototype and laptop; the local display uses GPIO and the camera a white CSI ribbon. Figure~\ref{fig:dashboard} documents the command surfaces, not live-system performance.
+
+\HazBotWorkflowFigure
+
+\input{sections/03_prototype_photo}
 
 \subsection{Navigation and Wheel Control}
 The LiDAR controller acquires ranges and sends packets to the Pi over USB. Host navigation uses scans for route clearance and target-distance association. ROS 2 mapping components are available, but map quality and localization error are not measured here.

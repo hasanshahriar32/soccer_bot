@@ -13,7 +13,7 @@ characterize_hazbot.py derives wrist geometry from scripts/robot.urdf, compares 
 
 verify_hazbot_mission.py defines a new seven-phase reference coordinator, independently checks command admissibility, enumerates all 12-bit observations at every phase for four policies, explores phase reachability, and emits counterexamples and a nominal Boolean witness. Its 109 checks cover the declared abstraction. The full 28,672-case policy has no violating commands; the three guard-removal ablations expose 480, 128, and 288 violating cases. This is not a dynamics or sensor simulation.
 
-The verifier regenerates generated/hazbot_mission_summary.tex from its computed values. Both scripts accept --output-dir to reproduce artifacts in a separate folder. The verifier optionally accepts --generated-dir. A custom output directory defaults to keeping its TeX output under that directory, leaving the active paper table unchanged.
+The verifier regenerates generated/hazbot_mission_summary.tex from its computed values. Both scripts accept --output-dir to reproduce artifacts in a separate folder. The verifier optionally accepts --generated-dir. A custom output directory defaults to keeping its TeX output under that directory, leaving the active paper summary prose unchanged.
 
 See the [active protocol](../research/evaluation_protocol.md), [mission method](../research/hazbot_mission_method.md), and [claim ledger](../research/claim_evidence.csv). Source and dataset hashes are recorded alongside settings and checks.
 

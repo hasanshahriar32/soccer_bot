@@ -1,6 +1,6 @@
 # HazBot IEEE paper project
 
-**HazBot: Architecture and Coordination Verification of A Raspberry Pi-Based Mobile Manipulator for Hazardous-Object Retrieval**
+**HazBot: Architecture and Coordination Verification of a Raspberry Pi-Based Mobile Manipulator for Hazardous-Object Retrieval**
 
 Start with the [paper PDF](submission/HazBot_IEEE_Anonymous.pdf), [Overleaf ZIP](submission/HazBot_IEEE_Overleaf.zip), [LaTeX entry point](main.tex), and [figure gallery](figures/README.md).
 

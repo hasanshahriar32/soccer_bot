@@ -97,7 +97,7 @@ def methodology(ch, mission):
           (67,BLUE,'B  Wrist geometry',('68,921 joint poses', '1,013 independent FK poses'),
            '0.200 m link-sum bound',('2,747 below ground', 'Δ ≤ 6.8 × 10⁻¹⁷ m')),
           (26,GOLD,'C  Command interfaces',('261,121 wheel pairs', '2,255 arm-mapping cases'),
-           '1,020: no command',('Mixed-zero wheel pairs', 'Magnitude lost; 29 checks'))]
+           '1,020: no sender call',('Mixed-zero input pairs', 'Magnitude lost; 29 checks'))]
     # Source fan-out and evidence collection stay in the outer gutters.
     # Every arrow terminates exactly on a panel boundary.
     c.setStrokeColor(HexColor(GRAY));c.setLineWidth(.7)
